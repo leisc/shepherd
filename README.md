@@ -45,8 +45,12 @@ _Coming soon._
 
 ## Reproducing Paper Results
 
-<!-- TODO: experiment commands with a 1-to-1 mapping to paper sections -->
-_Coming soon._
+The full experiment code, the four meta-agent applications and the
+framework-performance microbenchmarks, lives in a companion repository:
+**[shepherd-agents/shepherd-experiments](https://github.com/shepherd-agents/shepherd-experiments)**.
+It bundles the frozen substrate snapshot used for the paper, so the numbers stay
+reproducible against the exact version that produced them. See also
+[`experiments/`](experiments/).
 
 ## Citation
 
