@@ -2,16 +2,16 @@
 
 > Page status: release-ready
 > Source state: shipped-source
-> Applies to: Shepherd v1.0-dev
+> Applies to: Shepherd 0.1
 > Owner: @docs-system-owner (TBD)
 > Validation: scripts/check_shepherd_docs.py
 
-*This is a concept page; it builds the mental model. Steps live in the tutorial, signatures in the reference.*
+*Concept. The mental model behind Shepherd. Steps live in the tutorial, signatures in the reference.*
 
 A **task** is a typed Python function whose body the model fills in. You
 write the signature, the types, and a docstring that states the goal;
 Shepherd turns that contract into a model invocation and hands you back a
-value of the declared return type — or a typed failure.
+value of the declared return type, or a typed failure.
 
 ```python
 import shepherd as shp
@@ -30,18 +30,18 @@ of those few lines.
 Every part of a task's declaration does semantic work; nothing is decoration.
 
 - **Parameters are evidence.** The arguments you pass are what the model is
-  shown — the diff under review, the project name. A parameter is not
+  shown, the diff under review, the project name. A parameter is not
   plumbing; it is the material the model reasons over, presented under the
   name and type you gave it.
 - **The return type is the contract.** `-> SecurityReview` is not a hint. The
   model's response is validated against it, and the caller receives a real
-  `SecurityReview` value — or a typed delivery failure. Never a maybe-shaped
+  `SecurityReview` value, or a typed delivery failure. Never a maybe-shaped
   blob of text to parse by hand.
 - **The docstring is the instruction.** It states the goal in plain English,
-  and it is rendered to the model as the thing to do — not kept around for
+  and it is rendered to the model as the thing to do, not kept around for
   human readers only.
 
-One declaration is read by two audiences — your type checker and the model —
+One declaration is read by two audiences: your type checker and the model,
 and means the same thing to both. That is the core trick: there is no second,
 hidden prompt that the signature merely approximates.
 
@@ -52,15 +52,15 @@ behavioral: edit the docstring and you have edited the program, exactly as if
 you had edited a function body in classical code. Two tasks identical except
 for their docstrings are two different programs sharing a signature.
 
-Treat docstring edits accordingly — review them as behavior changes, not
+Treat docstring edits accordingly, review them as behavior changes, not
 style fixes. "Tightened the wording" on a task docstring is the same kind of
 change as "tightened the loop condition" anywhere else.
 
 ## Bodyless and bodied tasks
 
 The bodyless form above is the purest shape: signature plus docstring, one
-synthesized model delivery. When a task needs to orchestrate — call the model
-more than once, combine intermediate results, invoke other tasks — give it a
+synthesized model delivery. When a task needs to orchestrate, call the model
+more than once, combine intermediate results, invoke other tasks, give it a
 body, where `shp.deliver` is the explicit "go to the model now" step:
 
 ```python
@@ -83,30 +83,24 @@ each delivery flows through the same contract machinery as the bodyless form.
   is a *derived artifact* of the contract, not the thing you author.
 - **Not a raw model call.** Calling a provider directly gets you text and a
   shrug. Calling a task gets you a validated value, a typed failure mode, and
-  a durable record — the difference between an HTTP request and a database
+  a durable record, the difference between an HTTP request and a database
   transaction.
-- **Not a side-effecting agent by default.** A task does not get to quietly
-  browse, write files, or shell out. Everything it does beyond computing its
-  result goes through explicit, interceptable *effects*, and the
-  surface it may use is declared with `may=`, not discovered in production.
-
-!!! info "Design vocabulary — not shipped yet"
-    `may=` and the named permission profiles are design vocabulary from the design proposals; they ship with the public Shepherd package surface and its kernel-enforced permission work.
+- **Not an implicit side-effecting agent.** External work crosses explicit
+  model and effect boundaries, so the run can record what happened instead of
+  leaving you to infer it from logs.
 
 ## Where tasks sit
 
-A task is the *declaration*. Calling it inside a *workspace* — which supplies
-the model and the working context — produces a *run*, the durable record of
+A task is the *declaration*. Calling it inside a *workspace*, which supplies
+the model and the working context, produces a *run*, the durable record of
 that one execution; anything it says to the world beyond the model travels
-through *effects*. (The *Workspaces*, *Runs*, and *Effects* concept pages are
-in review and ship with the next promotion.) To see all four moving together,
-start with the
+through *effects*. To see all four moving together, start with the
 [first Shepherd app tutorial](../tutorials/first-shepherd-app.md).
 
 ## Going deeper
 
-- Formal semantics: `docs/spec/04-constructs.md` §construct-task-decorator *(formal spec — repository reference)*
-- Model delivery: `docs/spec/04-constructs.md` §construct-deliver *(formal spec — repository reference)*
-- Task data model: `docs/spec/01-data-model.md` §sec-tasks *(formal spec — repository reference)*
-- Rationale: `docs/paradigm.md` *(design rationale — repository reference)*
-- Teaching source: `docs/curriculum/tutorial/01-your-first-task.md` *(internal curriculum — repository reference)*
+- Formal semantics: `docs/spec/04-constructs.md` §construct-task-decorator *(formal spec, repository reference)*
+- Model delivery: `docs/spec/04-constructs.md` §construct-deliver *(formal spec, repository reference)*
+- Task data model: `docs/spec/01-data-model.md` §sec-tasks *(formal spec, repository reference)*
+- Rationale: `docs/paradigm.md` *(design rationale, repository reference)*
+- Teaching source: `docs/curriculum/tutorial/01-your-first-task.md` *(internal curriculum, repository reference)*

@@ -2,11 +2,11 @@
 
 > Page status: release-ready
 > Source state: checked-example
-> Applies to: Shepherd v1.0-dev
+> Applies to: Shepherd 0.1
 > Owner: @docs-system-owner (TBD)
 > Validation: docs_src/tutorials/first_app/test_first_app.py
 
-*This is a tutorial — a learning path in order. For task-specific recipes see the guides; for exact APIs see the reference.*
+*Tutorial. A learning path, in order. For task-specific recipes, see the guides. For exact APIs, see the reference.*
 
 > **Achievement.** Build and run a two-task change reviewer: one task that
 > classifies a code change, one that reviews it, composed with plain Python.
@@ -17,7 +17,7 @@
 
 Every code block on this page is included from one tested file
 (`docs_src/tutorials/first_app/app.py`), and its behavior is asserted in CI
-against a recorded, deterministic offline provider — what you read is what
+against a recorded, deterministic offline provider, what you read is what
 ran. The [source-state inventory](../reference/source-state.md) says exactly
 what that means today.
 
@@ -25,11 +25,11 @@ what that means today.
 
 A change reviewer made of two model-backed tasks and one ordinary function:
 
-- `triage_change(diff) -> Triage` — classifies a code change: category,
+- `triage_change(diff) -> Triage`, classifies a code change: category,
   priority, rationale.
-- `write_review(diff, triage) -> Review` — writes a short review, given the
+- `write_review(diff, triage) -> Review`, writes a short review, given the
   diff and its triage.
-- `review_change(diff) -> Review` — plain Python that feeds the first task's
+- `review_change(diff) -> Review`, plain Python that feeds the first task's
   output into the second.
 
 Small as it is, this is the real shape of a Shepherd program: typed functions
@@ -43,7 +43,7 @@ Start with the imports and the type you want back:
 --8<-- "tutorials/first_app/app.py:setup"
 ```
 
-`Triage` is a frozen dataclass — three string fields and two comments. It is
+`Triage` is a frozen dataclass, three string fields and two comments. It is
 not boilerplate; it is the **contract**. Whatever the model says, your code
 only ever receives a real `Triage` instance with those fields, or an error.
 
@@ -57,7 +57,7 @@ That function has no body, and it does not need one. In Shepherd the
 **signature carries the meaning**:
 
 - **Parameters are the inputs.** `diff: str` tells Shepherd to hand the model
-  a string named `diff`. You never format a prompt by hand — each parameter
+  a string named `diff`. You never format a prompt by hand, each parameter
   is rendered for the model in a way appropriate to its type.
 - **The return type is the validated contract.** `-> Triage` becomes the
   response schema. The reply is checked and coerced into a `Triage`, or the
@@ -65,22 +65,22 @@ That function has no body, and it does not need one. In Shepherd the
 - **The docstring is the instruction.** The first line is the job; the rest
   is elaboration. Write it the way you would brief a careful colleague:
   plain English, the categories named, the judgment call made explicit
-  ("priority reflects user impact, not engineering effort").
+  ("Priority reflects user impact, not engineering effort.").
 
 One consequence is worth pausing on: that docstring is **behavior, not a
 comment**. It is what the model is actually asked to do, so editing it
-changes what your program does — and a bodyless task without one is rejected
+changes what your program does, and a bodyless task without one is rejected
 when the decorator runs, not silently accepted.
 
 !!! success "Checkpoint"
     You have a typed, model-backed function. Prove the docstring rule to
-    yourself: delete the docstring and re-import the module — `@shp.task`
+    yourself: delete the docstring and re-import the module, `@shp.task`
     raises `TypeError` at definition time, because a bodyless task with no
     instruction is meaningless. Put it back.
 
 ## §3. Run it in a workspace
 
-A task does not choose its own model. That is the job of the **workspace** —
+A task does not choose its own model. That is the job of the **workspace**,
 the ambient context that every task call inside the block inherits:
 
 ```python
@@ -88,7 +88,7 @@ the ambient context that every task call inside the block inherits:
 ```
 
 This block is the entry point of the finished program, which is why it is
-indented — it sits inside the file's `main()`. Two things to notice:
+indented, it sits inside the file's `main()`. Two things to notice:
 
 - `shp.workspace(model=claude("sonnet-4-5"))` pins the model once, at the
   top. The tasks themselves stay model-agnostic: change that one argument and
@@ -123,13 +123,13 @@ bugfix/high: approve - Tightens the admin gate in auth.py by requiring an explic
 ```
 
 The line is deterministic because the offline provider replays recorded
-transcripts — the same ones CI asserts against, so this page cannot drift
+transcripts, the same ones CI asserts against, so this page cannot drift
 from the code.
 
 !!! success "Checkpoint"
     The program ran end to end, and `triage` is a real `Triage` instance:
     `triage.category == "bugfix"`, `triage.priority == "high"`, and
-    `triage.rationale` is a sentence you can read. Typed in, typed out — no
+    `triage.rationale` is a sentence you can read. Typed in, typed out, no
     parsing code anywhere in the file.
 
 ## §4. Compose a second task
@@ -142,12 +142,12 @@ The reviewer needs a second task, and something to connect the two:
 
 Three small pieces:
 
-- `Review` is another frozen dataclass — the second contract.
+- `Review` is another frozen dataclass, the second contract.
 - `write_review` is another bodyless task. Look at its second parameter:
   `triage: Triage`. Tasks can take **structured inputs**, including the typed
   output of another task; Shepherd renders the dataclass's fields to the
   model as labeled inputs, the same way it rendered `diff`.
-- `review_change` is the composition — and it is **not** a task. It is a
+- `review_change` is the composition, and it is **not** a task. It is a
   plain function with a single line of ordinary Python: call `triage_change`,
   pass the result to `write_review`.
 
@@ -160,13 +160,13 @@ modules, test them separately, or reuse `triage_change` in another program
 tomorrow.
 
 When one task genuinely needs several model calls with control flow between
-them, you can give it a body and sequence the calls yourself — a later
+them, you can give it a body and sequence the calls yourself, a later
 tutorial covers that. Most tasks look like the two on this page.
 
 !!! success "Checkpoint"
     `review_change(SAMPLE_DIFF)` returns a `Review` with
     `verdict == "approve"` and a summary that names `auth.py`. The page's
-    test file asserts exactly this — run it yourself:
+    test file asserts exactly this, run it yourself:
     `pytest docs_src/tutorials/first_app/test_first_app.py`.
 
 ## §5. What's next
@@ -177,12 +177,10 @@ workspace pinning the model, and composition in plain Python.
 
 From here:
 
-- **[Concepts: Tasks](../concepts/tasks.md)** — the mental model behind what
-  you just did: why signatures carry meaning, what a task may do at runtime,
-  and where the boundaries sit.
-- **Guides** — task-focused recipes (configuring a provider, testing
-  Shepherd code, debugging a failing run) are being drafted and will appear
-  in the nav as each is promoted.
-- **[Source-state inventory](../reference/source-state.md)** — the reference
+- **[Concepts: Tasks](../concepts/tasks.md)**, the mental model behind what
+  you just did: why signatures carry meaning and where the boundaries sit.
+- **[Guides](../guides/index.md)**, task-focused recipes for deterministic
+  runs, debugging, testing, and routing tasks to models.
+- **[Source-state inventory](../reference/source-state.md)**, the reference
   lane's honest ledger: which facts on these pages are backed by shipped
   source, checked examples, or fixtures today.

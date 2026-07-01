@@ -1,17 +1,66 @@
 # Live acceptance demo
 
-> Page status: scaffold
-> Source state: scaffold
-> Applies to: Shepherd v1.0-dev
+> Page status: fast-follow
+> Source state: preview
+> Applies to: Shepherd 0.1
 > Owner: @docs-system-owner (TBD)
-> Validation: not yet validated
+> Validation: scripts/check_shepherd_docs.py
 
-*This is a how-to guide for one job. New to Shepherd? Start with the tutorial. For exact APIs, see the reference.*
+*How-to guide. New to Shepherd? Start with the tutorial. For exact APIs, see the reference.*
 
-!!! warning "Scaffold — not yet shipped"
-    This page is scaffolded. Treat commands and code as non-authoritative
-    until the linked checked example, fixture, or shipped Shepherd surface exists.
+!!! warning "Not shipped yet"
+    This prototype is **offline by design**, every checked example runs against
+    the deterministic offline provider. The live-run path described here is
+    **planned** and written ahead so its shape can be reviewed. **Live calls
+    cost money and are non-deterministic.** Keep CI and everyday development on
+    the offline provider ([deterministic demo](deterministic-demo.md)).
 
-How-to scaffold for **Live acceptance demo**. The recipe — prerequisites, commands,
-expected result, and failure notes — will be written against a checked
-example before promotion.
+**Job.** Once, before you rely on offline development, confirm that real
+credentials, the network, and a live model all work end to end: a single live
+run that returns a valid typed result. This is an *acceptance* check, not a
+development loop.
+
+**Prerequisites.** A provider account and API key, recorded per
+[Configure a provider](configure-provider.md); `shepherd-ai` installed
+([install](../start/install.md), itself unshipped). Expect a small,
+real charge.
+
+## Steps
+
+The live switch and harness below are the **planned** surface, shown so the
+recipe's shape can be reviewed.
+
+1. **Record a credential** (planned `shepherd provider login`), see
+   [Configure a provider](configure-provider.md). The offline provider needs
+   none of this; a live run does.
+
+2. **Select a live provider in code.** Selecting the provider is real today; the
+   switch that routes it to the live backend instead of the recorded transcript
+   is the planned part:
+
+    ```python
+    import shepherd as shp
+    from shepherd.providers import claude
+
+    with shp.workspace(model=claude("sonnet-4-5")):
+        review = review_change(SAMPLE_DIFF)   # a real, billed model call (planned)
+    ```
+
+3. **Run it once and read the result, not the wording.** A live answer varies
+   run to run. You are accepting that a real call *connects and returns a valid
+   `Review`*, not that it prints any exact sentence. Do not assert on the text.
+
+## Expected result
+
+A typed result comes back from a genuine model call, and a charge appears on
+your provider dashboard. From here, switch back to the offline provider for
+day-to-day work and tests, acceptance is a one-time gate, not the inner loop.
+
+## If it fails
+
+- **No credential / not reachable?** See
+  [Configure a provider](configure-provider.md); a credential set in one shell
+  may be missing in another.
+- **Cost or flaky-output surprises?** Expected, live calls are billed and
+  non-deterministic. That is the reason the deterministic offline provider is
+  the default everywhere else.

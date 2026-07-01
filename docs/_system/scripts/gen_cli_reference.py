@@ -17,11 +17,11 @@ HEAD = """# CLI
 
 > Page status: scaffold
 > Source state: checked-fixture
-> Applies to: Shepherd v1.0-dev
+> Applies to: Shepherd 0.1
 > Owner: @docs-system-owner (TBD)
 > Validation: scripts/gen_cli_reference.py --check
 
-*This is reference — exact, generated facts. The mental model lives in concepts; recipes live in guides.*
+*Reference. Exact, generated facts. The mental model lives in concepts, recipes in guides.*
 
 !!! warning "Simulated capture — checked fixture"
     The Shepherd CLI has not shipped. This page is generated from a checked

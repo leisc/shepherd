@@ -1,5 +1,10 @@
 #!/usr/bin/env python3
-"""Stale-name gate (DESIGN 1.8): no `shepherd`/`device` leaks on public pages.
+"""Stale-name gate (DESIGN 1.8): no internal package names (`agentic*`, `shepherd_*`) or `device` leak on public pages.
+
+Public pages speak the `shepherd` facade; the bare `shepherd`/`Shepherd` brand and
+dotted `shepherd.<symbol>` paths are allowed. Internal implementation package names
+(`shepherd_runtime`, `shepherd_dialect`, …), any residual pre-rename `agentic*`, and
+`device` must not appear.
 
 Relief valves: the `> Stale-names: migration-context` marker (page-wide; the
 page must be enumerated in the allowlist) and allowlist path patterns. Exit
@@ -16,7 +21,10 @@ from check_shepherd_docs import load_config, parse_meta  # tolerant-but-inert lo
 from pathspec.gitignore import GitIgnoreSpec
 
 PROTO = Path(__file__).resolve().parent.parent
-PATTERN = re.compile(r"shepherd[\w]*|device", re.IGNORECASE)
+# Leading \b so internal package names (`shepherd_runtime`, …) are caught but the
+# validator script names cited in metadata (`check_shepherd_docs.py`,
+# `gen_shepherd_ref_pages.py`) are NOT — the `_` before `shepherd` is no word boundary.
+PATTERN = re.compile(r"\bagentic\w*|\bshepherd_\w+|\bdevice\b", re.IGNORECASE)
 
 
 def main() -> int:

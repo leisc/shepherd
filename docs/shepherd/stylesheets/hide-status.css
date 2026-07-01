@@ -1,0 +1,6 @@
+/* Hide the leading `> Key: value` page-status metadata block on the LIVE build.
+   Linked from mkdocs.yml only; mkdocs.internal.yml re-declares extra_css WITHOUT
+   this file (INHERIT replaces list-valued keys), so the reviewer build still shows
+   the block. The block stays in the markdown source, so the membership gate keeps
+   reading the status metadata. */
+.md-typeset > blockquote:first-of-type { display: none; }

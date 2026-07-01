@@ -8,7 +8,14 @@ INHERIT: mkdocs.yml
 site_dir: site/internal
 
 extra:
-  shepherd_docs_version: "1.0-dev (prototype, INTERNAL REVIEWER BUILD)"
+  shepherd_docs_version: "0.1 (internal reviewer build)"
+
+# extra_css REPLACES the parent's list under INHERIT, so re-list the base styles
+# WITHOUT hide-status.css — that is how the reviewer build keeps showing the
+# page-status indicator that the live build (mkdocs.yml) hides.
+extra_css:
+  - stylesheets/extra.css
+  - stylesheets/shepherd-home.css
 
 # Only non-page inputs stay excluded; every doc page is built and auto-naved.
 exclude_docs: |

@@ -1,17 +1,63 @@
 # Route tasks to models
 
-> Page status: scaffold
-> Source state: scaffold
-> Applies to: Shepherd v1.0-dev
+> Page status: release-ready
+> Source state: checked-example
+> Applies to: Shepherd 0.1
 > Owner: @docs-system-owner (TBD)
-> Validation: not yet validated
+> Validation: pytest docs_src/shepherd/tutorials/
 
-*This is a how-to guide for one job. New to Shepherd? Start with the tutorial. For exact APIs, see the reference.*
+*How-to guide. New to Shepherd? Start with the tutorial. For exact APIs, see the reference.*
 
-!!! warning "Scaffold — not yet shipped"
-    This page is scaffolded. Treat commands and code as non-authoritative
-    until the linked checked example, fixture, or shipped Shepherd surface exists.
+**Job.** Run different tasks against different models, a cheap, fast model for
+the easy step, a stronger one for the hard step, without editing the tasks
+themselves.
 
-How-to scaffold for **Route tasks to models**. The recipe — prerequisites, commands,
-expected result, and failure notes — will be written against a checked
-example before promotion.
+**Prerequisites.** The tutorial environment and providers selectable in code.
+
+## Steps
+
+1. **Remember the rule: the workspace pins the model, the task does not.** A
+   task is model-agnostic, its signature never names a model. Whichever
+   workspace is open when you call it decides who answers. So "routing" is not a
+   setting on the task; it is *which workspace you call it in*.
+
+2. **Scope each call to the model you want.** Open one workspace per model and
+   call the relevant task inside it:
+
+    ```python
+    import shepherd as shp
+    from shepherd.providers import claude
+
+    # cheap, fast model for the easy classification step
+    with shp.workspace(model=claude("haiku-4-5")):
+        triage = triage_change(diff)
+
+    # stronger model for the step that needs more judgment
+    with shp.workspace(model=claude("sonnet-4-5")):
+        review = write_review(diff, triage)
+    ```
+
+    The same two tasks would run against one model if you opened one workspace
+    around both calls. Nothing in `triage_change` or `write_review` changed,
+    only the scope each was called in.
+
+3. **Pass results across scopes as ordinary values.** `triage` is a plain typed
+   value once the first workspace closes; handing it to the second task in the
+   next workspace is normal Python. Routing lives in the call sites, not in a
+   pipeline object.
+
+## Expected result
+
+Each task runs against the model of its enclosing workspace; switching a step to
+another model is a one-line change to that block's `claude("...")` argument, and
+the tasks stay untouched. The workspace-pins-the-model primitive is the one
+exercised by the tutorial's tests
+(`docs_src/shepherd/tutorials/first_app/test_first_app.py`).
+
+## If it fails
+
+- **`RuntimeError` about a workspace?** A task was called between blocks, with no
+  workspace open. Every task call must sit inside a `with shp.workspace(...)`;
+  see [Debug your first run](debug-your-first-run.md).
+- **Both tasks ran on the same model?** They were inside the same workspace. Give
+  each its own block, as in step 2.

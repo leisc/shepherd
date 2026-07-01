@@ -2,11 +2,11 @@
 
 > Page status: scaffold
 > Source state: scaffold
-> Applies to: Shepherd v1.0-dev
+> Applies to: Shepherd 0.1
 > Owner: @docs-system-owner (TBD)
 > Validation: not yet validated
 
-*This is a how-to guide for one job. New to Shepherd? Start with the tutorial. For exact APIs, see the reference.*
+*How-to guide. New to Shepherd? Start with the tutorial. For exact APIs, see the reference.*
 
 !!! warning "Scaffold — not yet runnable"
     This page is a draft against a surface that has not shipped. Treat commands and code as illustrative until the page is promoted.

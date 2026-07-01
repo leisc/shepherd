@@ -7,8 +7,8 @@ import subprocess
 import sys
 from pathlib import Path
 
-PROTO = Path(__file__).resolve().parent.parent.parent # repo root (content: docs/shepherd, docs/_generated)
-TOOLING = PROTO / "docs_system" # docs-system tooling now lives here (mkdocs.yml, scripts/)
+PROTO = Path(__file__).resolve().parent.parent.parent.parent # repo root (docs/_src/shepherd/ -> up 4; content: docs/shepherd, docs/_generated)
+TOOLING = PROTO / "docs/_system" # docs-system tooling now lives here (mkdocs.yml, scripts/)
 GATE = TOOLING / "scripts/check_shepherd_docs.py"
 
 
@@ -25,10 +25,10 @@ def _seed(tmp_path: Path) -> Path:
     (root / "docs").mkdir()
     shutil.copytree(PROTO / "docs/shepherd", root / "docs/shepherd")
     # Copy the real config but normalize docs_dir to the in-fixture single-root
-    # layout: the deployed config uses '../docs/shepherd' because the tooling
-    # lives in docs_system/ while the content stays at the repo root.
+    # layout: the deployed config uses '../shepherd' because the tooling
+    # lives in docs/_system/ while the content stays at the repo root.
     cfg = (TOOLING / "mkdocs.yml").read_text(encoding="utf-8")
-    cfg = cfg.replace("docs_dir:../docs/shepherd", "docs_dir: docs/shepherd")
+    cfg = cfg.replace("docs_dir: ../shepherd", "docs_dir: docs/shepherd")
     (root / "mkdocs.yml").write_text(cfg, encoding="utf-8")
     return root
 
@@ -47,7 +47,8 @@ def test_unexcluded_scaffold_fails_leak(tmp_path):
     root = _seed(tmp_path)
     cfg = (root / "mkdocs.yml").read_text(encoding="utf-8")
     # Un-exclude a scaffold page without promoting it -> LEAK (+CONFLICT).
-    cfg = cfg.replace(" !/index.md\n", " !/index.md\n !/start/install.md\n")
+    # (Uses concepts/placements.md — still a scaffold; start/install was promoted.)
+    cfg = cfg.replace("  !/index.md\n", "  !/index.md\n  !/concepts/placements.md\n")
     (root / "mkdocs.yml").write_text(cfg, encoding="utf-8")
     assert _gate(root) == 1
 

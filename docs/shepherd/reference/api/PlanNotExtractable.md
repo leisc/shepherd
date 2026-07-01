@@ -1,4 +1,4 @@
-# `shepherd.task`
+# `shepherd.PlanNotExtractable`
 
 > Page status: scaffold
 > Source state: generated
@@ -11,15 +11,10 @@
 !!! warning "Pre-rename surface"
     Generated from the internal `shepherd` facade; names and paths change at the Shepherd rename.
 
-<span class="api-kind">function</span>
+<span class="api-kind">class</span>
 
-::: shepherd_runtime.nucleus.task
+::: shepherd_runtime.effects.PlanNotExtractable
     options:
       show_root_heading: true
       heading_level: 2
       show_root_full_path: false
-
-## See also
-
-- Mental model: [concepts/tasks.md](../../concepts/tasks.md)
-- Recipe: [tutorials/first-shepherd-app.md](../../tutorials/first-shepherd-app.md)

@@ -4,13 +4,13 @@
 # below. Generators READ the real repo sources (shepherd/) read-only.
 
 site_name: Shepherd
-site_description: Build agent systems in Python.
-docs_dir:../shepherd
+site_description: Program meta-agents in Python.
+docs_dir: ../shepherd
 site_dir: site/shepherd
 use_directory_urls: true
 
 extra:
-  shepherd_docs_version: "1.0-dev (prototype)"
+  shepherd_docs_version: "0.1"
 
 # THEME — "Research-Framework Documentation Theme" (locked handoff): warm paper,
 # a single teal accent (legacy Shepherd #178D8C), IBM Plex type, light tracked
@@ -44,6 +44,7 @@ theme:
 extra_css:
   - stylesheets/extra.css
   - stylesheets/shepherd-home.css
+  - stylesheets/hide-status.css   # live build hides the page-status indicator (reviewer build re-shows it)
 
 plugins:
   - search
@@ -52,9 +53,9 @@ plugins:
       handlers:
         python:
           paths:
-            -../shepherd/packages/meta/src
-            -../shepherd/packages/runtime/src
-            -../shepherd/packages/core/src
+            - ../../shepherd/packages/meta/src
+            - ../../shepherd/packages/runtime/src
+            - ../../shepherd/packages/core/src
           options:
             show_source: false
             docstring_style: google
@@ -93,10 +94,20 @@ exclude_docs: |
   *
   !/index.md
   !/start/quickstart.md
+  !/tutorials/index.md
   !/tutorials/first-shepherd-app.md
+  !/concepts/index.md
   !/concepts/tasks.md
+  !/concepts/effects.md
+  !/concepts/runs.md
+  !/concepts/workspaces.md
+  !/concepts/providers.md
+  !/guides/index.md
+  !/guides/deterministic-demo.md
+  !/guides/debug-your-first-run.md
+  !/guides/test-shepherd-code.md
+  !/guides/route-tasks-to-models.md
   !/reference/source-state.md
-  !/workflows/index.md
   !stylesheets/**
   !assets/**
 
@@ -106,10 +117,20 @@ nav:
   - Start:
       - Quickstart: start/quickstart.md
   - Tutorials:
+      - tutorials/index.md
       - First Shepherd app: tutorials/first-shepherd-app.md
   - Concepts:
+      - concepts/index.md
       - Tasks: concepts/tasks.md
+      - Effects: concepts/effects.md
+      - Runs: concepts/runs.md
+      - Workspaces: concepts/workspaces.md
+      - Providers: concepts/providers.md
+  - Guides:
+      - guides/index.md
+      - Deterministic demo: guides/deterministic-demo.md
+      - Debug your first run: guides/debug-your-first-run.md
+      - Test Shepherd code: guides/test-shepherd-code.md
+      - Route tasks to models: guides/route-tasks-to-models.md
   - Reference:
       - Source-state inventory: reference/source-state.md
-  - Workflows:
-      - workflows/index.md

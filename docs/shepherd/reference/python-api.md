@@ -2,11 +2,11 @@
 
 > Page status: scaffold
 > Source state: generated
-> Applies to: Shepherd v1.0-dev
+> Applies to: Shepherd 0.1
 > Owner: @docs-system-owner (TBD)
 > Validation: scripts/gen_shepherd_api_inventory.py --check
 
-*This is reference — exact, generated facts. The mental model lives in concepts; recipes live in guides.*
+*Reference. Exact, generated facts. The mental model lives in concepts, recipes in guides.*
 
 !!! warning "Pre-rename surface — scaffolded entry"
     This is the curated entry page for the Python API reference (

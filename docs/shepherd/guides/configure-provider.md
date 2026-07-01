@@ -1,30 +1,33 @@
 # Configure a provider
 
-> Page status: scaffold
-> Source state: scaffold
-> Applies to: Shepherd v1.0-dev
+> Page status: fast-follow
+> Source state: preview
+> Applies to: Shepherd 0.1
 > Owner: @docs-system-owner (TBD)
-> Validation: not yet validated
+> Validation: scripts/check_shepherd_docs.py
 
-*This is a how-to guide for one job. New to Shepherd? Start with the tutorial. For exact APIs, see the reference.*
+*How-to guide. New to Shepherd? Start with the tutorial. For exact APIs, see the reference.*
 
-!!! warning "Scaffold — not yet runnable"
-    This page is a draft against a surface that has not shipped. Treat commands and code as illustrative until the page is promoted.
+!!! warning "Not shipped yet"
+    The `shepherd provider` CLI (`login`, `check`, `list`) is the **planned**
+    credential-management surface and has not shipped. Selecting a provider in
+    code (step 3) is real today; the CLI steps are written ahead of the code so
+    the recipe's shape can be reviewed.
 
 **Job.** Record credentials for a model provider once, verify Shepherd can
 reach it, and select its models per workspace in code.
 
-**Prerequisites.** `shepherd-ai` installed ([install](../start/install.md) —
+**Prerequisites.** `shepherd-ai` installed ([install](../start/install.md),
 itself unshipped); a provider account and API key. **Live providers cost
 money and are non-deterministic.** The offline examples need none of this.
 
 ## Steps
 
-The `shepherd provider ...` commands below are the planned CLI surface —
+The `shepherd provider ...` commands below are the planned CLI surface,
 **unshipped**, written out so reviewers can check the recipe's shape.
 
 1. **Log in once.** Records the credential (or a reference to it) in the
-   configured credential store — not in your repository:
+   configured credential store, not in your repository:
 
     ```bash
     shepherd provider login claude
@@ -62,10 +65,10 @@ The `shepherd provider ...` commands below are the planned CLI surface —
 
 ## If it fails
 
-- **No credential found** — re-run `shepherd provider login claude`; check
+- **No credential found**, re-run `shepherd provider login claude`; check
   for an environment variable set in one shell but not another.
-- **The task raises before any model call** — it was called outside
+- **The task raises before any model call**, it was called outside
   `with shp.workspace(model=...)`; see
   [Debug your first run](debug-your-first-run.md).
-- **Cost or flaky-output surprises** — live calls are billed and vary run to
+- **Cost or flaky-output surprises**, live calls are billed and vary run to
   run; keep CI and tests on the deterministic offline provider.

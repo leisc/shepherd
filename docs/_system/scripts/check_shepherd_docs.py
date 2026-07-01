@@ -21,21 +21,21 @@ from pathspec.gitignore import GitIgnoreSpec
 PROTO = Path(__file__).resolve().parent.parent
 
 STATUSES = {"release-ready", "scaffold", "fast-follow", "historical-reference"}
-STATES = {"shipped-source", "checked-example", "checked-fixture", "generated", "scaffold", "historical"}
-ADMISSIBLE = {"shipped-source", "checked-example", "checked-fixture", "generated"}
+STATES = {"shipped-source", "checked-example", "checked-fixture", "generated", "preview", "scaffold", "historical"}
+ADMISSIBLE = {"shipped-source", "checked-example", "checked-fixture", "generated", "preview"}
 KEYS = ("Page status", "Source state", "Applies to", "Owner", "Validation")
 META_EXEMPT_PREFIX = ("_templates/",)
 META_EXEMPT = {"_runbook.md"}
 
 MODE_LINES = {
-    "quickstart": "*Quickstart — the fastest working run.",
-    "tutorial": "*This is a tutorial — a learning path in order.",
-    "guide": "*This is a how-to guide for one job.",
-    "concept": "*This is a concept page; it builds the mental model.",
-    "reference": "*This is reference — exact, generated facts.",
-    "workflow": "*This page documents one packaged workflow:",
-    "inventory": "*This is the source-state inventory —",
-    "operator-stub": "*This lane is reserved for operators.",
+    "quickstart": "*Quickstart.",
+    "tutorial": "*Tutorial.",
+    "guide": "*How-to guide.",
+    "concept": "*Concept.",
+    "reference": "*Reference.",
+    "workflow": "*Workflow.",
+    "inventory": "*Source-state inventory.",
+    "operator-stub": "*Operators.",
 }
 TYPE_BY_DIR = {
     "start": "quickstart", "tutorials": "tutorial", "guides": "guide",
@@ -142,12 +142,12 @@ def main() -> int:
             continue
         if status not in STATUSES or meta["Source state"] not in STATES:
             err("META", rel, "invalid Page status / Source state value", "use the §5.1 enums")
-        # MODELINE / C4
+        # MODELINE
         ptype = page_type(rel)
         if ptype and MODE_LINES[ptype] not in p["text"]:
             err("MODELINE", rel, f"canonical {ptype} mode line missing", "copy it from the matching page-mode template")
-        if ptype == "concept" and "## Going deeper" not in p["text"]:
-            err("MODELINE", rel, "concept page lacks '## Going deeper' (C4)", "add the labeled citations footer")
+        # (C4 '## Going deeper' footer requirement dropped — internal repo-reference
+        #  footers are not carried on the public concept pages; see docs sync 2026-07-01.)
         # LEAK
         if status != "release-ready" and not p["excluded"]:
             err("LEAK", rel, f"{status} page is un-excluded (URL-reachable in public build)",

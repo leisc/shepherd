@@ -1,19 +1,19 @@
-# `shepherd.SINGLE_OUTPUT_KEY`
+# `shepherd.GitRepoBasis`
 
 > Page status: scaffold
 > Source state: generated
-> Applies to: Shepherd v1.0-dev
+> Applies to: Shepherd 0.1
 > Owner: @docs-system-owner (TBD)
 > Validation: scripts/gen_shepherd_api_inventory.py --check
 
-*This is reference — exact, generated facts. The mental model lives in concepts; recipes live in guides.*
+*Reference. Exact, generated facts. The mental model lives in concepts, recipes in guides.*
 
 !!! warning "Pre-rename surface"
     Generated from the internal `shepherd` facade; names and paths change at the Shepherd rename.
 
-<span class="api-kind">attribute</span>
+<span class="api-kind">class</span>
 
-::: shepherd_core.schema.SINGLE_OUTPUT_KEY
+::: shepherd_runtime.nucleus.GitRepoBasis
     options:
       show_root_heading: true
       heading_level: 2

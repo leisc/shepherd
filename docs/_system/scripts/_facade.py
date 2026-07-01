@@ -25,6 +25,13 @@ SEARCH_PATHS = [
     REPO_ROOT / "shepherd/packages/core/src",
 ]
 
+# The lazy substrate-handle surface (``shepherd_dialect.workspace_control``,
+# resolved through the facade's PEP 562 ``__getattr__``) pulls ``vcs_core`` and
+# ``pygit2`` on import. The docs build is deliberately import-light and offline,
+# so those symbols cannot be rendered here; the generated reference documents the
+# nucleus that resolves from SEARCH_PATHS. See the facade's own module docstring.
+DEFERRED_SOURCE_PREFIX = "shepherd_dialect"
+
 API_DIR = PROTO_ROOT / "docs/shepherd/reference/api"
 MAP_FILE = API_DIR / "_map.yml"
 SNAPSHOT = PROTO_ROOT / "docs/_generated/shepherd/python-api/public-symbols.json"
@@ -43,7 +50,13 @@ def facade_map() -> tuple[list[str], dict[str, str]]:
             isinstance(t, ast.Name) and t.id == "__all__" for t in node.targets
         ):
             exports = [e.value for e in getattr(node.value, "elts", []) if isinstance(e, ast.Constant)]
-    return [e for e in exports if not e.startswith("__")], source
+    exports = [
+        e
+        for e in exports
+        if not e.startswith("__")
+        and not source.get(e, "").startswith(DEFERRED_SOURCE_PREFIX)
+    ]
+    return exports, source
 
 
 def _fmt_sig(obj) -> str:

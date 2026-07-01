@@ -116,6 +116,25 @@
 .md-header__title { font-weight: 600; letter-spacing: -0.01em; }
 .md-header__button.md-logo img { height: 1.45rem; width: auto; }
 
+/* Version badge beside the "Shepherd" site title. The site-title topic is the one
+   WITHOUT data-md-component (the other holds the scrolled page title and must stay
+   un-badged). overflow:visible so the ::after isn't clipped by the ellipsis box. */
+.md-header__topic:not([data-md-component]) .md-ellipsis { overflow: visible; }
+.md-header__topic:not([data-md-component]) .md-ellipsis::after {
+  content: "0.1";
+  margin-left: 0.5rem;
+  padding: 1px 7px;
+  border-radius: 99px;
+  font: 600 9.5px/1.6 var(--md-code-font-family);
+  letter-spacing: 0.02em;
+  vertical-align: middle;
+  position: relative;
+  top: -1px;
+  color: var(--accent);
+  background: rgba(23, 141, 140, 0.10);   /* legacy Shepherd teal #178D8C, tinted */
+  border: 1px solid rgba(23, 141, 140, 0.30);
+}
+
 .md-tabs {
   background-color: var(--paper);
   color: var(--ink-body);

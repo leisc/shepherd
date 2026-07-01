@@ -2,11 +2,11 @@
 
 > Page status: scaffold
 > Source state: scaffold
-> Applies to: Shepherd v1.0-dev
+> Applies to: Shepherd 0.1
 > Owner: @docs-system-owner (TBD)
 > Validation: not yet validated
 
-*This is a concept page; it builds the mental model. Steps live in the tutorial, signatures in the reference.*
+*Concept. The mental model behind Shepherd. Steps live in the tutorial, signatures in the reference.*
 
 <!-- CONTRACT: mental model only — no step lists, no exact signatures.
 Required: vocabulary, the model, boundaries/"what it is not", and the C4

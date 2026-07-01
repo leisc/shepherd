@@ -5,25 +5,21 @@ hide:
 ---
 
 <!--
-Page-metadata block — kept in an HTML comment so the membership gate
+Page-metadata block, kept in an HTML comment so the membership gate
 (scripts/check_shepherd_docs.py) still reads the `> Key: value` lines while the
 landing renders without a visible status banner.
 > Page status: release-ready
 > Source state: shipped-source
-> Applies to: Shepherd v1.0-dev
+> Applies to: Shepherd 0.1
 > Owner: @docs-system-owner (TBD)
 > Validation: scripts/check_shepherd_docs.py
 -->
 
 <div class="shp-hero" markdown>
 
-<p class="shp-eyebrow">Python agent framework</p>
+# Program meta-agents in Python
 
-# Build agent systems in Python
-
-You write ordinary typed functions; Shepherd runs them against a model,
-validates the results, records what happened, and lets you supervise and
-compose the runs.
+Write agents as simple typed functions, and meta-agents as functions that take your agents as input.
 
 [Get started](tutorials/first-shepherd-app.md){ .md-button .md-button--primary }
 [Quickstart](start/quickstart.md){ .md-button }
@@ -43,26 +39,26 @@ compose the runs.
 
     ---
 
-    A typed task, a workspace, and a small working reviewer — offline and
-    deterministic, in one sitting.
+    A typed task, a workspace, and a small working reviewer. Offline and
+    deterministic.
 
     [:octicons-arrow-right-24: First Shepherd app](tutorials/first-shepherd-app.md)
 
--   :material-cog-play:{ .lg .middle } **Run a packaged workflow**
+-   :material-bug-check:{ .lg .middle } **Debug and test a run**
 
     ---
 
-    For operators: install, configure credentials, run first-party workflows
-    in CI. *Ships with the Shepherd CLI.*
+    Read typed failures, keep runs deterministic, and test model-backed
+    code without live calls.
 
-    [:octicons-arrow-right-24: What operators can read today](workflows/index.md)
+    [:octicons-arrow-right-24: Debug your first run](guides/debug-your-first-run.md)
 
 -   :material-lightbulb-on:{ .lg .middle } **Understand & evaluate**
 
     ---
 
-    The mental model — tasks, effects, runs — and the ledger of exactly what
-    these docs may claim today.
+    The mental model behind tasks, effects, and runs, plus a record of what
+    these docs can claim today.
 
     [:octicons-arrow-right-24: Concepts: Tasks](concepts/tasks.md)
 
@@ -70,15 +66,14 @@ compose the runs.
 
 ## Why Shepherd
 
-- **Typed by construction.** A task is a function with a signature and a
-  docstring; the return type is the contract the model must satisfy.
-- **Observable.** Every run records what was sent and returned, so debugging is
-  reading a trace, not guessing.
-- **Composable.** Tasks are values — pass them, supervise them, and build larger
+- **Typed.** A task is a function with a signature and a docstring. The return
+  type is the contract the model must satisfy.
+- **Observable.** Every run records what was sent and returned, so you debug by
+  reading a trace instead of guessing.
+- **Composable.** Tasks are values. Pass them, supervise them, and build bigger
   programs out of small ones.
 
-!!! info "Shepherd v1.0-dev — prototype docs"
-    This site is built scaffold-first: a page is published only when its
-    content is backed by checked source, and everything else stays in the
-    reviewer build. The [source-state inventory](reference/source-state.md) is
-    the honest ledger of what these docs may claim today.
+!!! info "Every page here is backed by tested code"
+    A page goes public only after its examples run as tests against real
+    Shepherd code. The [source-state inventory](reference/source-state.md)
+    records where each claim comes from.

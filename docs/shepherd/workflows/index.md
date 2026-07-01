@@ -1,15 +1,14 @@
 # Workflows
 
-> Page status: release-ready
-> Source state: shipped-source
-> Applies to: Shepherd v1.0-dev
+> Page status: scaffold
+> Source state: scaffold
+> Applies to: Shepherd 0.1
 > Owner: @docs-system-owner (TBD)
-> Validation: scripts/check_shepherd_docs.py
+> Validation: not yet validated
 
-*This lane is reserved for operators. Packaged workflows ship with the
-Shepherd CLI; until then, this page lists what operators can read today.*
+*Operators. Packaged workflows ship with the Shepherd CLI. Until then, this page lists what operators can read today.*
 
-Shepherd will ship first-party, packaged workflows — install them, configure
+Shepherd will ship first-party, packaged workflows, install them, configure
 credentials, and run them in CI without writing any task code:
 
 ```text
@@ -23,8 +22,8 @@ this page will not pretend otherwise.
 
 ## What operators can read today
 
-- [Concepts → Tasks](../concepts/tasks.md) — what a workflow is made of.
-- [The source-state inventory](../reference/source-state.md) — the ledger of
+- [Concepts → Tasks](../concepts/tasks.md), what a workflow is made of.
+- [The source-state inventory](../reference/source-state.md), the ledger of
   what exists now versus what is coming.
-- [First Shepherd app](../tutorials/first-shepherd-app.md) — the builder path,
+- [First Shepherd app](../tutorials/first-shepherd-app.md), the builder path,
   if you want to see what workflow authors write.

@@ -2,14 +2,13 @@
 
 > Page status: release-ready
 > Source state: checked-example
-> Applies to: Shepherd v1.0-dev
+> Applies to: Shepherd 0.1
 > Owner: @docs-system-owner (TBD)
 > Validation: docs_src/quickstart/test_hello.py
 
-*Quickstart — the fastest working run. To learn the concepts in order, see the tutorial; for exact APIs, see the reference.*
+*Quickstart. To learn the concepts in order, see the tutorial. For exact APIs, see the reference.*
 
-Five lines of Python, one model-backed function, deterministic output. That is
-the whole page.
+A worker task and a meta-agent that supervises it. One deterministic run.
 
 ## Install
 
@@ -17,10 +16,7 @@ the whole page.
 pip install shepherd-ai
 ```
 
-One honest line first: this prototype runs every documented example against a
-recorded, deterministic offline provider — no credentials, no network — and
-the [source-state inventory](../reference/source-state.md) is the ledger of
-exactly what is real today.
+Every example on this site runs against a recorded offline provider. No credentials, no network. The [source-state inventory](../reference/source-state.md) lists exactly what's real today.
 
 ## Run
 
@@ -30,40 +26,28 @@ Save this as `hello.py` and run `python hello.py`:
 --8<-- "quickstart/hello.py:hello"
 ```
 
-What the five lines do:
+Two things are happening here:
 
-- `@shp.task` turns a typed function into something Shepherd can run. The
-  function has no body, on purpose.
-- The **docstring** is the instruction the model receives; the **return
-  type** (`-> str`) is the contract the response must satisfy.
-- `shp.workspace(model=claude("sonnet-4-5"))` pins which model every task
-  call inside the block runs against.
+- `implement` is an ordinary task: a typed Python function with a docstring and no body. The docstring is the instruction the model gets. The `-> str` return type is the contract the answer must match. `@shp.task` makes it runnable.
+- `oversee` is a meta-agent, which is just another task. It takes `implement` as an argument and runs it. If the tests fail, it reverts and retries. That's the idea: a meta-agent is a function that takes your agents as input.
+
+`shp.workspace(model=claude("sonnet-4-5"))` pins the model every task call in the block runs against.
 
 ## Expected output
 
 ```text
-- Shepherd turns typed Python functions into model-backed tasks.
-- The docstring is the instruction; the return type is the contract.
-- Runs are recorded, so behavior is debuggable after the fact.
+Login feature landed. The worker's first attempt failed 2 tests, so oversee reverted that step and retried; the retry passed all 41.
 ```
 
-The output is deterministic because the offline provider replays a recorded
-transcript — the same one CI asserts against
-(`docs_src/quickstart/test_hello.py`), so this block cannot silently drift
-from the code above.
+The output is deterministic. The offline provider replays a recorded transcript, the same one CI asserts against (`docs_src/quickstart/test_hello.py`), so this block can't drift from the code above.
 
 ## If it fails
 
-- **Called the task outside the `with` block?** Shepherd refuses to run a
-  task with no workspace configured and raises immediately, telling you to
-  open one — there is no hidden default model. Move the call inside
-  `with shp.workspace(...)`.
-- **`shp.DeliveryFailed`?** The response could not be coerced to the declared
-  return type. On this example, against the offline provider, that signals a
-  broken install — reinstall and rerun.
+- **Called a task outside the `with` block?** Shepherd won't run a task with no workspace configured. It raises right away and tells you to open one. There's no hidden default model. Move the call inside `with shp.workspace(...)`.
+- **`shp.DeliveryFailed`?** The response didn't coerce to the declared return type. Against the offline provider on this example, that means a broken install. Reinstall and rerun.
 
 ## Next
 
-One page, two tasks, one composed reviewer:
+Two tasks, composed into a reviewer:
 
 [Your first Shepherd app →](../tutorials/first-shepherd-app.md)

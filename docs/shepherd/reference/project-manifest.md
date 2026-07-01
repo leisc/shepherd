@@ -2,11 +2,11 @@
 
 > Page status: scaffold
 > Source state: scaffold
-> Applies to: Shepherd v1.0-dev
+> Applies to: Shepherd 0.1
 > Owner: @docs-system-owner (TBD)
 > Validation: not yet validated
 
-*This is reference — exact, generated facts. The mental model lives in concepts; recipes live in guides.*
+*Reference. Exact, generated facts. The mental model lives in concepts, recipes in guides.*
 
 !!! warning "Scaffold — not yet shipped"
     This reference page is scaffolded. Its generated content becomes

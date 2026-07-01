@@ -1,17 +1,79 @@
 # Test Shepherd code
 
-> Page status: scaffold
-> Source state: scaffold
-> Applies to: Shepherd v1.0-dev
+> Page status: release-ready
+> Source state: checked-example
+> Applies to: Shepherd 0.1
 > Owner: @docs-system-owner (TBD)
-> Validation: not yet validated
+> Validation: pytest docs_src/shepherd/quickstart/ docs_src/shepherd/tutorials/
 
-*This is a how-to guide for one job. New to Shepherd? Start with the tutorial. For exact APIs, see the reference.*
+*How-to guide. New to Shepherd? Start with the tutorial. For exact APIs, see the reference.*
 
-!!! warning "Scaffold — not yet shipped"
-    This page is scaffolded. Treat commands and code as non-authoritative
-    until the linked checked example, fixture, or shipped Shepherd surface exists.
+**Job.** Write automated tests for your model-backed tasks that run offline and
+deterministically, asserting on typed values, with no live calls and no
+flakiness.
 
-How-to scaffold for **Test Shepherd code**. The recipe — prerequisites, commands,
-expected result, and failure notes — will be written against a checked
-example before promotion.
+**Prerequisites.** `pytest` and the tutorial environment. The deterministic
+offline provider ([deterministic demo](deterministic-demo.md)) is what tests
+run against.
+
+## Steps
+
+1. **Call the task inside a workspace, exactly as your program does.** Pin the
+   offline provider and call the task in the test body:
+
+    ```python
+    import shepherd as shp
+    from shepherd.providers import claude
+
+    from app import SAMPLE_DIFF, Triage, triage_change
+
+
+    def test_triage_matches_contract():
+        with shp.workspace(model=claude("sonnet-4-5")):
+            triage = triage_change(SAMPLE_DIFF)
+        assert isinstance(triage, Triage)
+        assert (triage.category, triage.priority) == ("bugfix", "high")
+    ```
+
+2. **Assert on the typed value, not on parsed text.** The return type *is* the
+   contract: the task hands back a real `Triage`, so your test reads fields
+   (`triage.category`) instead of scraping a string. There is no JSON parsing to
+   assert around.
+
+3. **Test the failure contract too.** Shepherd's typed failures are part of the
+   behavior you can pin. Two are worth a test each:
+
+    ```python
+    import pytest
+
+
+    def test_bodyless_task_requires_docstring():
+        with pytest.raises(TypeError, match="docstring or guidance"):
+
+            @shp.task
+            def nameless(x: str) -> str:  # no docstring -> rejected at definition
+                pass
+
+
+    def test_task_outside_workspace_refuses():
+        with pytest.raises(RuntimeError):
+            triage_change(SAMPLE_DIFF)  # no workspace open -> no default model
+    ```
+
+## Expected result
+
+The tests pass offline and deterministically, the same way the docs' own
+examples are checked (`docs_src/shepherd/tutorials/first_app/test_first_app.py` runs the
+tutorial program and asserts the documented output). What the docs show is what
+runs, because a test runs it.
+
+## If it fails
+
+- **`shp.DeliveryFailed`?** The recorded answer could not be coerced into the
+  declared return type, usually a return type or docstring that no longer
+  matches the contract. Tighten the type, re-run.
+- **`RuntimeError` about a workspace?** A task was called outside
+  `with shp.workspace(...)`; open one in the test, as in step 1. See
+  [Debug your first run](debug-your-first-run.md).
+- **Output varies between runs?** A live provider slipped in. Keep tests on the
+  offline provider, that is what makes them deterministic.

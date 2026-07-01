@@ -1,27 +1,23 @@
 # Tutorials
 
-> Page status: scaffold
-> Source state: scaffold
-> Applies to: Shepherd v1.0-dev
+> Page status: release-ready
+> Source state: shipped-source
+> Applies to: Shepherd 0.1
 > Owner: @docs-system-owner (TBD)
-> Validation: not yet validated
+> Validation: scripts/check_shepherd_docs.py
 
-*This is a tutorial — a learning path in order. For task-specific recipes see the guides; for exact APIs see the reference.*
-
-!!! warning "Scaffold — not yet runnable"
-    This page is a draft against a surface that has not shipped. Treat commands and code as illustrative until the page is promoted.
+*Tutorial. A learning path, in order. For task-specific recipes, see the guides. For exact APIs, see the reference.*
 
 The tutorial track teaches Shepherd **in order**: each page builds on the one
 before, and each ends with something you ran yourself. You start with a typed
-task and a workspace and finish with a small composed program; later pages —
-effects, handlers, traces, supervision — arrive as those surfaces ship
+task and a workspace and finish with a small composed program; later pages,
+effects, handlers, traces, supervision, arrive as those surfaces ship
 publicly.
 
 Available now, tested and deterministic:
 
-- **[Your first Shepherd app](first-shepherd-app.md)** — a two-task change
-  reviewer in ~30–40 minutes. (That page is release-ready and CI-checked;
-  this index is the scaffold.)
+- **[Your first Shepherd app](first-shepherd-app.md)**, a two-task change
+  reviewer in ~30–40 minutes. (That page is release-ready and CI-checked.)
 
 ## Which kind of page do you need?
 
@@ -31,10 +27,10 @@ These docs keep four page kinds strictly apart, so each can keep its promise:
 |---|---|---|
 | "Teach me, in order." | **Tutorial** | A learning path: ordered steps, checkpoints, one running example. It teaches the happy path; it does not try to cover every option. |
 | "How do I do this one job?" | **Guide** | A recipe for a named task: prerequisites, steps, expected result, failure notes. It assumes you know the basics. |
-| "Why is it like this?" | **Concept** | The mental model — vocabulary, boundaries, tradeoffs. No steps to follow. |
+| "Why is it like this?" | **Concept** | The mental model, vocabulary, boundaries, tradeoffs. No steps to follow. |
 | "What exactly does this API do?" | **Reference** | Exact, checked facts: signatures, types, errors. Generated or verified, never narrative. |
 
-A tutorial is not a long guide, and a concept page is not a slow tutorial —
+A tutorial is not a long guide, and a concept page is not a slow tutorial,
 if a page mixes those jobs, that is a bug in the docs.
 
 ## Start here

@@ -2,7 +2,7 @@
   "facade": "shepherd",
   "generator": "scripts/gen_shepherd_api_inventory.py",
   "note": "Pre-rename facade; DESIGN S7 retargets to `shepherd`.",
-  "symbol_count": 18,
+  "symbol_count": 27,
   "symbols": {
     "Artifact": {
       "doc_hash": "471e8c479c15b415",
@@ -10,29 +10,59 @@
       "signature": "class Artifact",
       "source": "shepherd_runtime.nucleus.Artifact"
     },
+    "DeliveryException": {
+      "doc_hash": "cd3b8c735727525e",
+      "kind": "class",
+      "signature": "class DeliveryException(_NucleusError)",
+      "source": "shepherd_runtime.nucleus.DeliveryException"
+    },
     "DeliveryFailed": {
       "doc_hash": "a0989424ab18c701",
       "kind": "class",
-      "signature": "class DeliveryFailed(_NucleusError)",
+      "signature": "class DeliveryFailed(DeliveryException)",
       "source": "shepherd_runtime.nucleus.DeliveryFailed"
     },
-    "VcsCoreExecutionLink": {
-      "doc_hash": "b1e96a708923cb04",
+    "EffectNotPermitted": {
+      "doc_hash": "ee4a90b11e137b6b",
       "kind": "class",
-      "signature": "class VcsCoreExecutionLink",
-      "source": "shepherd_runtime.identities.VcsCoreExecutionLink"
+      "signature": "class EffectNotPermitted(Exception)",
+      "source": "shepherd_runtime.effects.EffectNotPermitted"
     },
-    "ModelRequest": {
-      "doc_hash": "d7f664098028c6ca",
+    "EffectSurfaceEmpty": {
+      "doc_hash": "eda93c6a585d449c",
       "kind": "class",
-      "signature": "class ModelRequest",
-      "source": "shepherd_runtime.provider_boundary.ModelRequest"
+      "signature": "class EffectSurfaceEmpty(Exception)",
+      "source": "shepherd_runtime.effects.EffectSurfaceEmpty"
     },
-    "ModelResponse": {
-      "doc_hash": "ef4e42d032945d49",
+    "EffectSurfaceTooWide": {
+      "doc_hash": "92832527b3ea5798",
       "kind": "class",
-      "signature": "class ModelResponse",
-      "source": "shepherd_runtime.provider_boundary.ModelResponse"
+      "signature": "class EffectSurfaceTooWide(Exception)",
+      "source": "shepherd_runtime.effects.EffectSurfaceTooWide"
+    },
+    "GitRepo": {
+      "doc_hash": "974f810bb73184d9",
+      "kind": "class",
+      "signature": "class GitRepo",
+      "source": "shepherd_runtime.nucleus.GitRepo"
+    },
+    "GitRepoBasis": {
+      "doc_hash": "d930a75f8746aa13",
+      "kind": "class",
+      "signature": "class GitRepoBasis",
+      "source": "shepherd_runtime.nucleus.GitRepoBasis"
+    },
+    "Match": {
+      "doc_hash": "d5c6d0b854066bb2",
+      "kind": "class",
+      "signature": "class Match",
+      "source": "shepherd_runtime.effects.Match"
+    },
+    "OverbroadHandler": {
+      "doc_hash": "e2dc2e752866b6a9",
+      "kind": "class",
+      "signature": "class OverbroadHandler(ValueError)",
+      "source": "shepherd_runtime.effects.OverbroadHandler"
     },
     "Permissive": {
       "doc_hash": "e3b0c44298fc1c14",
@@ -40,23 +70,41 @@
       "signature": "Permissive",
       "source": "shepherd_runtime.nucleus.profiles.Permissive"
     },
+    "Plan": {
+      "doc_hash": "7ef24e04d1ea0a78",
+      "kind": "class",
+      "signature": "class Plan(Generic[T])",
+      "source": "shepherd_runtime.effects.Plan"
+    },
+    "PlanNotExtractable": {
+      "doc_hash": "9d0eb5c1e76f837f",
+      "kind": "class",
+      "signature": "class PlanNotExtractable(ValueError)",
+      "source": "shepherd_runtime.effects.PlanNotExtractable"
+    },
     "Run": {
       "doc_hash": "04326a44cf18d540",
       "kind": "class",
       "signature": "class Run(Generic[T])",
       "source": "shepherd_runtime.nucleus.Run"
     },
+    "RunInProgress": {
+      "doc_hash": "b77178b81780f5de",
+      "kind": "class",
+      "signature": "class RunInProgress(_NucleusError)",
+      "source": "shepherd_runtime.nucleus.RunInProgress"
+    },
     "RunRef": {
-      "doc_hash": "b2f63c4d4070d94d",
+      "doc_hash": "3f3e11670cd2d01c",
       "kind": "class",
       "signature": "class RunRef",
       "source": "shepherd_runtime.nucleus.RunRef"
     },
-    "SINGLE_OUTPUT_KEY": {
-      "doc_hash": "e3b0c44298fc1c14",
-      "kind": "attribute",
-      "signature": "SINGLE_OUTPUT_KEY",
-      "source": "shepherd_core.schema.SINGLE_OUTPUT_KEY"
+    "Subset": {
+      "doc_hash": "a0732a24bb421696",
+      "kind": "class",
+      "signature": "class Subset(Enum)",
+      "source": "shepherd_runtime.effects.Subset"
     },
     "Workspace": {
       "doc_hash": "0f35c06a9c0c9160",
@@ -65,10 +113,10 @@
       "source": "shepherd_runtime.nucleus.Workspace"
     },
     "ask": {
-      "doc_hash": "a503f52d31400dd0",
+      "doc_hash": "3204b2f3607a652a",
       "kind": "function",
-      "signature": "ask(effect: Ask[R]) -> R",
-      "source": "shepherd_runtime.effects.ask"
+      "signature": "ask(effect: Ask[R]) -> R | Awaitable[R]",
+      "source": "shepherd._effect_facade.ask"
     },
     "current_binding": {
       "doc_hash": "48e719da5f386473",
@@ -91,25 +139,31 @@
     "handle": {
       "doc_hash": "856c9b51a72e8839",
       "kind": "function",
-      "signature": "handle(args: Any = (), kwargs: Any = {}) -> _HandleContext",
+      "signature": "handle(args = (), kwargs = {}) -> _HandleContext",
       "source": "shepherd_runtime.effects.handle"
     },
+    "open": {
+      "doc_hash": "b8f58047a4d0da1b",
+      "kind": "function",
+      "signature": "open(cwd: str | Path = '.', activate: bool = True, backend: str | None = 'clonefile') -> ShepherdWorkspace",
+      "source": "shepherd.open"
+    },
     "task": {
-      "doc_hash": "dcafa78170ce65e9",
+      "doc_hash": "57839139fa3cda44",
       "kind": "function",
       "signature": "task(fn: Any = None, guidance: str | None = None, name: str | None = None, may: object | None = None) -> Any",
       "source": "shepherd_runtime.nucleus.task"
     },
     "tell": {
-      "doc_hash": "57873c16cb9825f1",
+      "doc_hash": "1ad18c7257ab72f5",
       "kind": "function",
-      "signature": "tell(effect: Tell) -> None",
-      "source": "shepherd_runtime.effects.tell"
+      "signature": "tell(effect: Tell) -> None | Awaitable[None]",
+      "source": "shepherd._effect_facade.tell"
     },
     "workspace": {
-      "doc_hash": "84799d31dd04a78b",
+      "doc_hash": "74b0e100a0fac4a5",
       "kind": "function",
-      "signature": "workspace(model: object, root: str | Path | None = None, vcscore: bool = False) -> Workspace",
+      "signature": "workspace(model: object, root: str | Path | None = None) -> Workspace",
       "source": "shepherd_runtime.nucleus.workspace"
     }
   }

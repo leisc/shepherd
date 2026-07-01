@@ -2,11 +2,11 @@
 
 > Page status: scaffold
 > Source state: scaffold
-> Applies to: Shepherd v1.0-dev
+> Applies to: Shepherd 0.1
 > Owner: @docs-system-owner (TBD)
 > Validation: not yet validated
 
-*Quickstart — the fastest working run. To learn the concepts in order, see the tutorial; for exact APIs, see the reference.*
+*Quickstart. To learn the concepts in order, see the tutorial. For exact APIs, see the reference.*
 
 <!-- CONTRACT: ONE minimal path, offline-first; code via snippets from
 docs_src/quickstart/; show expected output verbatim from the recorded
