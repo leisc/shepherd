@@ -212,6 +212,7 @@ def run_outputs(
 @click.option("--binding", help="Only include outputs for this binding.")
 @click.option("--state", help="Only include outputs with this retained-output state.")
 @click.option("--latest", is_flag=True, help="Inspect the latest run.")
+@click.option("--read", "read_path", metavar="PATH", help="Print one changed file's content instead of the summary.")
 @click.option("--json", "json_output", is_flag=True, help="Emit the raw JSON payload.")
 def run_changeset(
     run_ref: str | None,
@@ -220,9 +221,12 @@ def run_changeset(
     binding: str | None,
     state: str | None,
     latest: bool,
+    read_path: str | None,
     json_output: bool,
 ) -> None:
     """Inspect the read-only changeset view for one retained run output."""
+    if read_path is not None and json_output:
+        raise click.UsageError("--read and --json are mutually exclusive")
     selector = _run_selector(run_ref, latest=latest)
     workspace = _open_workspace(activate=False)
     trace_store = None if trace_store_path is None else _open_trace_store(trace_store_path)
@@ -236,6 +240,13 @@ def run_changeset(
                 trace_store=trace_store,
             )
         )
+        if read_path is not None:
+            value = changeset.read_file(read_path)
+            if value is None:
+                raise click.ClickException(f"changeset has no file at {read_path!r}")
+            content, _mode = value
+            click.echo(content.decode("utf-8", errors="replace"), nl=False)
+            return
         _emit(changeset.inspect(), json_output=json_output, human=_emit_changeset)
     finally:
         if trace_store is not None:

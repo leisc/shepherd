@@ -55,35 +55,82 @@ shepherd --help
 
 ## Quickstart
 
-Create a scratch project, initialize Shepherd's workspace-control substrate, run
-a deterministic retained-output demo, and inspect the resulting trace:
+Shepherd is an agent framework: a task's implementation can be a sandboxed
+agent, and its work comes back as a **reviewable proposal** — nothing touches
+your files until you accept it. Here the whole body of a task *is* a Claude
+agent.
+
+> Needs the `claude` CLI and an `ANTHROPIC_API_KEY`. No key? Jump to the
+> [Offline Quickstart](#offline-quickstart) — it runs anywhere, keyless.
+
+A task is a plain Python function with **no body**; the signature and docstring
+are the contract the agent fulfils at runtime:
+
+```python
+def write_program(repo, prompt: str, output_path: str = "program.py") -> None:
+    """Write a small, self-contained Python program that does what `prompt` asks.
+
+    Save it to output_path. It must run with plain `python3`, read no input,
+    and finish on its own within about ten seconds.
+    """
+```
+
+Set up a scratch workspace and check the agent lane is ready:
 
 ```bash
-mkdir /tmp/shepherd-quickstart
-cd /tmp/shepherd-quickstart
+mkdir /tmp/agent-task && cd /tmp/agent-task
+shepherd init             # turn this directory into a Shepherd workspace
+shepherd doctor claude    # confirm claude CLI, API key, and sandbox are ready
+```
 
-shepherd init --backend auto
+Fetch the demo and let the agent work (about a minute):
+
+```bash
+shepherd demo write agent-task > agent_task.py
+python agent_task.py
+```
+
+The agent writes `donut.py` — but not into your directory. It lands as a
+**retained output**: a proposal held safely to one side, which you can run
+without applying anything:
+
+```bash
+shepherd run changeset --latest --read donut.py | python3 -
+```
+
+Ten seconds of spinning ASCII donut, straight out of the retained output. If
+you like it, keep it; if not, throw it away — the trace remembers either way
+(the demo prints both commands with the real run id):
+
+```bash
+shepherd run select <run-ref>     # keep it
+shepherd run discard <run-ref>    # ...or not
+```
+
+Edit `PROMPT` in `agent_task.py` and re-run to ask for anything else — the
+contract stays the same. For an agent that edits existing files, see
+`shepherd demo write claude-readme`.
+
+## Offline Quickstart
+
+No API key required. This runs the same retained-output machinery through
+Shepherd's deterministic provider — the agent lane above, minus the agent:
+
+```bash
+mkdir /tmp/shepherd-quickstart && cd /tmp/shepherd-quickstart
+
+shepherd init                                  # turn this directory into a workspace
 shepherd demo write quickstart > quickstart_demo.py
-python quickstart_demo.py
+python quickstart_demo.py                      # register + run a task, retaining its result
 
-shepherd run list
-shepherd run show --latest
-shepherd run trace --latest --events
-shepherd run changeset --latest
+shepherd run list                              # the run and its status
+shepherd run changeset --latest                # what it wrote, kept as a retained output
 ```
 
-The demo registers a task, runs it through Shepherd's workspace-control world
-channel, stores the result as a retained workspace output, and releases that
-output explicitly. Add `--json` to read commands when you need the durable
-machine payload:
-
-```bash
-shepherd run show --latest --json
-```
-
-`--backend auto` asks Shepherd to select the available workspace carrier. If you
-need to be explicit, use `--backend clonefile` on macOS or `--backend fuse` /
-`--backend kernel` on Linux.
+Inspect the full record with `shepherd run show --latest` (add `--json` to any
+read command for the durable machine payload); see the
+[docs](https://docs.shepherd-agents.ai/) for backend selection and the complete
+`run` surface.
 
 ## Python Surface
 
@@ -115,27 +162,13 @@ finally:
     workspace.close()
 ```
 
-## Optional Claude Lane
-
-On a host with native jail support, the local `claude` CLI, and
-`ANTHROPIC_API_KEY`:
-
-```bash
-shepherd doctor claude --backend auto
-shepherd demo write claude-readme > claude_readme.py
-python claude_readme.py
-```
-
-This lane uses `runtime={"provider": "claude"}` through the same retained-output
-workspace-control path. It is optional and not required for the deterministic
-quickstart.
-
 ## Examples
 
 Checked-in quickstart examples live in:
 
 - [`examples/quickstart/offline_task.py`](https://github.com/shepherd-agents/shepherd/blob/main/examples/quickstart/offline_task.py)
 - [`examples/quickstart/world_channel.py`](https://github.com/shepherd-agents/shepherd/blob/main/examples/quickstart/world_channel.py)
+- [`examples/quickstart/agent_task.py`](https://github.com/shepherd-agents/shepherd/blob/main/examples/quickstart/agent_task.py)
 - [`examples/quickstart/claude_readme.py`](https://github.com/shepherd-agents/shepherd/blob/main/examples/quickstart/claude_readme.py)
 
 The visual-artifact notebooks live in:

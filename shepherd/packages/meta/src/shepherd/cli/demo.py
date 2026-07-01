@@ -10,6 +10,7 @@ _DEMOS = {
     "offline-task": "offline_task.py",
     "quickstart": "world_channel.py",
     "world-channel": "world_channel.py",
+    "agent-task": "agent_task.py",
     "claude-readme": "claude_readme.py",
 }
 

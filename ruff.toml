@@ -135,6 +135,9 @@ ban-relative-imports = "parents"
     "BLE001",  # Blind except OK in example utility code
     "T201",    # Print is the primary output mechanism in examples
 ]
+"shepherd/packages/meta/src/shepherd/templates/**" = [
+    "T201",    # Templates are emitted verbatim as user-facing example scripts
+]
 "examples/tutorials/[0-9]*" = [
     "N999",    # Numeric-prefixed filenames are intentional for ordering
 ]

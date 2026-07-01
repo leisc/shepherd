@@ -19,7 +19,7 @@ QUICKSTART_EXAMPLES = REPO / "examples" / "quickstart"
 def test_quickstart_templates_match_checked_in_examples() -> None:
     """The generator templates and checked-in examples must not drift."""
     templates = importlib.resources.files("shepherd.templates.quickstart")
-    for filename in ("offline_task.py", "world_channel.py", "claude_readme.py"):
+    for filename in ("offline_task.py", "world_channel.py", "claude_readme.py", "agent_task.py"):
         assert templates.joinpath(filename).read_text(encoding="utf-8") == (
             QUICKSTART_EXAMPLES / filename
         ).read_text(encoding="utf-8")
@@ -32,6 +32,16 @@ def test_quickstart_generator_emits_compilable_demo() -> None:
     assert result.exit_code == 0, result.output
     assert "import shepherd as sp" in result.output
     compile(result.output, "<sp demo write quickstart>", "exec")
+
+
+def test_agent_task_generator_emits_compilable_demo() -> None:
+    """`sp demo write agent-task` emits a compilable bodyless-task script."""
+    result = CliRunner().invoke(shepherd_cli, ["demo", "write", "agent-task"])
+
+    assert result.exit_code == 0, result.output
+    assert "import shepherd as sp" in result.output
+    assert "def write_program(" in result.output
+    compile(result.output, "<sp demo write agent-task>", "exec")
 
 
 def test_requirements_dev_pins_local_quickstart_closure() -> None:

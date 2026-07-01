@@ -1461,6 +1461,18 @@ def fix_bug(repo, issue: str):
     assert changeset["changed_paths"] == changeset["output"]["changed_paths"]
     assert changeset["output"]["identity"]["output_id"] == record.outputs["workspace"].output_id
 
+    read_result = runner.invoke(cli.main, ["run", "changeset", record.run_ref, "--read", "candidate.txt"])
+    assert read_result.exit_code == 0, read_result.output
+    assert read_result.output == "selected candidate: parser\n"
+
+    read_missing_result = runner.invoke(cli.main, ["run", "changeset", record.run_ref, "--read", "missing.txt"])
+    assert read_missing_result.exit_code != 0
+    assert "no file" in read_missing_result.output
+
+    read_json_conflict = runner.invoke(cli.main, ["run", "changeset", record.run_ref, "--read", "candidate.txt", "--json"])
+    assert read_json_conflict.exit_code != 0
+    assert "mutually exclusive" in read_json_conflict.output
+
     for settled_record, expected_state in (
         (released_record, "released"),
         (discarded_record, "discarded"),
