@@ -1,6 +1,6 @@
 {
   "schema": "shepherd-source-state/1",
-  "applies_to": "Shepherd 0.1",
+  "applies_to": "Shepherd v1.0-dev",
   "note": "Machine-readable mirror of docs/shepherd/reference/source-state.md ( 'Initial Source-State Inventory'). Committed, reviewable snapshot; the.md ledger is the hand-maintained source of truth.",
   "fact_families": [
     {

@@ -1,13 +1,18 @@
 {% extends "base.html" %}
 
 <!--
-  Announce bar — the one small partial the handoff sanctions. Dark band + teal
-  version pill (the theme's announcement treatment), Shepherd-appropriate copy
-  (NOT the Helix placeholder text). Styled in stylesheets/extra.css (.md-banner).
+  Announce bar — the one small partial the handoff sanctions. Dark band + a teal
+  circle-i icon top-aligned to a bold heading line over a description line (the
+  prior authored layout). Styled in stylesheets/extra.css (.md-banner / .shp-announce).
 -->
 {% block announce %}
   <span class="shp-announce">
-    <span class="shp-announce__pill">0.1</span>
-    Program meta-agents in Python.
+    <span class="shp-announce__icon" aria-hidden="true">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M11,9H13V7H11M12,20C7.59,20 4,16.41 4,12C4,7.59 7.59,4 12,4C16.41,4 20,7.59 20,12C20,16.41 16.41,20 12,20M12,2A10,10 0 0,0 2,12A10,10 0 0,0 12,22A10,10 0 0,0 22,12A10,10 0 0,0 12,2M11,17H13V11H11V17Z"/></svg>
+    </span>
+    <span class="shp-announce__text">
+      <strong>This is an early development preview of Shepherd</strong>
+      <span>We don't recommend relying on it for production work yet. Please expect things to keep changing as we work towards a stable release.</span>
+    </span>
   </span>
 {% endblock %}

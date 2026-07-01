@@ -2,15 +2,15 @@
 
 > Page status: release-ready
 > Source state: checked-example
-> Applies to: Shepherd 0.1
+> Applies to: Shepherd v0.1.1-dev
 > Owner: @docs-system-owner (TBD)
 > Validation: pytest docs_src/shepherd/quickstart/ docs_src/shepherd/tutorials/
 
 *How-to guide. New to Shepherd? Start with the tutorial. For exact APIs, see the reference.*
 
 **Job.** Run a Shepherd example with no credentials and no network, and get
-**byte-identical output every time**, the deterministic offline provider that
-the docs and CI run against.
+**identical output every time**, using the deterministic offline provider that
+every documented example runs against.
 
 **Prerequisites.** The quickstart or tutorial environment. No API key, no
 account, nothing billed.
@@ -46,9 +46,9 @@ account, nothing billed.
 
 ## Expected result
 
-The two runs print the same three bullets, character for character, the same
-output CI asserts in `docs_src/shepherd/quickstart/test_hello.py`. Determinism is the
-point: a page that drifts from its code is caught by that test, not by a reader.
+The two runs print the same three bullets, character for character. Determinism
+is the point: the offline provider replays a recorded transcript, so what you
+read here is what runs.
 
 ## If it fails
 

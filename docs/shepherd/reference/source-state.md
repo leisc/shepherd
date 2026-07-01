@@ -2,17 +2,17 @@
 
 > Page status: release-ready
 > Source state: shipped-source
-> Applies to: Shepherd 0.1
+> Applies to: Shepherd v0.1.1-dev
 > Owner: @docs-system-owner (TBD)
 > Validation: scripts/check_shepherd_docs.py
 > Stale-names: migration-context
 
 *Source-state inventory. A hand-maintained record of what these docs can claim today, and where each fact comes from.*
 
-The public build is limited to pages whose current claims are backed by checked
-examples, shipped source, or an explicit source-state row. Additional scaffold
-pages may exist in the internal reviewer build; they are excluded from the public
-site.
+This prototype exercises the full documentation pipeline. The public build is
+limited to pages whose current claims are backed by checked examples, shipped
+source, or an explicit source-state row. Additional scaffold pages may exist in
+the internal reviewer build; they are excluded from the public site.
 
 | Fact family | Source of truth today | State |
 |---|---|---|

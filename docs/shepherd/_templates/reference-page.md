@@ -2,7 +2,7 @@
 
 > Page status: scaffold
 > Source state: generated
-> Applies to: Shepherd 0.1
+> Applies to: Shepherd v0.1.1-dev
 > Owner: @docs-system-owner (TBD)
 > Validation: scripts/gen_shepherd_api_inventory.py --check
 

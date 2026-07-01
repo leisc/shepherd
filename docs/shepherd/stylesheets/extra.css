@@ -89,17 +89,17 @@
    text colour (#55565F) would otherwise win and leave the label near-invisible on
    the dark bar. Re-assert the light banner text on the inner so it stays legible. */
 .md-banner .md-typeset { color: #C9CAD2; }
+/* text-align:center centres the inline-flex block within the bar; the block keeps
+   its own text-align:left so the two copy lines stay left-aligned under the icon. */
 .md-banner__inner { font-size: 13.5px; text-align: center; margin: 0.5rem auto; }
-.shp-announce { display: inline-flex; align-items: center; gap: 0.5rem; }
-.shp-announce__pill {
-  background-color: var(--accent);
-  color: #fff;
-  font: 600 10.5px/1.4 var(--md-code-font-family);
-  letter-spacing: 0.06em;
-  text-transform: uppercase;
-  padding: 2px 8px;
-  border-radius: 99px;
-}
+.shp-announce { display: inline-flex; align-items: flex-start; gap: 0.5rem; text-align: left; }
+/* Two-line copy: a bold heading line over a description line. */
+.shp-announce__text { display: flex; flex-direction: column; line-height: 1.4; }
+.shp-announce__text strong { color: #F2F3F6; font-weight: 700; }
+/* Outlined circle-i, brightened teal so it reads on the dark bar; top-aligned to
+   sit against the first (bold) line rather than centred on the whole block. */
+.shp-announce__icon { flex: none; width: 18px; height: 18px; margin-top: 1px; color: #5FD4D0; }
+.shp-announce__icon svg { display: block; width: 100%; height: 100%; fill: currentColor; stroke: currentColor; stroke-width: 0.9; stroke-linejoin: round; stroke-linecap: round; }
 
 /* ----------------------------------------------------------------------------
    Header + top tabs
@@ -121,7 +121,7 @@
    un-badged). overflow:visible so the ::after isn't clipped by the ellipsis box. */
 .md-header__topic:not([data-md-component]) .md-ellipsis { overflow: visible; }
 .md-header__topic:not([data-md-component]) .md-ellipsis::after {
-  content: "0.1";
+  content: "v0.1.1-dev";
   margin-left: 0.5rem;
   padding: 1px 7px;
   border-radius: 99px;

@@ -2,7 +2,7 @@
 
 > Page status: release-ready
 > Source state: checked-example
-> Applies to: Shepherd 0.1
+> Applies to: Shepherd v0.1.1-dev
 > Owner: @docs-system-owner (TBD)
 > Validation: pytest docs_src/shepherd/quickstart/ docs_src/shepherd/tutorials/
 
@@ -63,9 +63,8 @@ run against.
 ## Expected result
 
 The tests pass offline and deterministically, the same way the docs' own
-examples are checked (`docs_src/shepherd/tutorials/first_app/test_first_app.py` runs the
-tutorial program and asserts the documented output). What the docs show is what
-runs, because a test runs it.
+examples are tested: a test runs each program and asserts its documented output.
+What the docs show is what runs, because a test runs it.
 
 ## If it fails
 

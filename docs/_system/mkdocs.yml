@@ -10,7 +10,7 @@ site_dir: site/shepherd
 use_directory_urls: true
 
 extra:
-  shepherd_docs_version: "0.1"
+  shepherd_docs_version: "0.1.1-dev (prototype)"
 
 # THEME — "Research-Framework Documentation Theme" (locked handoff): warm paper,
 # a single teal accent (legacy Shepherd #178D8C), IBM Plex type, light tracked
@@ -93,7 +93,7 @@ markdown_extensions:
 exclude_docs: |
   *
   !/index.md
-  !/start/quickstart.md
+  !/start/index.md
   !/tutorials/index.md
   !/tutorials/first-shepherd-app.md
   !/concepts/index.md
@@ -107,15 +107,14 @@ exclude_docs: |
   !/guides/debug-your-first-run.md
   !/guides/test-shepherd-code.md
   !/guides/route-tasks-to-models.md
-  !/reference/source-state.md
   !stylesheets/**
   !assets/**
 
 # PUBLIC NAV = the allowlist. Exactly the un-excluded pages, nothing else.
 nav:
   - Home: index.md
-  - Start:
-      - Quickstart: start/quickstart.md
+  - Getting Started:
+      - start/index.md
   - Tutorials:
       - tutorials/index.md
       - First Shepherd app: tutorials/first-shepherd-app.md
@@ -132,5 +131,3 @@ nav:
       - Debug your first run: guides/debug-your-first-run.md
       - Test Shepherd code: guides/test-shepherd-code.md
       - Route tasks to models: guides/route-tasks-to-models.md
-  - Reference:
-      - Source-state inventory: reference/source-state.md

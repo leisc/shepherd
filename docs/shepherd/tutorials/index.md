@@ -2,7 +2,7 @@
 
 > Page status: release-ready
 > Source state: shipped-source
-> Applies to: Shepherd 0.1
+> Applies to: Shepherd v0.1.1-dev
 > Owner: @docs-system-owner (TBD)
 > Validation: scripts/check_shepherd_docs.py
 
@@ -17,7 +17,7 @@ publicly.
 Available now, tested and deterministic:
 
 - **[Your first Shepherd app](first-shepherd-app.md)**, a two-task change
-  reviewer in ~30–40 minutes. (That page is release-ready and CI-checked.)
+  reviewer in ~30–40 minutes. (That page is release-ready and tested.)
 
 ## Which kind of page do you need?
 

@@ -2,17 +2,16 @@
 
 > Page status: scaffold
 > Source state: scaffold
-> Applies to: Shepherd 0.1
+> Applies to: Shepherd v0.1.1-dev
 > Owner: @docs-system-owner (TBD)
 > Validation: not yet validated
 
 *Reference. Exact, generated facts. The mental model lives in concepts, recipes in guides.*
 
 !!! warning "Scaffold — not yet shipped"
-    This reference page is scaffolded. Its generated content becomes
-    authoritative once the Shepherd facade, CLI, schema, registry, or manifest
-    source exists and the generation check is enabled.
+    This reference page is a placeholder. It becomes authoritative once the
+    corresponding Shepherd facade, CLI, schema, registry, or manifest surface
+    exists.
 
-Reference scaffold for **Capability registry**. Generated tables and facts come from the
-schema/registry/manifest source once it exists; until then this reserves the
-structure and stays out of first-run navigation.
+Placeholder for the **Capability registry** reference. The tables and facts
+here will be filled in once the schema/registry/manifest surface exists.

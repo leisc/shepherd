@@ -2,7 +2,7 @@
 
 > Page status: fast-follow
 > Source state: preview
-> Applies to: Shepherd 0.1
+> Applies to: Shepherd v0.1.1-dev
 > Owner: @docs-system-owner (TBD)
 > Validation: scripts/check_shepherd_docs.py
 
@@ -19,7 +19,7 @@
 | You want | Install | What you get |
 |---|---|---|
 | The product (tutorial path) | `pip install shepherd-ai` | The `shepherd` import package, the `shepherd` CLI, the local run path, the provider registry, the deterministic offline provider, and one live provider path. |
-| Slim / audit install | `pip install shepherd-base` | Facade, CLI, slim runtime, minimal local placement support, and the offline provider, without the live-provider SDK. |
+| Slim / audit install | `pip install shepherd-base` | The `shepherd` import package, the `shepherd` CLI, a slim runtime, and the offline provider, without the live-provider SDK. |
 | First-party workflows | `pip install "shepherd-ai[authoring]"` | Adds packaged workflow plugins on top of the product. |
 
 The tutorial and Getting Started path is always `shepherd-ai`, never
@@ -31,5 +31,5 @@ import shepherd as shp
 
 ## Next
 
-- [Getting Started](quickstart.md): the path that works today.
+- [Getting Started](index.md): the path that works today.
 - [Your first Shepherd app](../tutorials/first-shepherd-app.md): the tutorial.

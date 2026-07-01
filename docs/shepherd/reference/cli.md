@@ -2,18 +2,15 @@
 
 > Page status: scaffold
 > Source state: checked-fixture
-> Applies to: Shepherd 0.1
+> Applies to: Shepherd v0.1.1-dev
 > Owner: @docs-system-owner (TBD)
 > Validation: scripts/gen_cli_reference.py --check
 
 *Reference. Exact, generated facts. The mental model lives in concepts, recipes in guides.*
 
-!!! warning "Simulated capture — checked fixture"
-    The Shepherd CLI has not shipped. This page is generated from a checked
-    fixture (`docs/_src/shepherd/_sim/cli-help.json`) that simulates `--help` capture so
-    the generate-and-drift pipeline runs end-to-end. When the CLI ships, the
-    fixture is replaced by a real capture and this banner is removed
-    (DESIGN Phase 3).
+!!! warning "CLI not shipped yet"
+    The Shepherd CLI has not shipped. This page previews the planned command
+    surface; the commands below are not runnable yet.
 
 The command groups follow: first-run (`init`, `doctor`, `demo`),
 `provider`, `placement`, `workflow`, and `run`/`runs`. Read-only listings

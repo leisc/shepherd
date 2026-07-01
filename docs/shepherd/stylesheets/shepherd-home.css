@@ -86,8 +86,11 @@
 .md-typeset .grid.cards .lg { color: var(--accent); }
 .md-typeset .grid.cards a:last-child { color: var(--accent-ink); font-weight: 500; }
 
-/* Snippet under the hero sits a touch tighter to the buttons. */
-.md-typeset .shp-hero + .highlight { margin-top: 0.4rem; max-width: 46rem; }
+/* Snippet under the hero sits a touch tighter to the buttons, and spans the full
+   content width so its left and right edges line up with the cards / sections
+   below (rather than the narrower 46rem hero text column, which left a one-sided
+   gutter on the right). */
+.md-typeset .shp-hero + .highlight { margin-top: 0.4rem; }
 
 /* Centre the landing column. nav + toc are hidden on the home, so Material's
    full-width main otherwise sits left-of-centre. Scoped to the home via the

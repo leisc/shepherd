@@ -2,7 +2,7 @@
 
 > Page status: release-ready
 > Source state: shipped-source
-> Applies to: Shepherd 0.1
+> Applies to: Shepherd v0.1.1-dev
 > Owner: @docs-system-owner (TBD)
 > Validation: scripts/check_shepherd_docs.py
 
@@ -52,7 +52,7 @@ Read the four pages in order, [tasks](tasks.md), [effects](effects.md),
 [runs](runs.md), [workspaces](workspaces.md). They build outward from the
 unit of work to its channel, its record, and its context.
 
-The public concept set deliberately stops at the surface these docs exercise:
+These concepts deliberately stop at the surface these docs exercise:
 tasks, effects, runs, workspaces, and provider selection. Permission policy,
-placements, workflow packaging, and live-provider operations stay out of the
-public build until their product surfaces land.
+placements, workflow packaging, and live-provider operations are covered
+once their product surfaces land.

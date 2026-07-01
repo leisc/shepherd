@@ -1,8 +1,8 @@
-# Quickstart
+# Getting Started
 
 > Page status: release-ready
 > Source state: checked-example
-> Applies to: Shepherd 0.1
+> Applies to: Shepherd v0.1.1-dev
 > Owner: @docs-system-owner (TBD)
 > Validation: docs_src/quickstart/test_hello.py
 
@@ -16,7 +16,7 @@ A worker task and a meta-agent that supervises it. One deterministic run.
 pip install shepherd-ai
 ```
 
-Every example on this site runs against a recorded offline provider. No credentials, no network. The [source-state inventory](../reference/source-state.md) lists exactly what's real today.
+Every example on this site runs against a recorded offline provider. No credentials, no network.
 
 ## Run
 
@@ -39,7 +39,7 @@ Two things are happening here:
 Login feature landed. The worker's first attempt failed 2 tests, so oversee reverted that step and retried; the retry passed all 41.
 ```
 
-The output is deterministic. The offline provider replays a recorded transcript, the same one CI asserts against (`docs_src/quickstart/test_hello.py`), so this block can't drift from the code above.
+The output is deterministic. The offline provider replays a recorded transcript, so what you read here is exactly what runs.
 
 ## If it fails
 

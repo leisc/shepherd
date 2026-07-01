@@ -2,7 +2,7 @@
 
 > Page status: release-ready
 > Source state: checked-example
-> Applies to: Shepherd 0.1
+> Applies to: Shepherd v0.1.1-dev
 > Owner: @docs-system-owner (TBD)
 > Validation: docs_src/tutorials/first_app/test_first_app.py
 
@@ -15,11 +15,9 @@
 > **Prerequisites.** Python 3.11+; comfortable with dataclasses and type
 > hints. No prior agent-framework experience assumed.
 
-Every code block on this page is included from one tested file
-(`docs_src/tutorials/first_app/app.py`), and its behavior is asserted in CI
-against a recorded, deterministic offline provider, what you read is what
-ran. The [source-state inventory](../reference/source-state.md) says exactly
-what that means today.
+Every code block on this page comes from one tested program, and it runs
+against a recorded, deterministic offline provider, so what you read is what
+runs.
 
 ## §1. What you'll build
 
@@ -123,8 +121,7 @@ bugfix/high: approve - Tightens the admin gate in auth.py by requiring an explic
 ```
 
 The line is deterministic because the offline provider replays recorded
-transcripts, the same ones CI asserts against, so this page cannot drift
-from the code.
+transcripts, so this page stays in step with the code you run.
 
 !!! success "Checkpoint"
     The program ran end to end, and `triage` is a real `Triage` instance:
@@ -165,9 +162,9 @@ tutorial covers that. Most tasks look like the two on this page.
 
 !!! success "Checkpoint"
     `review_change(SAMPLE_DIFF)` returns a `Review` with
-    `verdict == "approve"` and a summary that names `auth.py`. The page's
-    test file asserts exactly this, run it yourself:
-    `pytest docs_src/tutorials/first_app/test_first_app.py`.
+    `verdict == "approve"` and a summary that names `auth.py`. This is exactly
+    what the tutorial's own test asserts, so the behavior is pinned, not
+    aspirational.
 
 ## §5. What's next
 
@@ -181,6 +178,3 @@ From here:
   you just did: why signatures carry meaning and where the boundaries sit.
 - **[Guides](../guides/index.md)**, task-focused recipes for deterministic
   runs, debugging, testing, and routing tasks to models.
-- **[Source-state inventory](../reference/source-state.md)**, the reference
-  lane's honest ledger: which facts on these pages are backed by shipped
-  source, checked examples, or fixtures today.

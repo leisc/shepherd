@@ -2,7 +2,7 @@
 
 > Page status: release-ready
 > Source state: checked-example
-> Applies to: Shepherd 0.1
+> Applies to: Shepherd v0.1.1-dev
 > Owner: @docs-system-owner (TBD)
 > Validation: pytest docs_src/shepherd/tutorials/
 
@@ -50,9 +50,8 @@ themselves.
 
 Each task runs against the model of its enclosing workspace; switching a step to
 another model is a one-line change to that block's `claude("...")` argument, and
-the tasks stay untouched. The workspace-pins-the-model primitive is the one
-exercised by the tutorial's tests
-(`docs_src/shepherd/tutorials/first_app/test_first_app.py`).
+the tasks stay untouched. Workspace-pins-the-model is the same behavior the
+tutorial exercises and tests.
 
 ## If it fails
 

@@ -143,9 +143,9 @@
       "source": "shepherd_runtime.effects.handle"
     },
     "open": {
-      "doc_hash": "b8f58047a4d0da1b",
+      "doc_hash": "0cea5311ba0bd634",
       "kind": "function",
-      "signature": "open(cwd: str | Path = '.', activate: bool = True, backend: str | None = 'clonefile') -> ShepherdWorkspace",
+      "signature": "open(cwd: str | Path = '.', activate: bool = True, backend: str | None = None) -> ShepherdWorkspace",
       "source": "shepherd.open"
     },
     "task": {

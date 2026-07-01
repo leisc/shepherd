@@ -16,11 +16,6 @@ MODE_LINE = (
     "*Reference. Exact, generated facts. The mental model lives in "
     "concepts, recipes in guides.*"
 )
-BANNER = (
-    '!!! warning "Pre-rename surface"\n'
-    "    Generated from the internal `shepherd` facade; names and paths change "
-    "at the Shepherd rename.\n"
-)
 
 
 def load_map() -> dict:
@@ -38,13 +33,12 @@ def render(info: dict, see_also: dict | None) -> str:
         "",
         "> Page status: scaffold",
         "> Source state: generated",
-        "> Applies to: Shepherd 0.1",
+        "> Applies to: Shepherd v0.1.1-dev",
         "> Owner: @docs-system-owner (TBD)",
         "> Validation: scripts/gen_shepherd_api_inventory.py --check",
         "",
         MODE_LINE,
         "",
-        BANNER,
         f'<span class="api-kind">{kind}</span>',
         "",
         f"::: {target}",
@@ -70,8 +64,8 @@ def main() -> int:
     infos = symbol_info()
     smap = load_map()
     stale = []
-    expected: set[str] = set()
     API_DIR.mkdir(parents=True, exist_ok=True)
+    expected: set[str] = set()
     for info in infos:
         fn = API_DIR / page_filename(info["name"], exports)
         expected.add(fn.name)
@@ -81,24 +75,24 @@ def main() -> int:
                 stale.append(fn.name)
         else:
             fn.write_text(content, encoding="utf-8", newline="\n")
-    # The generated per-symbol pages are the only *.md in API_DIR (_map.yml is the
-    # sole hand-maintained input). Any *.md outside the current export set is an
-    # orphan from a wider facade: flag it under --check, delete it on regen, so a
-    # shrunk facade never leaves a page the strict build would try (and fail) to
-    # render.
+    # Orphans: committed api/*.md pages whose symbol left the facade __all__.
+    # --check flags them as drift; write mode prunes them, so the reference can
+    # never silently document a symbol the code no longer exports.
     orphans = sorted(p.name for p in API_DIR.glob("*.md") if p.name not in expected)
     if check:
-        stale = sorted(set(stale) | set(orphans))
-        if stale:
-            print(f"DRIFT: {len(stale)} generated page(s) stale: {', '.join(stale)}")
+        problems = sorted(stale) + [f"{o} (orphan)" for o in orphans]
+        if problems:
+            print(f"DRIFT: {len(problems)} generated page(s) stale/orphan: {', '.join(problems)}")
             print("fix: ./check.sh regen   (see docs/_runbook.md)")
             return 1
         print(f"ok: {len(infos)} generated pages match the facade")
         return 0
     for name in orphans:
         (API_DIR / name).unlink()
-    tail = f" (pruned {len(orphans)} stale)" if orphans else ""
-    print(f"wrote {len(infos)} pages -> {API_DIR}{tail}")
+    msg = f"wrote {len(infos)} pages -> {API_DIR}"
+    if orphans:
+        msg += f"; pruned {len(orphans)} orphan(s): {', '.join(orphans)}"
+    print(msg)
     return 0
 
 

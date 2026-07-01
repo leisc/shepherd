@@ -2,7 +2,7 @@
 
 > Page status: release-ready
 > Source state: checked-example
-> Applies to: Shepherd 0.1
+> Applies to: Shepherd v0.1.1-dev
 > Owner: @docs-system-owner (TBD)
 > Validation: pytest docs_src/shepherd/quickstart/ docs_src/shepherd/tutorials/
 
@@ -11,7 +11,7 @@
 **Job.** Your first run failed; identify which of the three classic
 first-run failures you hit, and fix it.
 
-**Prerequisites.** You attempted the [Getting Started](../start/quickstart.md) walkthrough or
+**Prerequisites.** You attempted the [Getting Started](../start/index.md) walkthrough or
 the [tutorial](../tutorials/first-shepherd-app.md).
 
 ## Steps
@@ -21,8 +21,7 @@ the [tutorial](../tutorials/first-shepherd-app.md).
    (`TypeError`), missing context (`RuntimeError`), or the model's response
    (`shp.DeliveryFailed`).
 
-2. **Match it in the table.** All three rows are real behaviors, asserted by
-   checked examples today:
+2. **Match it in the table.** All three rows are real, tested behaviors:
 
     | What you see | Why | Fix |
     |---|---|---|
@@ -30,7 +29,7 @@ the [tutorial](../tutorials/first-shepherd-app.md).
     | `shp.DeliveryFailed: ...` | The model's response could not be coerced into the declared return type, missing dataclass fields, or the wrong shape where `-> str` was promised. The message names what was missing. | Tighten the return type and docstring so the contract is unambiguous, then rerun; the docstring is the instruction the model is following. |
     | `TypeError: Bodyless callable task ... must declare a docstring or guidance=` | A bodyless `@shp.task` has no docstring. The docstring **is** the model-call goal, so omitting it is an error at definition time, not a silent no-op. | Write the docstring: first line is the job, the rest is elaboration. |
 
-3. **Re-run the [Getting Started](../start/quickstart.md) and
+3. **Re-run the [Getting Started](../start/index.md) and
    [tutorial](../tutorials/first-shepherd-app.md) examples** to confirm your
    environment is sound.
 

@@ -2,7 +2,7 @@
 
 > Page status: release-ready
 > Source state: shipped-source
-> Applies to: Shepherd 0.1
+> Applies to: Shepherd v0.1.1-dev
 > Owner: @docs-system-owner (TBD)
 > Validation: scripts/check_shepherd_docs.py
 
@@ -40,7 +40,7 @@ the contract; the provider is the situation it runs in.
 
 ## The offline provider is a real provider
 
-Every documented example runs against a **recorded,
+In this prototype every documented example runs against a **recorded,
 deterministic offline provider**, no credentials, no network. It is not a mock
 bolted on for tests; it is a provider like any other, selected the same way, and
 it is the one the docs and CI use so that what you read is what ran. Live

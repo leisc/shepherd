@@ -2,7 +2,7 @@
 
 > Page status: fast-follow
 > Source state: preview
-> Applies to: Shepherd 0.1
+> Applies to: Shepherd v0.1.1-dev
 > Owner: @docs-system-owner (TBD)
 > Validation: scripts/check_shepherd_docs.py
 
@@ -11,20 +11,19 @@
 !!! warning "Not shipped yet"
     The `shepherd provider` CLI (`login`, `check`, `list`) is the **planned**
     credential-management surface and has not shipped. Selecting a provider in
-    code (step 3) is real today; the CLI steps are written ahead of the code so
-    the recipe's shape can be reviewed.
+    code (step 3) is real today; the CLI steps below preview the planned shape.
 
 **Job.** Record credentials for a model provider once, verify Shepherd can
 reach it, and select its models per workspace in code.
 
-**Prerequisites.** `shepherd-ai` installed ([install](../start/install.md),
-itself unshipped); a provider account and API key. **Live providers cost
-money and are non-deterministic.** The offline examples need none of this.
+**Prerequisites.** `shepherd-ai` installed ([install](../start/install.md)); a
+provider account and API key. **Live providers cost money and are
+non-deterministic.** The offline examples need none of this.
 
 ## Steps
 
 The `shepherd provider ...` commands below are the planned CLI surface,
-**unshipped**, written out so reviewers can check the recipe's shape.
+**unshipped**, shown here as a preview of the intended workflow.
 
 1. **Log in once.** Records the credential (or a reference to it) in the
    configured credential store, not in your repository:
@@ -44,9 +43,8 @@ The `shepherd provider ...` commands below are the planned CLI surface,
     shepherd provider list --json
     ```
 
-3. **Select the model in code.** Real today in the checked examples: import
-   the provider entry point; the workspace pins the model for every task
-   call inside the block:
+3. **Select the model in code.** Real today: import the provider entry
+   point; the workspace pins the model for every task call inside the block:
 
     ```python
     import shepherd as shp
@@ -71,4 +69,4 @@ The `shepherd provider ...` commands below are the planned CLI surface,
   `with shp.workspace(model=...)`; see
   [Debug your first run](debug-your-first-run.md).
 - **Cost or flaky-output surprises**, live calls are billed and vary run to
-  run; keep CI and tests on the deterministic offline provider.
+  run; keep your tests on the deterministic offline provider.

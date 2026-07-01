@@ -2,7 +2,7 @@
 
 > Page status: release-ready
 > Source state: shipped-source
-> Applies to: Shepherd 0.1
+> Applies to: Shepherd v0.1.1-dev
 > Owner: @docs-system-owner (TBD)
 > Validation: scripts/check_shepherd_docs.py
 
@@ -96,11 +96,3 @@ the model and the working context, produces a *run*, the durable record of
 that one execution; anything it says to the world beyond the model travels
 through *effects*. To see all four moving together, start with the
 [first Shepherd app tutorial](../tutorials/first-shepherd-app.md).
-
-## Going deeper
-
-- Formal semantics: `docs/spec/04-constructs.md` §construct-task-decorator *(formal spec, repository reference)*
-- Model delivery: `docs/spec/04-constructs.md` §construct-deliver *(formal spec, repository reference)*
-- Task data model: `docs/spec/01-data-model.md` §sec-tasks *(formal spec, repository reference)*
-- Rationale: `docs/paradigm.md` *(design rationale, repository reference)*
-- Teaching source: `docs/curriculum/tutorial/01-your-first-task.md` *(internal curriculum, repository reference)*

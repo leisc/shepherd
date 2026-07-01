@@ -2,21 +2,21 @@
 
 > Page status: scaffold
 > Source state: scaffold
-> Applies to: Shepherd 0.1
+> Applies to: Shepherd v0.1.1-dev
 > Owner: @docs-system-owner (TBD)
 > Validation: not yet validated
 
 *Workflow. Design refinement.*
 
-!!! warning "Scaffold, not yet shipped"
-    This page is scaffolded. Treat commands and code as non-authoritative
-    until the linked checked example, fixture, or shipped Shepherd surface exists.
+!!! warning "Not shipped yet"
+    This page is a placeholder. Treat commands and code as non-authoritative
+    until the shipped Shepherd surface exists.
 
 ## Facts
 
 ```text
-source_state: scaffold   # no manifest yet; see docs_src/shepherd/workflows/fixtures/
+source_state: scaffold
 ```
 
-Hand-written usage for the **Design refinement** workflow goes here once a workflow
-manifest or checked fixture supplies the facts block.
+Usage for the **Design refinement** workflow goes here once the workflow
+manifest supplies the facts block.

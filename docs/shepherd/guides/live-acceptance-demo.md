@@ -2,18 +2,18 @@
 
 > Page status: fast-follow
 > Source state: preview
-> Applies to: Shepherd 0.1
+> Applies to: Shepherd v0.1.1-dev
 > Owner: @docs-system-owner (TBD)
 > Validation: scripts/check_shepherd_docs.py
 
 *How-to guide. New to Shepherd? Start with the tutorial. For exact APIs, see the reference.*
 
 !!! warning "Not shipped yet"
-    This prototype is **offline by design**, every checked example runs against
-    the deterministic offline provider. The live-run path described here is
-    **planned** and written ahead so its shape can be reviewed. **Live calls
-    cost money and are non-deterministic.** Keep CI and everyday development on
-    the offline provider ([deterministic demo](deterministic-demo.md)).
+    This prototype is **offline by design**, every documented example runs
+    against the deterministic offline provider. The live-run path described here
+    is **planned**, shown as a preview of its intended shape. **Live calls cost
+    money and are non-deterministic.** Keep everyday development on the offline
+    provider ([deterministic demo](deterministic-demo.md)).
 
 **Job.** Once, before you rely on offline development, confirm that real
 credentials, the network, and a live model all work end to end: a single live
@@ -22,13 +22,12 @@ development loop.
 
 **Prerequisites.** A provider account and API key, recorded per
 [Configure a provider](configure-provider.md); `shepherd-ai` installed
-([install](../start/install.md), itself unshipped). Expect a small,
-real charge.
+([install](../start/install.md)). Expect a small, real charge.
 
 ## Steps
 
-The live switch and harness below are the **planned** surface, shown so the
-recipe's shape can be reviewed.
+The live switch below is the **planned** surface, shown as a preview of the
+intended workflow.
 
 1. **Record a credential** (planned `shepherd provider login`), see
    [Configure a provider](configure-provider.md). The offline provider needs

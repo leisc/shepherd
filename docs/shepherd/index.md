@@ -10,7 +10,7 @@ Page-metadata block, kept in an HTML comment so the membership gate
 landing renders without a visible status banner.
 > Page status: release-ready
 > Source state: shipped-source
-> Applies to: Shepherd 0.1
+> Applies to: Shepherd v0.1.1-dev
 > Owner: @docs-system-owner (TBD)
 > Validation: scripts/check_shepherd_docs.py
 -->
@@ -21,9 +21,7 @@ landing renders without a visible status banner.
 
 Write agents as simple typed functions, and meta-agents as functions that take your agents as input.
 
-[Get started](tutorials/first-shepherd-app.md){ .md-button .md-button--primary }
-[Quickstart](start/quickstart.md){ .md-button }
-[Concepts](concepts/tasks.md){ .md-button }
+[Get started](start/index.md){ .md-button .md-button--primary }
 
 </div>
 
@@ -57,8 +55,7 @@ Write agents as simple typed functions, and meta-agents as functions that take y
 
     ---
 
-    The mental model behind tasks, effects, and runs, plus a record of what
-    these docs can claim today.
+    The mental model behind tasks, effects, and runs - and how they fit together into one framework.
 
     [:octicons-arrow-right-24: Concepts: Tasks](concepts/tasks.md)
 
@@ -73,7 +70,11 @@ Write agents as simple typed functions, and meta-agents as functions that take y
 - **Composable.** Tasks are values. Pass them, supervise them, and build bigger
   programs out of small ones.
 
-!!! info "Every page here is backed by tested code"
-    A page goes public only after its examples run as tests against real
-    Shepherd code. The [source-state inventory](reference/source-state.md)
-    records where each claim comes from.
+<br>
+
+!!! info "Important"
+    Shepherd is an early **development preview** - ready to explore and build
+    with, but not yet to depend on. Expect **breaking changes** between releases and rough edges as the design
+    settles, and please don't build production or business-critical workflows on
+    it yet. Support is best-effort, and nothing is guaranteed to be stable while
+    we're pre-1.0. If something is missing, confusing, or broken, please [let us know](https://github.com/shepherd-agents/shepherd/issues).
