@@ -105,6 +105,7 @@ exclude_docs: |
   !/concepts/permissions.md
   !/concepts/placements.md
   !/guides/index.md
+  !/guides/grant-repo-access.md
   !/guides/deterministic-demo.md
   !/guides/debug-your-first-run.md
   !/guides/test-shepherd-code.md
@@ -132,6 +133,7 @@ nav:
       - Providers: concepts/providers.md
   - Guides:
       - guides/index.md
+      - Grant a task repo access: guides/grant-repo-access.md
       - Deterministic demo: guides/deterministic-demo.md
       - Debug your first run: guides/debug-your-first-run.md
       - Test Shepherd code: guides/test-shepherd-code.md
