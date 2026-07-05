@@ -63,7 +63,6 @@ if TYPE_CHECKING:
         Flow,
         FlowControlClient,
         GitRepoGrant,
-        GitRepoPath,
         May,
         ReadOnly,
         ReadWrite,
@@ -93,7 +92,6 @@ _LAZY: frozenset[str] = frozenset(
         "ReadOnly",
         "ReadWrite",
         "GitRepoGrant",
-        "GitRepoPath",
         "Flow",
         "FlowControlClient",
     }
@@ -185,7 +183,6 @@ __all__ = [  # noqa: RUF022
     "ReadOnly",
     "ReadWrite",
     "GitRepoGrant",
-    "GitRepoPath",
     "Flow",
     "FlowControlClient",
 ]
