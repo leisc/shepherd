@@ -34,7 +34,7 @@ artifact — there is no separate policy document to drift out of sync.
 
 ## The grant lowers to the syscall jail
 
-On a jailed device the grant is compiled to that run's writable roots and
+Under jailed placement (`placement="jail"`, or `"auto"` on a jail-capable host) the grant is compiled to that run's writable roots and
 **enforced at the native syscall jail** (macOS Seatbelt; Linux Landlock). A
 write to a `ReadOnly`-granted repository, or to any managed path not covered by
 a `ReadWrite` grant, is refused at the syscall — before the last undo point, not
@@ -98,7 +98,7 @@ task registered with `may_default=` sets that same floor at registration time.
 
 !!! note "Scope (0.2.0)"
     Per-binding whole-profile `ReadOnly`/`ReadWrite` over disjoint named
-    bindings, on a jailed device, filesystem / Git substrate, same-process
+    bindings, under jailed placement, filesystem / Git substrate, same-process
     value-children. Enforcement is exercised on macOS Seatbelt; Linux Landlock
     is container-gated. Sub-root / `where(path=…)` grants are not part of this
     cut.
@@ -121,6 +121,6 @@ Permissions are the authority half of a [task's](tasks.md) contract: the
 signature says both *what it computes* (parameters and return type) and *what it
 may touch*. What actually crosses the boundary at runtime are
 [effects](effects.md), and the resources they act on are the
-[runtime substrate](runtime-substrate.md), handles that carry their own
+[runtime substrate](index.md), handles that carry their own
 authority. Permissions are the rules; effects are the traffic; the substrate is
 the world being governed.
