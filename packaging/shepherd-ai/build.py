@@ -15,7 +15,7 @@ workspace itself is never modified.
 
 Usage:
     python packaging/shepherd-ai/build.py           # build sdist + wheel into dist/
-    python packaging/shepherd-ai/build.py --version 0.1.3
+    python packaging/shepherd-ai/build.py --version 0.2.0
 """
 
 from __future__ import annotations
