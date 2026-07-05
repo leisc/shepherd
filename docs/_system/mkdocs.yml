@@ -102,11 +102,14 @@ exclude_docs: |
   !/concepts/runs.md
   !/concepts/workspaces.md
   !/concepts/providers.md
+  !/concepts/permissions.md
+  !/concepts/placements.md
   !/guides/index.md
   !/guides/deterministic-demo.md
   !/guides/debug-your-first-run.md
   !/guides/test-shepherd-code.md
   !/guides/route-tasks-to-models.md
+  !/reference/cli.md
   !stylesheets/**
   !assets/**
 
@@ -122,6 +125,8 @@ nav:
       - concepts/index.md
       - Tasks: concepts/tasks.md
       - Effects: concepts/effects.md
+      - Permissions: concepts/permissions.md
+      - Placements: concepts/placements.md
       - Runs: concepts/runs.md
       - Workspaces: concepts/workspaces.md
       - Providers: concepts/providers.md
@@ -131,3 +136,5 @@ nav:
       - Debug your first run: guides/debug-your-first-run.md
       - Test Shepherd code: guides/test-shepherd-code.md
       - Route tasks to models: guides/route-tasks-to-models.md
+  - Reference:
+      - CLI: reference/cli.md

@@ -1,10 +1,10 @@
 # Permissions
 
-> Page status: scaffold
-> Source state: preview
+> Page status: release-ready
+> Source state: shipped-source
 > Applies to: Shepherd v0.2.0
 > Owner: @docs-system-owner (TBD)
-> Validation: scripts/check_shepherd_docs.py
+> Validation: shepherd/packages/dialect/tests/test_lane_c_acceptance_gate.py
 
 *Concept. The mental model behind Shepherd. Steps live in the tutorial, signatures in the reference.*
 
@@ -96,7 +96,7 @@ run = workspace.run(task, repo=workspace.git_repo(), may="ReadOnly")
 it is compiled into the jail and enforced at the syscall, not merely advised. A
 task registered with `may_default=` sets that same floor at registration time.
 
-!!! note "Scope (P-030 v0.2)"
+!!! note "Scope (0.2.0)"
     Per-binding whole-profile `ReadOnly`/`ReadWrite` over disjoint named
     bindings, on a jailed device, filesystem / Git substrate, same-process
     value-children. Enforcement is exercised on macOS Seatbelt; Linux Landlock
