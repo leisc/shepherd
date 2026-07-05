@@ -661,8 +661,4 @@ def _validate_sha256_digest(value: str, field: str) -> None:
 
 
 def _is_git_oid(value: object) -> bool:
-    return (
-        isinstance(value, str)
-        and len(value) == 40
-        and all(char in "0123456789abcdef" for char in value)
-    )
+    return isinstance(value, str) and len(value) == 40 and all(char in "0123456789abcdef" for char in value)

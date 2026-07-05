@@ -93,7 +93,7 @@ class FakeSelectedRevision:
 
 @dataclass(frozen=True)
 class FakeExecOutcome:
-    oids: tuple[str,...]
+    oids: tuple[str, ...]
 
 
 class FakeVcsCore:
@@ -101,7 +101,7 @@ class FakeVcsCore:
         self,
         payloads: dict[str, dict[str, object]],
         traces: dict[str, dict[str, object]] | None = None,
-        retained_outputs: tuple[RetainedOutputQueryResult,...] = (),
+        retained_outputs: tuple[RetainedOutputQueryResult, ...] = (),
     ) -> None:
         self.ground = object()
         self.payloads = payloads
@@ -111,8 +111,8 @@ class FakeVcsCore:
         self.direct_retained_reads: list[RetainedOutputIdentity] = []
         self.retained_reads: list[tuple[object, str | None, str | None]] = []
         self.exec_calls: list[tuple[str, str, object, str | None]] = []
-        self.published_put_paths: list[tuple[str,...]] = []
-        self.published_delete_paths: list[tuple[str,...]] = []
+        self.published_put_paths: list[tuple[str, ...]] = []
+        self.published_delete_paths: list[tuple[str, ...]] = []
         self.entries: dict[str, dict[str, dict[str, object]]] = {}
         self._head_index = 0
 
@@ -153,7 +153,7 @@ class FakeVcsCore:
         prefix: str,
         *,
         scope: object = None,
-    ) -> tuple[tuple[str, dict[str, object]],...]:
+    ) -> tuple[tuple[str, dict[str, object]], ...]:
         self.reads.append((binding, scope))
         rows = [
             (path, dict(value))
@@ -199,7 +199,7 @@ class FakeVcsCore:
         parent: object = None,
         binding: str | None = None,
         state: str | None = None,
-    ) -> tuple[RetainedOutputQueryResult,...]:
+    ) -> tuple[RetainedOutputQueryResult, ...]:
         self.retained_reads.append((parent, binding, state))
         return tuple(
             row
@@ -220,7 +220,7 @@ class FailingPublishVcsCore(FakeVcsCore):
         self,
         payloads: dict[str, dict[str, object]],
         traces: dict[str, dict[str, object]] | None = None,
-        retained_outputs: tuple[RetainedOutputQueryResult,...] = (),
+        retained_outputs: tuple[RetainedOutputQueryResult, ...] = (),
     ) -> None:
         super().__init__(payloads, traces=traces, retained_outputs=retained_outputs)
         self.fail_next_publish = True
@@ -262,7 +262,7 @@ def task_version(
         import_path="pkg.tasks:fix_bug",
         schema_digest=f"sha256:{version}",
         may_default="ReadOnly",
-        status=status, # type: ignore[arg-type]
+        status=status,  # type: ignore[arg-type]
         source_identity="world:w1:path:pkg/tasks.py",
         signature_schema={"type": "object"},
         metadata={"owner": "tests"},
@@ -299,7 +299,7 @@ def retained_output_row(*, state: str = "unconsumed") -> RetainedOutputQueryResu
         parent_ref="refs/vcscore/ground",
         parent_scope_name="ground",
         parent_scope_instance_id=None,
-        state=state, # type: ignore[arg-type]
+        state=state,  # type: ignore[arg-type]
         binding="workspace",
         output_world_oid="w-out",
         handoff_ref="handoff-1",
@@ -484,7 +484,7 @@ def retained_output_row_for_handoff(
     *,
     parent: ScopeInfo,
     state: str = "unconsumed",
-    changed_paths: tuple[str,...] | None = None,
+    changed_paths: tuple[str, ...] | None = None,
 ) -> RetainedOutputQueryResult:
     return RetainedOutputQueryResult(
         scope_name=handoff.scope_name,
@@ -493,7 +493,7 @@ def retained_output_row_for_handoff(
         parent_ref=parent.ref,
         parent_scope_name=parent.name,
         parent_scope_instance_id=None if parent.ref == "refs/vcscore/ground" else parent.instance_id,
-        state=state, # type: ignore[arg-type]
+        state=state,  # type: ignore[arg-type]
         binding=handoff.binding,
         output_world_oid=handoff.output_world_oid,
         handoff_ref=handoff.handoff_ref,
@@ -576,7 +576,7 @@ def run_record(
         args_digest="sha256:args",
         may_profile="ReadOnly",
         provider="in-process",
-        status=status, # type: ignore[arg-type]
+        status=status,  # type: ignore[arg-type]
         terminalization=run_terminalization(status=status, citation=citation),
         trace_ref=trace_ref,
         operation_refs=RunOperationRefs(
@@ -682,7 +682,7 @@ def retained_unpublished_run_record(
         terminalization=RunTerminalization(
             body_status="completed",
             world_disposition="retained",
-            output_publication_status=publication_status, # type: ignore[arg-type]
+            output_publication_status=publication_status,  # type: ignore[arg-type]
             retained_custody=retained_custody(row),
             publication_error=publication_error,
         ),
@@ -744,7 +744,7 @@ def fake_mg(
     tasks: dict[str, object] | None = None,
     runs: dict[str, object] | None = None,
     traces: dict[str, dict[str, object]] | None = None,
-    retained_outputs: tuple[RetainedOutputQueryResult,...] = (),
+    retained_outputs: tuple[RetainedOutputQueryResult, ...] = (),
 ) -> FakeVcsCore:
     payloads: dict[str, dict[str, object]] = {}
     if tasks is not None:
@@ -1154,8 +1154,8 @@ def test_exact_run_query_uses_addressable_keyed_record_without_whole_payload_rea
     def _fail_whole_payload_read(*args: object, **kwargs: object) -> object:
         raise AssertionError("exact run lookup must not read the whole run ledger")
 
-    mg.read_selected_binding_revision = _fail_whole_payload_read # type: ignore[method-assign]
-    mg.read_selected_binding_revision_with_head = _fail_whole_payload_read # type: ignore[method-assign]
+    mg.read_selected_binding_revision = _fail_whole_payload_read  # type: ignore[method-assign]
+    mg.read_selected_binding_revision_with_head = _fail_whole_payload_read  # type: ignore[method-assign]
 
     assert show_run(mg, "run-1") == record
 
@@ -1190,8 +1190,8 @@ def test_run_ledger_auxiliary_reads_use_addressable_keyed_records_without_whole_
     def _fail_whole_payload_read(*args: object, **kwargs: object) -> object:
         raise AssertionError("auxiliary lookup must not read the whole run ledger")
 
-    mg.read_selected_binding_revision = _fail_whole_payload_read # type: ignore[method-assign]
-    mg.read_selected_binding_revision_with_head = _fail_whole_payload_read # type: ignore[method-assign]
+    mg.read_selected_binding_revision = _fail_whole_payload_read  # type: ignore[method-assign]
+    mg.read_selected_binding_revision_with_head = _fail_whole_payload_read  # type: ignore[method-assign]
 
     store = RunLedgerStore(mg)
 
@@ -1212,8 +1212,8 @@ def test_all_run_output_citations_use_keyed_records_without_whole_payload_read()
     def _fail_whole_payload_read(*args: object, **kwargs: object) -> object:
         raise AssertionError("all-run citation lookup must not synthesize the whole run ledger")
 
-    mg.read_selected_binding_revision = _fail_whole_payload_read # type: ignore[method-assign]
-    mg.read_selected_binding_revision_with_head = _fail_whole_payload_read # type: ignore[method-assign]
+    mg.read_selected_binding_revision = _fail_whole_payload_read  # type: ignore[method-assign]
+    mg.read_selected_binding_revision_with_head = _fail_whole_payload_read  # type: ignore[method-assign]
 
     citations = run_output_citations(mg)
 
@@ -1385,11 +1385,11 @@ def test_flow_facade_lists_keyed_flow_records_without_whole_payload_read() -> No
     def _fail_whole_payload_read(*args: object, **kwargs: object) -> object:
         raise AssertionError("flow facade must not read the whole run ledger")
 
-    mg.read_selected_binding_revision = _fail_whole_payload_read # type: ignore[method-assign]
-    mg.read_selected_binding_revision_with_head = _fail_whole_payload_read # type: ignore[method-assign]
+    mg.read_selected_binding_revision = _fail_whole_payload_read  # type: ignore[method-assign]
+    mg.read_selected_binding_revision_with_head = _fail_whole_payload_read  # type: ignore[method-assign]
 
     workspace = type("FakeWorkspace", (), {"mg": mg})()
-    client = FlowControlClient(workspace) # type: ignore[arg-type]
+    client = FlowControlClient(workspace)  # type: ignore[arg-type]
 
     assert [flow.flow_id for flow in client.list()] == ["flow-1"]
     flow = client.get("flow-1")
@@ -1616,7 +1616,7 @@ def test_workspace_control_cli_outputs_uses_trace_store_and_query_layer(
     calls: dict[str, object] = {}
 
     class FakeRuns:
-        def outputs(self, **kwargs: object) -> tuple[dict[str, object],...]:
+        def outputs(self, **kwargs: object) -> tuple[dict[str, object], ...]:
             calls.update(kwargs)
             return ({"output_name": "workspace", "state": "selected"},)
 
@@ -1798,7 +1798,7 @@ def test_workspace_control_cli_starts_run_through_workspace_facade(monkeypatch: 
 
 def _fake_workspace(mg: FakeVcsCore) -> object:
     class FakeTasks:
-        def list(self, *, status: str | None = None, prefix: str | None = None) -> tuple[TaskSummary,...]:
+        def list(self, *, status: str | None = None, prefix: str | None = None) -> tuple[TaskSummary, ...]:
             return list_tasks(mg, status=status, prefix=prefix)
 
         def describe(self, task_ref: str) -> dict[str, object] | None:
@@ -1823,7 +1823,7 @@ def _fake_workspace(mg: FakeVcsCore) -> object:
             status: str | None = None,
             task_id: str | None = None,
             max_count: int | None = None,
-        ) -> tuple[RunSummary,...]:
+        ) -> tuple[RunSummary, ...]:
             return list_runs(mg, status=status, task_id=task_id, max_count=max_count)
 
         def show(self, run_ref: str) -> RunRecord | None:
@@ -1834,7 +1834,7 @@ def _fake_workspace(mg: FakeVcsCore) -> object:
             *,
             run_ref: str | None = None,
             binding: str | None = None,
-        ) -> tuple[RunOutputCitationRef,...]:
+        ) -> tuple[RunOutputCitationRef, ...]:
             return run_output_citations(mg, run_ref=run_ref, binding=binding)
 
         def vcscore(self, run_ref: str) -> dict[str, object] | None:
@@ -2360,7 +2360,7 @@ def test_run_record_constructor_rejects_invalid_optional_strings() -> None:
 
 def test_run_record_constructor_rejects_invalid_launch_context() -> None:
     with pytest.raises(TypeError, match=r"run\.launch_context"):
-        replace(run_record("run-1"), launch_context={"launch_surface": "cli"}) # type: ignore[arg-type]
+        replace(run_record("run-1"), launch_context={"launch_surface": "cli"})  # type: ignore[arg-type]
 
 
 def test_workspace_control_run_record_requires_authority_context() -> None:

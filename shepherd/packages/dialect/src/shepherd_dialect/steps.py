@@ -220,9 +220,7 @@ def return_type_to_output_schema(return_type: type | None) -> dict[str, Any]:
 # --- the function-form decorator (W2b) --------------------------------------------
 
 
-def step(
-    fn: Callable[..., Any] | None = None, *, timeout: float = DEFAULT_STEP_TIMEOUT, shepherd: bool = True
-) -> Any:
+def step(fn: Callable[..., Any] | None = None, *, timeout: float = DEFAULT_STEP_TIMEOUT, shepherd: bool = True) -> Any:
     """Function-form ``@step`` decorator.
 
     The class-form inline ``self.step[T]`` retires with the spine (tranche D1).
@@ -256,14 +254,10 @@ def step(
                     )
                     raw = getattr(response, "structured_output", response)
                     result = (
-                        parse_single_output(raw, meta.return_type, meta.name)
-                        if meta.return_type is not None
-                        else None
+                        parse_single_output(raw, meta.return_type, meta.name) if meta.return_type is not None else None
                     )
             except Exception as exc:
-                nucleus._emit_step_event(
-                    {"kind": "step.failed", "step": meta.name, "error": str(exc)[:200]}
-                )
+                nucleus._emit_step_event({"kind": "step.failed", "step": meta.name, "error": str(exc)[:200]})
                 raise
             nucleus._emit_step_event({"kind": "step.completed", "step": meta.name})
             return result

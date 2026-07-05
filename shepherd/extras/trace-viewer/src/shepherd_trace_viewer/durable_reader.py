@@ -84,10 +84,7 @@ def read_trace_payload(payload: Mapping[str, Any]) -> TraceView:
         raise DurableTraceReadError("duplicate event ids in trace payload")
 
     owner_paths = _owner_paths(payload, events)
-    lanes = tuple(
-        TraceLane(id=owner, label=owner, node_ids=tuple(path))
-        for owner, path in owner_paths.items()
-    )
+    lanes = tuple(TraceLane(id=owner, label=owner, node_ids=tuple(path)) for owner, path in owner_paths.items())
     lane_ids_by_node: dict[str, list[str]] = defaultdict(list)
     for lane in lanes:
         for node_id in lane.node_ids:

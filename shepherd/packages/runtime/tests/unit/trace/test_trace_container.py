@@ -140,9 +140,7 @@ def test_trace_default_is_empty_kernel_and_surface() -> None:
 
 def test_filter_returns_narrowed_trace() -> None:
     run_ref = RunRef(id="run-1")
-    s_run = _RunStartedFixture(
-        ref="surf_run", timestamp_us=0, run_ref=run_ref, task_id="t"
-    )
+    s_run = _RunStartedFixture(ref="surf_run", timestamp_us=0, run_ref=run_ref, task_id="t")
     trace = Trace(run_ref=run_ref, kernel=(), surface=(s_run,))
 
     runs = trace.filter(SubTag.run)
@@ -165,9 +163,7 @@ def test_cite_locates_kernel_records() -> None:
 
 def test_cite_locates_surface_records() -> None:
     run_ref = RunRef(id="run-1")
-    record = _RunStartedFixture(
-        ref="surf_1", timestamp_us=10, run_ref=run_ref, task_id="t"
-    )
+    record = _RunStartedFixture(ref="surf_1", timestamp_us=10, run_ref=run_ref, task_id="t")
     trace = Trace(run_ref=run_ref, surface=(record,))
     assert trace.cite("surf_1") is record
 

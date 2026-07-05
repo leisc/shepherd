@@ -197,9 +197,7 @@ def _execute_task_sync(
 
     if isinstance(task, CallableTask):
         valid_inputs = {
-            parameter.name: inputs[parameter.name]
-            for parameter in task.metadata.parameters
-            if parameter.name in inputs
+            parameter.name: inputs[parameter.name] for parameter in task.metadata.parameters if parameter.name in inputs
         }
         try:
             maybe_run = task.detailed(**valid_inputs)

@@ -479,7 +479,9 @@ def test_multi_owner_append_is_atomic_and_owner_ordered() -> None:
         append_intent_id="intent:bad-multi-owner",
         groups=(
             AppendGroup(trace_owner_id="exec:parent", fact_drafts=(_draft("parent_step"),)),
-            AppendGroup(trace_owner_id="exec:child", fact_drafts=(FactDraft(mode="capture", schema_ref="", payload={}),)),
+            AppendGroup(
+                trace_owner_id="exec:child", fact_drafts=(FactDraft(mode="capture", schema_ref="", payload={}),)
+            ),
         ),
     )
 
@@ -602,7 +604,9 @@ def test_causal_closure_crosses_parent_child_facts_with_visibility() -> None:
     )
 
     payload_view = store.read_causal_closure(READER, step.fact_ids)
-    shape_view = store.read_causal_closure(ReadContext(actor_ref="reader", visibility_profile="shape_only"), step.fact_ids)
+    shape_view = store.read_causal_closure(
+        ReadContext(actor_ref="reader", visibility_profile="shape_only"), step.fact_ids
+    )
 
     assert payload_view.fact_ids() == (*child_event, *observed.fact_ids, *step.fact_ids)
     first = payload_view.visible_facts_by_id[child_event[0]]

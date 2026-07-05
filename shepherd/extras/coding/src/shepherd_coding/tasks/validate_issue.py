@@ -49,22 +49,14 @@ class ValidationResult:
 
 @task(guidance=_VALIDATION_GUIDANCE)
 async def validate_issue(
-    issue_description: Annotated[
-        str, InputMarker(description="Description of the potential issue")
-    ],
+    issue_description: Annotated[str, InputMarker(description="Description of the potential issue")],
     issue_hypothesis: Annotated[
         str,
         InputMarker(description="What the analyzer believes is wrong and why"),
     ],
-    issue_file_path: Annotated[
-        str, InputMarker(description="File containing the potential issue")
-    ],
-    issue_line_range: Annotated[
-        str, InputMarker(description="Line range (e.g., '10-25')")
-    ],
-    issue_evidence: Annotated[
-        str, InputMarker(description="Code snippet that triggered the finding")
-    ],
+    issue_file_path: Annotated[str, InputMarker(description="File containing the potential issue")],
+    issue_line_range: Annotated[str, InputMarker(description="Line range (e.g., '10-25')")],
+    issue_evidence: Annotated[str, InputMarker(description="Code snippet that triggered the finding")],
 ) -> ValidationResult:
     """Validate a single LLM-sourced issue against the codebase.
 

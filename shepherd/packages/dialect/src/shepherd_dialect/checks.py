@@ -69,8 +69,7 @@ class CheckFailed(Exception):  # noqa: N818 — the legacy CheckFailedError obse
         self.check = check
         self.phase = phase
         super().__init__(
-            f"[{phase}] check failed for {field_name!r}: "
-            f"{check.format_message(value, field_name)} (task {task_name})"
+            f"[{phase}] check failed for {field_name!r}: {check.format_message(value, field_name)} (task {task_name})"
         )
 
 
@@ -157,11 +156,7 @@ def extract_checks(fn: Any) -> tuple[dict[str, tuple[Check, ...]], tuple[Check, 
         # Stringified annotations (PEP 563) referencing closure locals cannot be
         # resolved from the function object; fall back to whatever is live.
         hints = {k: v for k, v in getattr(fn, "__annotations__", {}).items() if not isinstance(v, str)}
-    input_checks = {
-        name: checks
-        for name, ann in hints.items()
-        if name != "return" and (checks := _checks_in(ann))
-    }
+    input_checks = {name: checks for name, ann in hints.items() if name != "return" and (checks := _checks_in(ann))}
     return input_checks, _checks_in(hints.get("return"))
 
 

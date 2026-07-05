@@ -286,9 +286,7 @@ def _rewrite_program_structure(value: Ref | None, rewrites: _PreRewrites) -> Ref
     if value.startswith("install:") and not value.startswith("install:sha256:"):
         canonical = rewrites.program_install.get(value)
         if canonical is None:
-            raise SemanticTransitionBatchValidationError(
-                f"program-structure rewrite missing for install ref {value!r}"
-            )
+            raise SemanticTransitionBatchValidationError(f"program-structure rewrite missing for install ref {value!r}")
         return canonical
     if value.startswith("handler-env:") and not value.startswith("handler-env:sha256:"):
         canonical = rewrites.program_handler_env.get(value)
@@ -300,9 +298,7 @@ def _rewrite_program_structure(value: Ref | None, rewrites: _PreRewrites) -> Ref
     if value.startswith("schema:") and not value.startswith("schema:sha256:"):
         fingerprint = rewrites.program_schema.get(value)
         if fingerprint is None and value not in rewrites.program_schema:
-            raise SemanticTransitionBatchValidationError(
-                f"program-structure rewrite missing for schema ref {value!r}"
-            )
+            raise SemanticTransitionBatchValidationError(f"program-structure rewrite missing for schema ref {value!r}")
         if fingerprint is None:
             return None
         return content_ref("schema", fingerprint)
@@ -315,9 +311,7 @@ def _rewrite_continuation(value: Ref | None, rewrites: _PreRewrites) -> Ref | No
     if _is_runtime_ref(value, "continuation"):
         canonical = rewrites.continuation.get(value)
         if canonical is None:
-            raise SemanticTransitionBatchValidationError(
-                f"continuation rewrite missing for {value!r}"
-            )
+            raise SemanticTransitionBatchValidationError(f"continuation rewrite missing for {value!r}")
         return canonical
     return value
 
@@ -328,9 +322,7 @@ def _rewrite_continuation_control(value: Ref | None, rewrites: _PreRewrites) -> 
     if _is_runtime_ref(value, "continuation-control"):
         canonical = rewrites.continuation_control.get(value)
         if canonical is None:
-            raise SemanticTransitionBatchValidationError(
-                f"continuation-control rewrite missing for {value!r}"
-            )
+            raise SemanticTransitionBatchValidationError(f"continuation-control rewrite missing for {value!r}")
         return canonical
     return value
 
@@ -341,9 +333,7 @@ def _rewrite_ctx(value: Ref | None, rewrites: _PreRewrites) -> Ref | None:
     if _is_runtime_ref(value, "ctx"):
         canonical = rewrites.context.get(value)
         if canonical is None:
-            raise SemanticTransitionBatchValidationError(
-                f"ctx rewrite missing for {value!r}"
-            )
+            raise SemanticTransitionBatchValidationError(f"ctx rewrite missing for {value!r}")
         return canonical
     return value
 
@@ -366,9 +356,7 @@ def _build_pre_rewrites(
     )
 
 
-def _install_runtime_to_canonical(
-    prepared: PreparedKernelProgram, identity: ProgramIdentity
-) -> dict[Ref, Ref]:
+def _install_runtime_to_canonical(prepared: PreparedKernelProgram, identity: ProgramIdentity) -> dict[Ref, Ref]:
     """Build runtime-string → canonical-content-ref mapping for installs.
 
     The runtime emits `install:N` refs (e.g. `install:3`); ProgramIdentity
@@ -490,20 +478,14 @@ def _parse_path_ref(path_ref: str) -> tuple[str, str, str]:
     """
 
     if not path_ref.startswith("path:"):
-        raise SemanticTransitionBatchValidationError(
-            f"path ref must start with 'path:', got {path_ref!r}"
-        )
-    body = path_ref[len("path:"):]
+        raise SemanticTransitionBatchValidationError(f"path ref must start with 'path:', got {path_ref!r}")
+    body = path_ref[len("path:") :]
     head, sep, rest = body.partition("/")
     if not sep:
-        raise SemanticTransitionBatchValidationError(
-            f"path ref missing source/branch components: {path_ref!r}"
-        )
+        raise SemanticTransitionBatchValidationError(f"path ref missing source/branch components: {path_ref!r}")
     source, sep2, branch = rest.partition("/")
     if not sep2:
-        raise SemanticTransitionBatchValidationError(
-            f"path ref missing branch component: {path_ref!r}"
-        )
+        raise SemanticTransitionBatchValidationError(f"path ref missing branch component: {path_ref!r}")
     return head, source, branch
 
 
@@ -525,15 +507,11 @@ def _canonical_path_body(
     else:
         canonical_selection_lookup = selection_canon.get(head)
         if canonical_selection_lookup is None:
-            raise SemanticTransitionBatchValidationError(
-                f"path ref {path_ref!r} cites unknown selection {head!r}"
-            )
+            raise SemanticTransitionBatchValidationError(f"path ref {path_ref!r} cites unknown selection {head!r}")
         canonical_selection = canonical_selection_lookup
     canonical_source_lookup = source_canon.get(source)
     if canonical_source_lookup is None:
-        raise SemanticTransitionBatchValidationError(
-            f"path ref {path_ref!r} cites unknown source {source!r}"
-        )
+        raise SemanticTransitionBatchValidationError(f"path ref {path_ref!r} cites unknown source {source!r}")
     return {
         "selection": canonical_selection,
         "source": canonical_source_lookup,
@@ -585,8 +563,7 @@ def semantic_batch_from_transition(
         prepared = state.prepared_program
         if profile is not None and profile != state.profile:
             raise SemanticTransitionBatchValidationError(
-                f"explicit profile {profile.name!r} disagrees with "
-                f"state.profile {state.profile.name!r}"
+                f"explicit profile {profile.name!r} disagrees with state.profile {state.profile.name!r}"
             )
         profile = state.profile
     else:
@@ -633,8 +610,12 @@ def semantic_batch_from_transition(
                 record,
                 _FIELDS_BY_RECORD_TYPE["EffectDeclaration"],
                 pre,
-                declaration_canon, selection_canon, source_canon,
-                path_canon, resume_canon, capture_canon,
+                declaration_canon,
+                selection_canon,
+                source_canon,
+                path_canon,
+                resume_canon,
+                capture_canon,
             )
             canonical = content_ref("declaration", body)
             declaration_canon[record.ref] = canonical
@@ -647,8 +628,12 @@ def semantic_batch_from_transition(
                 record,
                 _FIELDS_BY_RECORD_TYPE["HandlerSelection"],
                 pre,
-                declaration_canon, selection_canon, source_canon,
-                path_canon, resume_canon, capture_canon,
+                declaration_canon,
+                selection_canon,
+                source_canon,
+                path_canon,
+                resume_canon,
+                capture_canon,
             )
             canonical = content_ref("selection", body)
             selection_canon[record.ref] = canonical
@@ -662,8 +647,12 @@ def semantic_batch_from_transition(
                 record,
                 _FIELDS_BY_RECORD_TYPE[type_name],
                 pre,
-                declaration_canon, selection_canon, source_canon,
-                path_canon, resume_canon, capture_canon,
+                declaration_canon,
+                selection_canon,
+                source_canon,
+                path_canon,
+                resume_canon,
+                capture_canon,
             )
             canonical = content_ref("source", body)
             source_canon[record.ref] = canonical
@@ -693,8 +682,12 @@ def semantic_batch_from_transition(
                 record,
                 _FIELDS_BY_RECORD_TYPE["ContinuationResume"],
                 pre,
-                declaration_canon, selection_canon, source_canon,
-                path_canon, resume_canon, capture_canon,
+                declaration_canon,
+                selection_canon,
+                source_canon,
+                path_canon,
+                resume_canon,
+                capture_canon,
             )
             decl_c = declaration_canon.get(record.declaration_ref, record.declaration_ref)
             sel_c = selection_canon.get(record.selection_ref, record.selection_ref)
@@ -714,8 +707,12 @@ def semantic_batch_from_transition(
                 record,
                 _FIELDS_BY_RECORD_TYPE["ResumeReturn"],
                 pre,
-                declaration_canon, selection_canon, source_canon,
-                path_canon, resume_canon, capture_canon,
+                declaration_canon,
+                selection_canon,
+                source_canon,
+                path_canon,
+                resume_canon,
+                capture_canon,
             )
             resume_c = resume_canon.get(record.resume_ref, record.resume_ref)
             seq = resume_return_seq[resume_c]
@@ -732,8 +729,12 @@ def semantic_batch_from_transition(
                 record,
                 _FIELDS_BY_RECORD_TYPE["EffectCapture"],
                 pre,
-                declaration_canon, selection_canon, source_canon,
-                path_canon, resume_canon, capture_canon,
+                declaration_canon,
+                selection_canon,
+                source_canon,
+                path_canon,
+                resume_canon,
+                capture_canon,
             )
             sel_c = selection_canon.get(record.selection_ref, record.selection_ref)
             path_c = path_canon.get(record.selection_path_ref, record.selection_path_ref)
@@ -752,8 +753,12 @@ def semantic_batch_from_transition(
                 record,
                 _FIELDS_BY_RECORD_TYPE["SelectionClosed"],
                 pre,
-                declaration_canon, selection_canon, source_canon,
-                path_canon, resume_canon, capture_canon,
+                declaration_canon,
+                selection_canon,
+                source_canon,
+                path_canon,
+                resume_canon,
+                capture_canon,
             )
             sel_c = selection_canon.get(record.selection_ref, record.selection_ref)
             path_c = path_canon.get(record.selection_path_ref, record.selection_path_ref)
@@ -771,15 +776,18 @@ def semantic_batch_from_transition(
             _projected_record_dict(
                 record,
                 pre,
-                declaration_canon, selection_canon, source_canon,
-                path_canon, resume_canon, resume_return_canon,
-                capture_canon, closed_canon,
+                declaration_canon,
+                selection_canon,
+                source_canon,
+                path_canon,
+                resume_canon,
+                resume_return_canon,
+                capture_canon,
+                closed_canon,
             )
         )
 
-    ref_map = CanonicalRefMap(
-        entries=tuple(sorted(ref_map_entries.items()))
-    )
+    ref_map = CanonicalRefMap(entries=tuple(sorted(ref_map_entries.items())))
 
     # Profile is read from transition metadata in a future commit; for #72
     # the caller supplies it explicitly (default CORE_A).
@@ -787,9 +795,7 @@ def semantic_batch_from_transition(
 
     transition_kind = _transition_kind(transition)
 
-    continuation_objects_payload = _continuation_objects_for_records(
-        projected_records, catalog
-    )
+    continuation_objects_payload = _continuation_objects_for_records(projected_records, catalog)
 
     # admission_basis is None for initial-run transitions; non-initial
     # transitions require an explicit admission basis (deferred to #73+
@@ -863,9 +869,7 @@ def _continuation_objects_for_records(
     return tuple(continuation_object_to_json(reachable[ref]) for ref in sorted(reachable))
 
 
-def _collect_continuation_object_refs(
-    record: Mapping[str, JsonValue], out: set[str]
-) -> None:
+def _collect_continuation_object_refs(record: Mapping[str, JsonValue], out: set[str]) -> None:
     """Recursively walk a JSON record dict and collect every string field
     that starts with `continuation-object:`."""
 
@@ -982,9 +986,7 @@ def _project_rejected(
 
     payload = transition.payload
     if not isinstance(payload, ReplayableRejected):
-        raise SemanticTransitionBatchValidationError(
-            "rejected transition must carry ReplayableRejected payload"
-        )
+        raise SemanticTransitionBatchValidationError("rejected transition must carry ReplayableRejected payload")
 
     # For rejected transitions, the partial-records ref map is best-effort:
     # the trace_delta may be empty or contain partial records up to the
@@ -1009,9 +1011,15 @@ def _project_rejected(
             for record in transition.trace_delta:
                 if isinstance(record, EffectDeclaration):
                     body = _canonical_record_body(
-                        record, _FIELDS_BY_RECORD_TYPE["EffectDeclaration"], pre,
-                        declaration_canon, selection_canon, source_canon,
-                        path_canon, resume_canon, capture_canon,
+                        record,
+                        _FIELDS_BY_RECORD_TYPE["EffectDeclaration"],
+                        pre,
+                        declaration_canon,
+                        selection_canon,
+                        source_canon,
+                        path_canon,
+                        resume_canon,
+                        capture_canon,
                     )
                     canonical = content_ref("declaration", body)
                     declaration_canon[record.ref] = canonical
@@ -1019,10 +1027,16 @@ def _project_rejected(
             for record in transition.trace_delta:
                 partial_records.append(
                     _projected_record_dict(
-                        record, pre,
-                        declaration_canon, selection_canon, source_canon,
-                        path_canon, resume_canon, resume_return_canon,
-                        capture_canon, closed_canon,
+                        record,
+                        pre,
+                        declaration_canon,
+                        selection_canon,
+                        source_canon,
+                        path_canon,
+                        resume_canon,
+                        resume_return_canon,
+                        capture_canon,
+                        closed_canon,
                     )
                 )
         except SemanticTransitionBatchValidationError:
@@ -1138,8 +1152,7 @@ def validate_semantic_batch(batch: SemanticTransitionBatch) -> None:
     missing_canonical = cited_canonical - canonical_values
     if missing_canonical:
         raise SemanticTransitionBatchValidationError(
-            f"CanonicalRefMap missing coverage for canonical refs cited by records: "
-            f"{sorted(missing_canonical)!r}"
+            f"CanonicalRefMap missing coverage for canonical refs cited by records: {sorted(missing_canonical)!r}"
         )
 
     # Tightness: every canonical value in the map must appear cited
@@ -1225,9 +1238,7 @@ def project_envelope_to_wire(
     if envelope.status == "profile-rejected":
         rejection = envelope.payload
         if not isinstance(rejection, KernelRejection):
-            raise TypeError(
-                "profile-rejected envelope payload must be a KernelRejection"
-            )
+            raise TypeError("profile-rejected envelope payload must be a KernelRejection")
         synthetic_transition_id = content_ref(
             "profile-rejected",
             {
@@ -1248,9 +1259,7 @@ def project_envelope_to_wire(
 
     if envelope.transition is None:
         # Guarded by KernelResultEnvelope.__post_init__, but defensive
-        raise SemanticTransitionBatchValidationError(
-            f"envelope.status={envelope.status!r} requires transition"
-        )
+        raise SemanticTransitionBatchValidationError(f"envelope.status={envelope.status!r} requires transition")
 
     batch = semantic_batch_from_transition(envelope.transition, state, catalog)
     return WireResult(envelope=envelope, batch=batch)

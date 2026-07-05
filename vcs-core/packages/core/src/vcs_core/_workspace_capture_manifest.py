@@ -104,9 +104,7 @@ def workspace_capture_state_from_store(
     byte_authority = "tree-backed" if tree_backed else "digest-only"
     payload = workspace_state_revision_payload(entries, byte_authority=byte_authority)
     manifest = payload["state_manifest"]
-    final_present_paths = {
-        str(entry["path"]) for entry in entries if entry.get("state", "present") == "present"
-    }
+    final_present_paths = {str(entry["path"]) for entry in entries if entry.get("state", "present") == "present"}
     reduced_state_proof: dict[str, object] = {
         "command_operation_id": command_operation_id,
         "byte_authority": byte_authority,
@@ -172,9 +170,7 @@ def workspace_state_payload_from_store(
     return WorkspaceStatePayload(payload=payload, workspace_tree_oid=workspace_tree_oid)
 
 
-def _workspace_tree_oid_from_commit(
-    store: Store, source_commit: pygit2.Commit | None
-) -> str | None:
+def _workspace_tree_oid_from_commit(store: Store, source_commit: pygit2.Commit | None) -> str | None:
     """Return the hex Git oid of the ``workspace`` subtree on ``source_commit``."""
     if source_commit is None:
         return None

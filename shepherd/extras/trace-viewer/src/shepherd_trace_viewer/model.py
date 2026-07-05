@@ -5,7 +5,6 @@ The viewer consumes provider-neutral durable task-trace revisions and projected
 into this UI transport contract before the browser sees them.
 """
 
-
 from __future__ import annotations
 
 from dataclasses import dataclass, field

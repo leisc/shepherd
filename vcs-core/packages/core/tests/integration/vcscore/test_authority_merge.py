@@ -92,7 +92,7 @@ def _authz_view_kwargs(**overrides: object) -> dict[str, object]:
 )
 def test_authz_match_view_rejects_invalid_producer_fields(overrides: dict[str, object]) -> None:
     with pytest.raises((TypeError, ValueError)):
-        AuthzMatchView(**_authz_view_kwargs(**overrides)) # type: ignore[arg-type]
+        AuthzMatchView(**_authz_view_kwargs(**overrides))  # type: ignore[arg-type]
 
 
 def _decide(request: GitRepoAuthorityRequest) -> AuthorityDecision:
@@ -141,7 +141,11 @@ def _write_workspace_authority_pending(mg: VcsCore, scope: ScopeInfo, operation_
 
 
 def _authority_effects(history: Any) -> list[dict[str, object]]:
-    return [commit.metadata for commit in history.commits if str(commit.metadata.get("type", "")).startswith(("Authority", "RetainedOutput", "Prepared"))]
+    return [
+        commit.metadata
+        for commit in history.commits
+        if str(commit.metadata.get("type", "")).startswith(("Authority", "RetainedOutput", "Prepared"))
+    ]
 
 
 def _authority_plan_kwargs() -> dict[str, object]:
@@ -632,9 +636,7 @@ def test_authority_discard_recovery_gates_before_owned_lifecycle_mutation(tmp_pa
         assert mg._lifecycle_run is not None
         assert mg._lifecycle_run.operation == "discard"
         assert mg._store.ref_exists(child.ref)
-        assert mg.list_authority_settlement_pending() == (
-            "op_discard_recovery_gate_before_mutation_settlement",
-        )
+        assert mg.list_authority_settlement_pending() == ("op_discard_recovery_gate_before_mutation_settlement",)
         assert backend.discarded == []
 
         with pytest.raises(
@@ -646,9 +648,7 @@ def test_authority_discard_recovery_gates_before_owned_lifecycle_mutation(tmp_pa
         assert mg._lifecycle_run is not None
         assert mg._lifecycle_run.operation == "discard"
         assert mg._store.ref_exists(child.ref)
-        assert mg.list_authority_settlement_pending() == (
-            "op_discard_recovery_gate_before_mutation_settlement",
-        )
+        assert mg.list_authority_settlement_pending() == ("op_discard_recovery_gate_before_mutation_settlement",)
         assert backend.discarded == []
     finally:
         mg.deactivate(warn_on_open_scopes=False)

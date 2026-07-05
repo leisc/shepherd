@@ -46,19 +46,11 @@ def detect_handler_shape(fn: Callable) -> HandlerShape:
     try:
         sig = inspect.signature(fn)
     except (TypeError, ValueError) as exc:
-        raise HandlerSignatureError(
-            f"{getattr(fn, '__qualname__', fn)!r}: cannot inspect signature: {exc}"
-        ) from exc
+        raise HandlerSignatureError(f"{getattr(fn, '__qualname__', fn)!r}: cannot inspect signature: {exc}") from exc
 
-    positional = [
-        p
-        for p in sig.parameters.values()
-        if p.kind in (p.POSITIONAL_ONLY, p.POSITIONAL_OR_KEYWORD)
-    ]
+    positional = [p for p in sig.parameters.values() if p.kind in (p.POSITIONAL_ONLY, p.POSITIONAL_OR_KEYWORD)]
     required_keyword_only = [
-        p
-        for p in sig.parameters.values()
-        if p.kind is p.KEYWORD_ONLY and p.default is inspect.Parameter.empty
+        p for p in sig.parameters.values() if p.kind is p.KEYWORD_ONLY and p.default is inspect.Parameter.empty
     ]
     if required_keyword_only:
         names = ", ".join(p.name for p in required_keyword_only)
@@ -93,18 +85,13 @@ def detect_handler_shape(fn: Callable) -> HandlerShape:
         if _annotation_is_resumption(ann):
             if not inspect.iscoroutinefunction(fn):
                 raise HandlerSignatureError(
-                    f"{fn.__qualname__}: supervisor handlers must be "
-                    f"`async def` (DECISIONS D14); got sync function"
+                    f"{fn.__qualname__}: supervisor handlers must be `async def` (DECISIONS D14); got sync function"
                 )
             return "supervisor"
-        raise HandlerSignatureError(
-            f"{fn.__qualname__}: second parameter annotation must be "
-            f"Resumption (got {ann!r})"
-        )
+        raise HandlerSignatureError(f"{fn.__qualname__}: second parameter annotation must be Resumption (got {ann!r})")
 
     raise HandlerSignatureError(
-        f"{fn.__qualname__}: invalid signature; expected 1 or 2 "
-        f"positional parameters (got {len(positional)})"
+        f"{fn.__qualname__}: invalid signature; expected 1 or 2 positional parameters (got {len(positional)})"
     )
 
 

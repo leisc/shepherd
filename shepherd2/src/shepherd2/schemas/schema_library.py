@@ -46,6 +46,5 @@ def ensure_projection_compatible(trace_slice: TraceSlice, spec: ProjectionSpec) 
     """Validate that a slice satisfies a projection's declared kernel requirements."""
     if spec.mode_requirement not in ("any", trace_slice.mode_filter):
         raise ProjectionModeError(
-            f"projection {spec.name!r} requires mode_filter={spec.mode_requirement!r}; "
-            f"got {trace_slice.mode_filter!r}"
+            f"projection {spec.name!r} requires mode_filter={spec.mode_requirement!r}; got {trace_slice.mode_filter!r}"
         )

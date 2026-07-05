@@ -56,30 +56,34 @@ def pure_let_program():
 def resume_shape_program():
     return Handle(
         Let("y", Perform("ask", Lit(None)), Return(Var("y"))),
-        HandlerEnv((
-            StaticHandlerInstall(
-                effect_kind="ask",
-                handler_id="resume.v1",
-                handled_result_schema=AnySchema(),
-                payload_name="_payload",
-                body=Let("r", Resume(Lit(42)), Return(Var("r"))),
-            ),
-        )),
+        HandlerEnv(
+            (
+                StaticHandlerInstall(
+                    effect_kind="ask",
+                    handler_id="resume.v1",
+                    handled_result_schema=AnySchema(),
+                    payload_name="_payload",
+                    body=Let("r", Resume(Lit(42)), Return(Var("r"))),
+                ),
+            )
+        ),
     )
 
 
 def abort_shape_program():
     return Handle(
         Perform("ask", Lit(None)),
-        HandlerEnv((
-            StaticHandlerInstall(
-                effect_kind="ask",
-                handler_id="abort.v1",
-                handled_result_schema=AnySchema(),
-                payload_name="_payload",
-                body=Abort(Lit(0)),
-            ),
-        )),
+        HandlerEnv(
+            (
+                StaticHandlerInstall(
+                    effect_kind="ask",
+                    handler_id="abort.v1",
+                    handled_result_schema=AnySchema(),
+                    payload_name="_payload",
+                    body=Abort(Lit(0)),
+                ),
+            )
+        ),
     )
 
 
@@ -100,8 +104,7 @@ def nested_handlers_program():
     )
     return Handle(
         Handle(
-            Let("a", Perform("inner", Lit(None)),
-                Let("b", Perform("outer", Lit(None)), Return(Var("a")))),
+            Let("a", Perform("inner", Lit(None)), Let("b", Perform("outer", Lit(None)), Return(Var("a")))),
             HandlerEnv((inner,)),
         ),
         HandlerEnv((outer,)),
@@ -365,9 +368,7 @@ def test_sidecar_and_trace_modes_agree_on_canonical_refs_for_resume_shape() -> N
     # confirm the canonical maps agree.
     session, _ts2 = KernelReplaySession.start(prepared)
     catalog = dict(session._evaluator.continuation_objects)
-    batch_sidecar = semantic_batch_from_transition(
-        transition_sidecar, state_sidecar, catalog
-    )
+    batch_sidecar = semantic_batch_from_transition(transition_sidecar, state_sidecar, catalog)
 
     assert isinstance(batch_sidecar, SemanticTransitionBatch)
     # The canonical ref VALUES (the right-hand sides) must agree across

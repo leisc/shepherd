@@ -86,8 +86,18 @@ def _node_schema(nullable_str: dict, nullable_num: dict, nullable_int: dict, obj
     return {
         "type": "object",
         "required": [
-            "id", "kind", "family", "role", "lane_ids", "sequence", "timestamp",
-            "label", "identity_domain", "record_digest", "body", "payload",
+            "id",
+            "kind",
+            "family",
+            "role",
+            "lane_ids",
+            "sequence",
+            "timestamp",
+            "label",
+            "identity_domain",
+            "record_digest",
+            "body",
+            "payload",
         ],
         "additionalProperties": False,
         "properties": {

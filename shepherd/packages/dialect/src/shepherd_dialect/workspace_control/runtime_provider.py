@@ -114,7 +114,7 @@ class _WorkspaceClaudeInvocation:
     model_name: str | None
     task_lock: TaskArtifactLock
     kwargs: Mapping[str, Any]
-    input_artifacts: tuple[WorkspaceRuntimeInputArtifact,...]
+    input_artifacts: tuple[WorkspaceRuntimeInputArtifact, ...]
 
 
 @dataclass(frozen=True)
@@ -284,7 +284,7 @@ class ClaudeWorkspaceRuntimeProvider:
     artifact_payload: Mapping[str, Any]
     kwargs: Mapping[str, Any]
     model_name: str | None
-    input_artifacts: tuple[WorkspaceRuntimeInputArtifact,...] = ()
+    input_artifacts: tuple[WorkspaceRuntimeInputArtifact, ...] = ()
     launch_metadata: dict[str, object] | None = None
     provider_id: str = "claude"
 
@@ -459,7 +459,7 @@ def _static_runtime_invocation_id(provider_id: str, execution: Any) -> str:
 
 def _record_provider_events(
     metadata: dict[str, object] | None,
-    events: tuple[ProviderEvent,...],
+    events: tuple[ProviderEvent, ...],
 ) -> None:
     if metadata is None:
         return
@@ -498,17 +498,14 @@ def _claude_runtime_prompt(
     task_lock: TaskArtifactLock,
     artifact_payload: Mapping[str, Any],
     kwargs: Mapping[str, Any],
-    input_artifacts: tuple[WorkspaceRuntimeInputArtifact,...],
+    input_artifacts: tuple[WorkspaceRuntimeInputArtifact, ...],
 ) -> str:
     entrypoint = artifact_payload.get("entrypoint")
     source_files = _claude_prompt_source_files(artifact_payload)
     args_json = json.dumps(_prompt_jsonable(dict(kwargs)), indent=2, sort_keys=True, default=str)
     manifest = [artifact.manifest_entry() for artifact in input_artifacts]
     manifest_json = json.dumps(manifest, indent=2, sort_keys=True)
-    source_block = "\n\n".join(
-        f"### {path}\n```python\n{content}\n```"
-        for path, content in source_files
-    )
+    source_block = "\n\n".join(f"### {path}\n```python\n{content}\n```" for path, content in source_files)
     if not source_block:
         source_block = "(no source text available)"
     return (
@@ -532,7 +529,7 @@ def _claude_runtime_prompt(
     )
 
 
-def _claude_prompt_source_files(artifact_payload: Mapping[str, Any]) -> tuple[tuple[str, str],...]:
+def _claude_prompt_source_files(artifact_payload: Mapping[str, Any]) -> tuple[tuple[str, str], ...]:
     files = artifact_payload.get("files")
     if not isinstance(files, list | tuple):
         return ()
@@ -574,7 +571,7 @@ def _prompt_jsonable(value: object) -> object:
     return repr(value)[:240]
 
 
-def _stage_claude_input_artifacts(root: Path, artifacts: tuple[WorkspaceRuntimeInputArtifact,...]) -> None:
+def _stage_claude_input_artifacts(root: Path, artifacts: tuple[WorkspaceRuntimeInputArtifact, ...]) -> None:
     for artifact in artifacts:
         _validate_static_runtime_artifact_path(artifact.materialized_path)
         if not artifact.materialized_path.startswith(f"{CLAUDE_WORKSPACE_INPUT_DIR}/"):

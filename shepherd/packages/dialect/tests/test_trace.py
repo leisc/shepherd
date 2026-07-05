@@ -134,7 +134,5 @@ def test_harvest_import_boundary_kernel_ring_only() -> None:
         "assert any(m.startswith('shepherd2.kernel') for m in loaded), loaded\n"
         "print('boundary OK')\n"
     )
-    proc = subprocess.run(
-        [sys.executable, "-P", "-c", code], capture_output=True, text=True, check=True
-    )
+    proc = subprocess.run([sys.executable, "-P", "-c", code], capture_output=True, text=True, check=True)
     assert "boundary OK" in proc.stdout

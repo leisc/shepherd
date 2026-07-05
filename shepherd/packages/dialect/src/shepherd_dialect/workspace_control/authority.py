@@ -20,7 +20,7 @@ _GRANT_DESCRIPTOR_SCHEMA = "shepherd.workspace-control.gitrepo-grant.v1"
 _CLAMP_DESCRIPTOR_SCHEMA = "shepherd.workspace-control.gitrepo-grant-clamp.v1"
 
 FieldConstraint = dict[str, object]
-FieldConstraintClause = tuple[FieldConstraint,...]
+FieldConstraintClause = tuple[FieldConstraint, ...]
 GitRepoClassificationBasis = Literal["effect_record", "exact_tree_diff", "changed_paths_fallback", "unclassifiable"]
 GitRepoCompleteness = Literal["complete", "advisory", "incomplete"]
 
@@ -64,10 +64,10 @@ class GitRepoAuthoritySurface:
 class GitRepoAuthorityDecisionPolicy:
     """Policy envelope for evaluating one flat GitRepo authority request."""
 
-    routes: tuple[str,...]
-    binding_refs: tuple[str,...] | None = None
+    routes: tuple[str, ...]
+    binding_refs: tuple[str, ...] | None = None
     domain: str = "gitrepo.v0"
-    allowed_classification_bases: tuple[GitRepoClassificationBasis,...] = ("effect_record", "exact_tree_diff")
+    allowed_classification_bases: tuple[GitRepoClassificationBasis, ...] = ("effect_record", "exact_tree_diff")
     allow_changed_paths_fallback: bool = False
     allow_changed_paths_fallback_for_path_sensitive: bool = False
     allow_control_plane: bool = False
@@ -311,7 +311,7 @@ class GitRepoGrantClause:
             raise TypeError("GitRepo grant clause descriptor mutates must be a boolean or null")
         return cls(binding_ref=binding_ref, path_prefix=path_prefix, mutates=mutates)
 
-    def to_constraint_clauses(self, *, route: str | None = None) -> tuple[FieldConstraintClause,...]:
+    def to_constraint_clauses(self, *, route: str | None = None) -> tuple[FieldConstraintClause, ...]:
         constraints: list[FieldConstraint] = [{"field": "domain", "op": "eq", "value": "gitrepo.v0"}]
         if route is not None:
             constraints.append({"field": "route", "op": "eq", "value": route})
@@ -331,7 +331,7 @@ class GitRepoGrantDescriptor:
     """Internal grant descriptor for the current GitRepo authority fragment."""
 
     grant_ref: str
-    clauses: tuple[GitRepoGrantClause,...]
+    clauses: tuple[GitRepoGrantClause, ...]
 
     def to_descriptor(self) -> dict[str, object]:
         return {
@@ -361,6 +361,7 @@ class GitRepoGrantDescriptor:
             grant_ref=grant_ref,
             clauses=tuple(GitRepoGrantClause.from_descriptor(clause) for clause in raw_clauses),
         )
+
     @property
     def digest(self) -> str:
         return _descriptor_digest(self.to_descriptor())
@@ -442,7 +443,7 @@ class GitRepoGrantClamp:
 def build_gitrepo_field_authority_surface(
     *,
     label: str,
-    clauses: tuple[FieldConstraintClause,...],
+    clauses: tuple[FieldConstraintClause, ...],
     **descriptor_fields: object,
 ) -> GitRepoAuthoritySurface:
     """Build a descriptor-backed field ``Match`` over flat GitRepo authority views."""
@@ -491,7 +492,7 @@ def decide_gitrepo_authority_request(
         )
 
     try:
-        view = GitRepoAuthorityView.from_mapping(dict(request.match_view.as_mapping())) # type: ignore[attr-defined]
+        view = GitRepoAuthorityView.from_mapping(dict(request.match_view.as_mapping()))  # type: ignore[attr-defined]
     except (AttributeError, TypeError, ValueError) as exc:
         return _authority_decision(
             request=request,
@@ -676,7 +677,7 @@ def clamp_gitrepo_grants(
     )
 
 
-def _match_from_constraint_clauses(clauses: tuple[FieldConstraintClause,...]) -> Match:
+def _match_from_constraint_clauses(clauses: tuple[FieldConstraintClause, ...]) -> Match:
     match = Match.nothing()
     for clause in clauses:
         match = match | _match_from_constraints(clause)
@@ -758,7 +759,7 @@ def _normalize_path_constraint_value(value: object, *, op: str) -> str:
     return normalized
 
 
-def _has_path_constraint(clauses: tuple[FieldConstraintClause,...]) -> bool:
+def _has_path_constraint(clauses: tuple[FieldConstraintClause, ...]) -> bool:
     return any(constraint["field"] == "path" for clause in clauses for constraint in clause)
 
 
@@ -802,7 +803,7 @@ def _required_view_classification_basis(mapping: Mapping[object, object]) -> Git
 
 def _best_effort_match_mapping(request: object) -> dict[object, object] | None:
     try:
-        return GitRepoAuthorityView.from_mapping(dict(request.match_view.as_mapping())).as_mapping() # type: ignore[attr-defined]
+        return GitRepoAuthorityView.from_mapping(dict(request.match_view.as_mapping())).as_mapping()  # type: ignore[attr-defined]
     except (AttributeError, TypeError, ValueError):
         return None
 

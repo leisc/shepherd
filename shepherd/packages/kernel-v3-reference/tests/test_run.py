@@ -87,8 +87,7 @@ def _suspended_program():
 
 def _two_suspend_program():
     return elaborate(
-        Let("a", Perform("ask1", Lit(None)),
-            Let("b", Perform("ask2", Lit(None)), Return(Var("a")))),
+        Let("a", Perform("ask1", Lit(None)), Let("b", Perform("ask2", Lit(None)), Return(Var("a")))),
     )
 
 

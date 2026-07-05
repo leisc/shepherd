@@ -38,9 +38,7 @@ def _ctx() -> DriverContext:
         operation_id="op-test",
         binding="workspace",
         role="shepherd.WorkspaceRef",
-        store_identity=SubstrateStoreIdentity(
-            store_id="store_workspace", kind="filesystem", resource_id="ws:test"
-        ),
+        store_identity=SubstrateStoreIdentity(store_id="store_workspace", kind="filesystem", resource_id="ws:test"),
     )
 
 
@@ -196,9 +194,7 @@ def test_parse_with_fan_out_sink_delivers_to_every_consumer() -> None:
     assert result.parsed_count == 2
     assert len(coordinator.observations) == 2
     assert len(supervisor.observations) == 2
-    assert [o.observation_id for o in coordinator.observations] == [
-        o.observation_id for o in supervisor.observations
-    ]
+    assert [o.observation_id for o in coordinator.observations] == [o.observation_id for o in supervisor.observations]
 
 
 def test_parse_fan_out_failure_isolation_does_not_block_other_sinks() -> None:

@@ -91,7 +91,11 @@ def _shepherd_context(run_ref: str) -> dict[str, object]:
 
 
 def _authority_effects(history: Any) -> list[dict[str, object]]:
-    return [commit.metadata for commit in history.commits if str(commit.metadata.get("type", "")).startswith(("Authority", "RetainedOutput", "Prepared"))]
+    return [
+        commit.metadata
+        for commit in history.commits
+        if str(commit.metadata.get("type", "")).startswith(("Authority", "RetainedOutput", "Prepared"))
+    ]
 
 
 def test_workspace_filesystem_authority_execution_options_drive_runtime_run(tmp_path: Path) -> None:

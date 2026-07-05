@@ -227,7 +227,7 @@ def test_compare_same_invocation_across_terminal_outcomes():
     ok = RunTrace(revision("r1"))
     failed = RunTrace(revision("r2", status="discarded", extra=[DENIAL]))
     diff = ok.compare(failed)
-    assert diff["same_invocation"] is True # same task+args+may ⇒ same cross-run fact
+    assert diff["same_invocation"] is True  # same task+args+may ⇒ same cross-run fact
     assert diff["terminal_status"] == ("merged", "discarded")
     assert diff["kind_count_delta"] == {"supervisor.decision": 1}
 
@@ -288,11 +288,11 @@ def test_nested_child_completed_event_points_to_durable_child_trace(mg) -> None:
 
 @pytest.mark.skipif(sys.platform != "darwin", reason="clonefile carrier pairing (sibling-suite convention)")
 def test_read_run_trace_rides_the_public_route(mg, tmp_path: Path, monkeypatch) -> None:
-    assert read_run_trace(mg) is None # no world yet — the None path is honest
+    assert read_run_trace(mg) is None  # no world yet — the None path is honest
     head = append_run_trace(mg, revision("run-1", extra=[DENIAL]))
     by_head = read_run_trace(mg, head)
     assert by_head.run_ref == "run-1"
-    by_selected = read_run_trace(mg) # head=None: the binding's selected head
+    by_selected = read_run_trace(mg)  # head=None: the binding's selected head
     assert by_selected.payload == by_head.payload
     assert by_head.summary()["supervision"][0]["path"] == "src/x.py"
 

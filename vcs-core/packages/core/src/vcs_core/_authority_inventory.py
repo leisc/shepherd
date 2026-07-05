@@ -32,7 +32,7 @@ AUTHORITY_SETTLEMENT_SCHEMA_MISMATCH = "authority_settlement_schema_mismatch"
 AUTHORITY_SETTLEMENT_IDENTITY_MISMATCH = "authority_settlement_identity_mismatch"
 
 
-def probe_authority_settlement_pending(repo_path: str | Path) -> tuple[InventoryItem,...]:
+def probe_authority_settlement_pending(repo_path: str | Path) -> tuple[InventoryItem, ...]:
     root = _authority_settlement_pending_root(repo_path)
     if not root.exists():
         return ()
@@ -52,16 +52,13 @@ def authority_settlement_pending_label(item: InventoryItem) -> str:
     return f"{Path(str(item.locator)).name} ({item.health.status})"
 
 
-def authority_settlement_pending_labels(repo_path: str | Path) -> tuple[str,...]:
-    return tuple(
-        authority_settlement_pending_label(item)
-        for item in probe_authority_settlement_pending(repo_path)
-    )
+def authority_settlement_pending_labels(repo_path: str | Path) -> tuple[str, ...]:
+    return tuple(authority_settlement_pending_label(item) for item in probe_authority_settlement_pending(repo_path))
 
 
 def read_valid_authority_settlement_pending_records(
     repo_path: str | Path,
-) -> tuple[PendingAuthoritySettlement,...]:
+) -> tuple[PendingAuthoritySettlement, ...]:
     items = probe_authority_settlement_pending(repo_path)
     invalid_items = tuple(item for item in items if item.health.validity != "valid")
     if invalid_items:
@@ -70,16 +67,13 @@ def read_valid_authority_settlement_pending_records(
     records: list[PendingAuthoritySettlement] = []
     for item in items:
         if item.locator is None:
-            raise InvalidRepositoryStateError(
-                f"authority settlement inventory item {item.id!r} has no locator."
-            )
+            raise InvalidRepositoryStateError(f"authority settlement inventory item {item.id!r} has no locator.")
         try:
             payload = json.loads(Path(item.locator).read_text())
             records.append(PendingAuthoritySettlement.from_dict(payload))
         except (OSError, json.JSONDecodeError, TypeError, ValueError) as exc:
             raise InvalidRepositoryStateError(
-                "authority settlement pending inventory changed while recovery was reading "
-                f"{item.locator}: {exc}"
+                f"authority settlement pending inventory changed while recovery was reading {item.locator}: {exc}"
             ) from exc
     return tuple(records)
 
@@ -294,14 +288,12 @@ def _item_id(path: Path) -> str:
     return f"authority_settlement_pending:file:{path.name}"
 
 
-def _invalid_pending_records_message(items: tuple[InventoryItem,...]) -> str:
+def _invalid_pending_records_message(items: tuple[InventoryItem, ...]) -> str:
     details = []
     for item in items:
         issue_codes = ",".join(item.health.issue_codes) or item.health.status
         details.append(f"{authority_settlement_pending_label(item)} [{issue_codes}]")
-    return "Cannot recover authority settlements while pending-settlement inventory is invalid: " + "; ".join(
-        details
-    )
+    return "Cannot recover authority settlements while pending-settlement inventory is invalid: " + "; ".join(details)
 
 
 def _item(
@@ -311,7 +303,7 @@ def _item(
     health: Health,
     fields: dict[str, object],
     source_identity: dict[str, object] | None = None,
-    issues: tuple[InventoryIssue,...] = (),
+    issues: tuple[InventoryIssue, ...] = (),
 ) -> InventoryItem:
     return InventoryItem(
         id=item_id,

@@ -194,8 +194,8 @@ class _NucleusRunExecutionError(Exception):
         self,
         cause: BaseException,
         *,
-        task_resolutions: tuple[TaskResolutionRecord,...],
-        task_executions: tuple[TaskExecutionRecord,...],
+        task_resolutions: tuple[TaskResolutionRecord, ...],
+        task_executions: tuple[TaskExecutionRecord, ...],
     ) -> None:
         super().__init__(str(cause))
         self.cause = cause
@@ -460,7 +460,7 @@ class RuntimeTaskLibrary:
         *,
         base_version: str,
         produced_by_run: str | None = None,
-        derived_from: tuple[str,...] = (),
+        derived_from: tuple[str, ...] = (),
         source_identity: str | None = None,
         may_default: str | None = None,
         declared_dependencies: Mapping[str, DeclaredDependencyInput] | None = None,
@@ -542,11 +542,11 @@ class TaskRuntimeContext:
         return self._graph
 
     @property
-    def task_resolutions(self) -> tuple[TaskResolutionRecord,...]:
+    def task_resolutions(self) -> tuple[TaskResolutionRecord, ...]:
         return tuple(self._resolutions)
 
     @property
-    def task_executions(self) -> tuple[TaskExecutionRecord,...]:
+    def task_executions(self) -> tuple[TaskExecutionRecord, ...]:
         return tuple(self._executions)
 
     def resolve_task(
@@ -909,7 +909,7 @@ class TaskLibraryClient:
     def mg(self) -> Any:
         return self._workspace.mg
 
-    def list(self, *, status: str | None = None, prefix: str | None = None) -> tuple[TaskSummary,...]:
+    def list(self, *, status: str | None = None, prefix: str | None = None) -> tuple[TaskSummary, ...]:
         return list_tasks(self.mg, status=status, prefix=prefix)
 
     def get(self, task_ref: TaskRefInput) -> TaskDefinitionVersion | None:
@@ -953,7 +953,7 @@ class TaskLibraryClient:
         declared_dependencies: Mapping[str, DeclaredDependencyInput] | None = None,
         metadata: Mapping[str, object] | None = None,
         produced_by_run: str | None = None,
-        derived_from: tuple[str,...] = (),
+        derived_from: tuple[str, ...] = (),
         source_identity: str | None = None,
     ) -> TaskDefinitionVersion:
         """Register a task source as a new task version.
@@ -990,7 +990,7 @@ class TaskLibraryClient:
         declared_dependencies: Mapping[str, DeclaredDependencyInput] | None = None,
         metadata: Mapping[str, object] | None = None,
         produced_by_run: str | None = None,
-        derived_from: tuple[str,...] = (),
+        derived_from: tuple[str, ...] = (),
     ) -> TaskDefinitionVersion:
         """Commit a generated source update derived from an existing task version."""
         task_source = _task_source_from_source_text(
@@ -1024,7 +1024,7 @@ class TaskLibraryClient:
         declared_dependencies: Mapping[str, DeclaredDependencyInput] | None = None,
         metadata: Mapping[str, object] | None = None,
         produced_by_run: str | None = None,
-        derived_from: tuple[str,...] = (),
+        derived_from: tuple[str, ...] = (),
     ) -> TaskDefinitionVersion:
         """Register generated task source directly into the task artifact store."""
         task_source = _task_source_from_source_text(
@@ -1054,7 +1054,7 @@ class TaskLibraryClient:
         *,
         base_version: str,
         produced_by_run: str | None = None,
-        derived_from: tuple[str,...] = (),
+        derived_from: tuple[str, ...] = (),
         source_identity: str | None = None,
         may_default: str | None = None,
         declared_dependencies: Mapping[str, DeclaredDependencyInput] | None = None,
@@ -1135,7 +1135,7 @@ class TaskLibraryClient:
         metadata: JsonObject,
         base_version: str | None,
         produced_by_run: str | None,
-        derived_from: tuple[str,...],
+        derived_from: tuple[str, ...],
         source_identity: str | None,
     ) -> TaskDefinitionVersion:
         if not task_id:
@@ -1274,7 +1274,7 @@ class RunControlClient:
         status: str | None = None,
         task_id: str | None = None,
         max_count: int | None = None,
-    ) -> tuple[RunSummary,...]:
+    ) -> tuple[RunSummary, ...]:
         return list_runs(self.mg, status=status, task_id=task_id, max_count=max_count)
 
     def show(self, run_ref: RunSelectorInput) -> RunRecord | None:
@@ -1300,7 +1300,7 @@ class RunControlClient:
         *,
         run_ref: RunSelectorInput | None = None,
         binding: str | None = None,
-    ) -> tuple[RunOutputCitationRef,...]:
+    ) -> tuple[RunOutputCitationRef, ...]:
         run_ref_id, exact_run_ref = _coerce_optional_run_query_input(run_ref)
         if exact_run_ref:
             assert run_ref_id is not None
@@ -1315,7 +1315,7 @@ class RunControlClient:
         binding: str | None = None,
         state: str | None = None,
         trace_store: Any = None,
-    ) -> tuple[RunOutput,...]:
+    ) -> tuple[RunOutput, ...]:
         owned_store = None
         if trace_store is None:
             from shepherd2.trace_store import SQLiteTraceStore
@@ -1715,8 +1715,8 @@ class RunControlClient:
         run_ref: str,
         parent_scope: Any,
         resolved: ResolvedTask,
-        task_resolutions: tuple[TaskResolutionRecord,...],
-        task_executions: tuple[TaskExecutionRecord,...],
+        task_resolutions: tuple[TaskResolutionRecord, ...],
+        task_executions: tuple[TaskExecutionRecord, ...],
     ) -> RunRecord | None:
         pending = _pending_filesystem_authority_settlement_for_run(self.mg, run_ref)
         if pending is None:
@@ -1896,7 +1896,7 @@ class RunControlClient:
             "authority_context": retained_authority_context,
             "execution_enforcement": retained_execution.to_descriptor(),
         }
-        if (runtime_policy:= runtime_plan.policy_payload()) is not None:
+        if (runtime_policy := runtime_plan.policy_payload()) is not None:
             settlement_policy["runtime"] = runtime_policy
         launch_context = RunLaunchContext(
             launch_surface=launch_surface,
@@ -1964,7 +1964,7 @@ class RunControlClient:
                     task_resolutions=exc.task_resolutions,
                     task_executions=exc.task_executions,
                 )
-            except Exception as exc: # noqa: BLE001 - terminalize arbitrary task/runtime failures.
+            except Exception as exc:  # noqa: BLE001 - terminalize arbitrary task/runtime failures.
                 self._publish_failed_retained_workspace_run(running, exc)
 
             return self._publish_successful_retained_workspace_run(
@@ -1981,8 +1981,8 @@ class RunControlClient:
         running: RunRecord,
         cause: BaseException,
         *,
-        task_resolutions: tuple[TaskResolutionRecord,...] | None = None,
-        task_executions: tuple[TaskExecutionRecord,...] | None = None,
+        task_resolutions: tuple[TaskResolutionRecord, ...] | None = None,
+        task_executions: tuple[TaskExecutionRecord, ...] | None = None,
     ) -> NoReturn:
         failed = replace(
             running,
@@ -2017,8 +2017,8 @@ class RunControlClient:
         running: RunRecord,
         *,
         sealed_execution: Any,
-        completed_resolutions: tuple[TaskResolutionRecord,...],
-        task_executions: tuple[TaskExecutionRecord,...],
+        completed_resolutions: tuple[TaskResolutionRecord, ...],
+        task_executions: tuple[TaskExecutionRecord, ...],
         trace_ref: TraceRef,
         resolved: ResolvedTask,
     ) -> RunRecord:
@@ -2031,7 +2031,7 @@ class RunControlClient:
                 trace_ref=trace_ref,
                 sealed_execution=sealed_execution,
             )
-        except Exception as exc: # noqa: BLE001 - custody exists; record diagnosable terminal state.
+        except Exception as exc:  # noqa: BLE001 - custody exists; record diagnosable terminal state.
             publication_error = _output_publication_error(exc, sealed_execution=sealed_execution)
 
         terminal_without_trace = replace(
@@ -2092,7 +2092,7 @@ class RunControlClient:
         resolved_graph: ResolvedTaskGraph,
         placement_decision: _WorkspaceRunPlacementDecision,
         runtime_plan: WorkspaceRunRuntimePlan,
-    ) -> tuple[Any, tuple[TaskResolutionRecord,...], tuple[TaskExecutionRecord,...]]:
+    ) -> tuple[Any, tuple[TaskResolutionRecord, ...], tuple[TaskExecutionRecord, ...]]:
         """Execute a workspace-control task through vcs-core's retained runtime command."""
         from vcs_core.runtime_api import CommandExecutionOptions
         from vcs_core.types import SealedExecutionOutcome
@@ -2199,7 +2199,7 @@ class RunControlClient:
         parent_scope: Any,
         root_resolution: TaskResolutionRecord,
         resolved_graph: ResolvedTaskGraph,
-    ) -> tuple[Any, tuple[TaskResolutionRecord,...], tuple[TaskExecutionRecord,...]]:
+    ) -> tuple[Any, tuple[TaskResolutionRecord, ...], tuple[TaskExecutionRecord, ...]]:
         """Execute a workspace-control task through authority terminalization."""
         from vcs_core.runtime_api import AuthorityExecutionOutcome
 
@@ -2246,7 +2246,7 @@ class RunControlClient:
         execution_provider: Any | None = None,
         executor_descriptor: TaskExecutor | None = None,
         task_execution_metadata: Mapping[str, object] | None = None,
-    ) -> tuple[Any, tuple[TaskResolutionRecord,...], tuple[TaskExecutionRecord,...]]:
+    ) -> tuple[Any, tuple[TaskResolutionRecord, ...], tuple[TaskExecutionRecord, ...]]:
         """Execute a workspace-control task through vcs-core's runtime command."""
         if execution_provider is not None:
             return self._execute_nucleus_confined_root_runtime_run(
@@ -2316,7 +2316,7 @@ class RunControlClient:
             )
         except Exception as exc:
             runtime = runtime_ref
-            task_runtime_executions: tuple[TaskExecutionRecord,...] = (
+            task_runtime_executions: tuple[TaskExecutionRecord, ...] = (
                 () if runtime is None else runtime.task_executions
             )
             raise error_cls(
@@ -2342,7 +2342,7 @@ class RunControlClient:
         executor_descriptor: TaskExecutor | None,
         task_execution_metadata: Mapping[str, object] | None,
         error_cls: type[_NucleusRunExecutionError],
-    ) -> tuple[Any, tuple[TaskResolutionRecord,...], tuple[TaskExecutionRecord,...]]:
+    ) -> tuple[Any, tuple[TaskResolutionRecord, ...], tuple[TaskExecutionRecord, ...]]:
         """Execute a root workspace task via an execution-bound confined provider."""
         executor = executor_descriptor or ConfinedProcessTaskExecutorDescriptor()
         execution_metadata = (
@@ -2469,7 +2469,7 @@ class _TaskLibraryMutation:
     metadata: JsonObject
     base_version: str | None
     produced_by_run: str | None
-    derived_from: tuple[str,...]
+    derived_from: tuple[str, ...]
     source_identity: str | None
 
 
@@ -2505,7 +2505,7 @@ def _parse_source_identity(value: str) -> _SourceIdentity:
     marker = ":path:"
     if not value.startswith(prefix) or marker not in value:
         raise TaskRegistrationError("source_identity must be shaped as world:<world_oid>:path:<relative_path>")
-    world_oid, path = value[len(prefix):].split(marker, 1)
+    world_oid, path = value[len(prefix) :].split(marker, 1)
     if not world_oid:
         raise TaskRegistrationError("source_identity world oid must be non-empty")
     _validate_source_identity_path(path)
@@ -2774,7 +2774,7 @@ def _workspace_run_placement_decision(
 
 def _resolve_workspace_run_placement(placement: str) -> WorkspaceRunPlacement:
     if placement in {"auto", "advisory", "jail"}:
-        return placement # type: ignore[return-value]
+        return placement  # type: ignore[return-value]
     raise RunStartError("workspace run placement must be one of: 'auto', 'advisory', 'jail'")
 
 
@@ -2861,7 +2861,7 @@ def _validate_workspace_runtime_plan_for_placement(
 def _workspace_runtime_input_artifacts(
     workspace: ShepherdWorkspace,
     args: Mapping[str, object],
-) -> tuple[WorkspaceRuntimeInputArtifact,...]:
+) -> tuple[WorkspaceRuntimeInputArtifact, ...]:
     return tuple(
         _workspace_runtime_input_artifact(workspace, ref, index=index)
         for index, ref in enumerate(iter_run_artifact_input_refs(args), start=1)
@@ -2922,7 +2922,7 @@ def _terminal_launch_context_with_execution_evidence(
         updated[key] = None
     if cause is None:
         updated["established_monitor"] = raw.get("requested_monitor")
-    elif (confined_failure:= _confined_task_execution_failure(cause)) is not None:
+    elif (confined_failure := _confined_task_execution_failure(cause)) is not None:
         updated["established_monitor"] = raw.get("requested_monitor") if confined_failure.monitor_established else None
         updated[_confined_task_failure_evidence_key(confined_failure)] = confined_failure.evidence()
     elif _is_monitor_refusal(cause):
@@ -3501,7 +3501,7 @@ def _artifact_digest_from_payload(payload: Mapping[str, object]) -> str:
         "requires_python": payload.get("requires_python"),
         "metadata": payload.get("metadata", {}),
     }
-    if len(digest_payload["files"]) != len(files): # type: ignore[arg-type]
+    if len(digest_payload["files"]) != len(files):  # type: ignore[arg-type]
         raise TaskRegistrationError("task artifact files must be objects")
     return _canonical_digest(digest_payload)
 
@@ -3680,7 +3680,7 @@ def _loaded_task_callable(mg: Any, ref: TaskArtifactRef) -> Any:
                     sys.modules[name] = module
 
 
-def _artifact_files(payload: Mapping[str, object]) -> tuple[Mapping[str, object],...]:
+def _artifact_files(payload: Mapping[str, object]) -> tuple[Mapping[str, object], ...]:
     raw_files = payload.get("files")
     if not isinstance(raw_files, list | tuple):
         raise RunStartError("task artifact files must be a list")
@@ -3711,7 +3711,7 @@ def _is_same_path(path: str, other: Path | None) -> bool:
         return False
 
 
-def _module_chain(module_name: str) -> tuple[str,...]:
+def _module_chain(module_name: str) -> tuple[str, ...]:
     parts = module_name.split(".")
     return tuple(".".join(parts[:index]) for index in range(1, len(parts) + 1))
 
@@ -3874,13 +3874,13 @@ def _failed_task_execution_record(record: TaskExecutionRecord, exc: BaseExceptio
 
 
 def _exception_error_evidence(exc: BaseException) -> JsonObject:
-    if (confined_failure:= _confined_task_execution_failure(exc)) is not None:
+    if (confined_failure := _confined_task_execution_failure(exc)) is not None:
         return confined_failure.evidence()
     return {"type": type(exc).__name__, "message": str(exc)}
 
 
 def _run_enforcement_for_task_executions(
-    executions: tuple[TaskExecutionRecord,...],
+    executions: tuple[TaskExecutionRecord, ...],
     *,
     fallback: RunEnforcement,
 ) -> RunEnforcement:
@@ -3891,7 +3891,7 @@ def _run_enforcement_for_task_executions(
 
 def _run_execution_evidence_for_task_executions(
     evidence: RunExecutionEvidence,
-    executions: tuple[TaskExecutionRecord,...],
+    executions: tuple[TaskExecutionRecord, ...],
 ) -> RunExecutionEvidence:
     if any(execution.metadata.get("launch_confined_attempted") is True for execution in executions):
         return replace(evidence, enforcement_basis="launch_confined_attempted")
@@ -3952,7 +3952,7 @@ def _run_ledger_payload(payload: Mapping[str, object] | None) -> JsonObject:
         raise RunStartError(str(exc)) from exc
 
 
-def _task_versions_for_payload(payload: Mapping[str, object], task_id: str) -> tuple[TaskDefinitionVersion,...]:
+def _task_versions_for_payload(payload: Mapping[str, object], task_id: str) -> tuple[TaskDefinitionVersion, ...]:
     tasks = payload.get("tasks", {})
     if not isinstance(tasks, Mapping):
         raise TaskRegistrationError("task ledger payload field 'tasks' must be an object")
@@ -3973,7 +3973,7 @@ def _split_task_ref(task_ref: str) -> tuple[str, str | None]:
     return task_id, version
 
 
-def _next_version(existing_versions: tuple[TaskDefinitionVersion,...]) -> str:
+def _next_version(existing_versions: tuple[TaskDefinitionVersion, ...]) -> str:
     max_version = 0
     for version in existing_versions:
         if version.version.startswith("v") and version.version[1:].isdigit():

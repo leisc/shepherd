@@ -42,7 +42,7 @@ class TraceDescriptorNotResolvedError(RunOutputResolutionError):
 class DescriptorResolver(Protocol):
     """Resolve a trace-owned RunOutput descriptor from its durable locator."""
 
-    def __call__(self, locator: RunOutputDescriptorLocator) -> ProjectedRunOutputDescriptor:...
+    def __call__(self, locator: RunOutputDescriptorLocator) -> ProjectedRunOutputDescriptor: ...
 
 
 @dataclass(frozen=True)
@@ -128,7 +128,7 @@ class RunOutputResolver:
         if self.trace_store is not None and self.descriptor_resolver is not None:
             raise TypeError("RunOutputResolver accepts either trace_store or descriptor_resolver, not both")
 
-    def resolve(self, citations: Iterable[RunOutputCitationRef]) -> tuple[RunOutputRef,...]:
+    def resolve(self, citations: Iterable[RunOutputCitationRef]) -> tuple[RunOutputRef, ...]:
         citations_tuple = tuple(citations)
         if not citations_tuple:
             return ()
@@ -138,7 +138,7 @@ class RunOutputResolver:
         if not candidate_citations:
             return ()
         descriptor_resolver: DescriptorResolver | None = None
-        retained_rows: tuple[Any,...] | None = None
+        retained_rows: tuple[Any, ...] | None = None
         refs: list[RunOutputRef] = []
         for citation in candidate_citations:
             if descriptor_resolver is None:
@@ -150,7 +150,9 @@ class RunOutputResolver:
                     retained_rows = self._filtered_retained_output_rows()
                 retained = _matching_retained_row(citation, retained_rows)
             if retained is None:
-                raise RunOutputResolutionError(f"no retained-output custody row matches run output {citation.output_name!r}")
+                raise RunOutputResolutionError(
+                    f"no retained-output custody row matches run output {citation.output_name!r}"
+                )
             if not self._matches_filters(retained):
                 continue
             refs.append(_run_output_ref_from_authorities(citation, retained, descriptor_record))
@@ -171,7 +173,7 @@ class RunOutputResolver:
             "use run_output_citations() for raw run-ledger citations"
         )
 
-    def _filtered_retained_output_rows(self) -> tuple[Any,...] | None:
+    def _filtered_retained_output_rows(self) -> tuple[Any, ...] | None:
         return self._list_retained_output_rows(parent=self.parent, binding=self.binding, state=self.state)
 
     def _matches_filters(self, retained: Any) -> bool:
@@ -189,7 +191,7 @@ class RunOutputResolver:
         parent: Any,
         binding: str | None,
         state: str | None,
-    ) -> tuple[Any,...]:
+    ) -> tuple[Any, ...]:
         reader = getattr(self.mg, "list_retained_outputs", None)
         if reader is None:
             raise TypeError("workspace-control output queries require VcsCore.list_retained_outputs")
@@ -427,7 +429,7 @@ def _retained_parent_scope_instance_id(parent_ref: str, retained: Any) -> str | 
     return raw
 
 
-def _changed_paths_tuple(value: Any, field_name: str) -> tuple[str,...]:
+def _changed_paths_tuple(value: Any, field_name: str) -> tuple[str, ...]:
     if not isinstance(value, list | tuple):
         raise TypeError(f"{field_name} must be a list or tuple")
     paths: list[str] = []
@@ -438,7 +440,7 @@ def _changed_paths_tuple(value: Any, field_name: str) -> tuple[str,...]:
     return tuple(paths)
 
 
-def _matching_retained_row(citation: RunOutputCitationRef, rows: tuple[Any,...]) -> Any | None:
+def _matching_retained_row(citation: RunOutputCitationRef, rows: tuple[Any, ...]) -> Any | None:
     for row in rows:
         if _retained_row_matches(citation, row):
             return row
@@ -607,7 +609,7 @@ def _validate_trace_descriptor_payload(
     *,
     citation: RunOutputCitationRef,
     retained: _RetainedOutputFields,
-    changed_paths: tuple[str,...],
+    changed_paths: tuple[str, ...],
 ) -> None:
     expected = {
         "output_name": citation.output_name,
@@ -669,7 +671,7 @@ def _required_payload_member(
     return value
 
 
-def _changed_paths(value: Any, field_name: str) -> tuple[str,...]:
+def _changed_paths(value: Any, field_name: str) -> tuple[str, ...]:
     if not isinstance(value, list | tuple):
         raise RunOutputResolutionError(f"{field_name} must be a list or tuple")
     paths: list[str] = []

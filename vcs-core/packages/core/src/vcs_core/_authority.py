@@ -312,7 +312,7 @@ class PreparedAuthorityMerge:
     parent_scope_ref: str
     candidate_batch_ref: str
     candidate_digest: str
-    prepared_substrate_names: tuple[str,...]
+    prepared_substrate_names: tuple[str, ...]
     prepared_substrate_digests: dict[str, str]
 
     def to_metadata(
@@ -359,7 +359,7 @@ class PreparedRetainedOutputSelection:
     candidate_head: str
     parent_basis_world_oid: str
     output_world_oid: str
-    changed_paths: tuple[str,...]
+    changed_paths: tuple[str, ...]
     classification_basis: RetainedOutputClassificationBasis
 
     def to_metadata(
@@ -406,17 +406,17 @@ class AuthorityMergeResult:
     settlement: AuthoritySettlement
     parent_world_before: str | None
     parent_world_after: str | None
-    decisions: tuple[AuthorityDecisionRecord,...]
+    decisions: tuple[AuthorityDecisionRecord, ...]
     permission_plan_digest: str | None = None
     permission_plan_descriptor: dict[str, object] | None = None
 
 
 class DecisionProvider(Protocol):
-    def __call__(self, request: GitRepoAuthorityRequest) -> AuthorityDecision | AuthorityOutcome:...
+    def __call__(self, request: GitRepoAuthorityRequest) -> AuthorityDecision | AuthorityOutcome: ...
 
 
 class RetainedOutputDecisionProvider(Protocol):
-    def __call__(self, request: RetainedOutputAuthorityRequest) -> AuthorityDecision | AuthorityOutcome:...
+    def __call__(self, request: RetainedOutputAuthorityRequest) -> AuthorityDecision | AuthorityOutcome: ...
 
 
 AUTHORITY_SETTLEMENT_PENDING_SCHEMA = "vcscore/authority-settlement-pending/v1"
@@ -454,7 +454,7 @@ class PendingAuthoritySettlement:
     outcome: AuthorityOutcome
     settlement: AuthoritySettlement
     commit_outcome: AuthorityCommitOutcome
-    decision_ids: tuple[str,...]
+    decision_ids: tuple[str, ...]
     reason_code: str
     transaction_kind: AuthorityTransactionKind = "filesystem_merge"
     selection_operation_id: str | None = None
@@ -523,16 +523,12 @@ class PendingAuthoritySettlement:
             "permission_plan_descriptor",
         )
         if (self.permission_plan_digest is None) != (permission_plan_descriptor is None):
-            raise ValueError(
-                "authority settlement pending PermissionPlan evidence must include digest and descriptor"
-            )
+            raise ValueError("authority settlement pending PermissionPlan evidence must include digest and descriptor")
         if permission_plan_descriptor is not None:
             try:
                 permission_plan_descriptor = normalize_permission_plan_descriptor(permission_plan_descriptor)
             except PermissionPlanEvidenceError as exc:
-                raise ValueError(
-                    f"authority settlement pending PermissionPlan descriptor is invalid: {exc}"
-                ) from exc
+                raise ValueError(f"authority settlement pending PermissionPlan descriptor is invalid: {exc}") from exc
             if compute_permission_plan_digest(permission_plan_descriptor) != self.permission_plan_digest:
                 raise ValueError("authority settlement pending PermissionPlan digest mismatch")
             expected_route = (
@@ -1322,7 +1318,7 @@ def _short_digest(value: object) -> str:
     return hashlib.sha256(payload).hexdigest()[:16]
 
 
-def pending_authority_settlement_records(repo_path: str | Path) -> tuple[PendingAuthoritySettlement,...]:
+def pending_authority_settlement_records(repo_path: str | Path) -> tuple[PendingAuthoritySettlement, ...]:
     root = _authority_settlement_pending_root(repo_path)
     if not root.exists():
         return ()
@@ -1331,9 +1327,7 @@ def pending_authority_settlement_records(repo_path: str | Path) -> tuple[Pending
         try:
             records.append(PendingAuthoritySettlement.from_dict(json.loads(path.read_text())))
         except (OSError, json.JSONDecodeError, TypeError, ValueError) as exc:
-            raise InvalidRepositoryStateError(
-                f"Cannot read authority settlement pending record {path}: {exc}"
-            ) from exc
+            raise InvalidRepositoryStateError(f"Cannot read authority settlement pending record {path}: {exc}") from exc
     return tuple(records)
 
 
@@ -1344,9 +1338,7 @@ def read_pending_authority_settlement(
     try:
         return PendingAuthoritySettlement.from_dict(json.loads(path.read_text()))
     except (OSError, json.JSONDecodeError, TypeError, ValueError) as exc:
-        raise InvalidRepositoryStateError(
-            f"Cannot read authority settlement pending record {path}: {exc}"
-        ) from exc
+        raise InvalidRepositoryStateError(f"Cannot read authority settlement pending record {path}: {exc}") from exc
 
 
 def write_pending_authority_settlement(repo_path: str | Path, pending: PendingAuthoritySettlement) -> None:
@@ -1363,7 +1355,7 @@ def clear_pending_authority_settlement(repo_path: str | Path, settlement_operati
     _authority_settlement_pending_path(repo_path, settlement_operation_id).unlink(missing_ok=True)
 
 
-def authority_settlement_pending_labels(repo_path: str | Path) -> tuple[str,...]:
+def authority_settlement_pending_labels(repo_path: str | Path) -> tuple[str, ...]:
     labels: list[str] = []
     root = _authority_settlement_pending_root(repo_path)
     if not root.exists():
@@ -1427,7 +1419,7 @@ def _optional_str(data: dict[str, object], field_name: str) -> str | None:
     return str(value)
 
 
-def _str_tuple(value: object, field_name: str) -> tuple[str,...]:
+def _str_tuple(value: object, field_name: str) -> tuple[str, ...]:
     if not isinstance(value, list):
         raise TypeError(f"authority settlement field {field_name!r} must be a list")
     result: list[str] = []

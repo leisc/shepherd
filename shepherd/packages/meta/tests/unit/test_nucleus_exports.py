@@ -31,7 +31,7 @@ def test_top_level_facade_exposes_spine_and_handle_surface() -> None:
         "RunRef",
     ):
         assert name in shepherd.__all__
-    #...and the substrate-handle surface is now consolidated here too.
+    # ...and the substrate-handle surface is now consolidated here too.
     for name in (
         "GitRepo",
         "May",

@@ -42,11 +42,7 @@ class BalanceResult:
 async def query_balance(
     account_id: Annotated[
         str,
-        InputMarker(
-            description=(
-                "Account ID to query (defaults to the context's account)"
-            )
-        ),
+        InputMarker(description=("Account ID to query (defaults to the context's account)")),
     ] = "",
 ) -> BalanceResult:
     """Query the balance of a banking account.
@@ -62,10 +58,12 @@ async def query_balance(
 
         ws = workspace(model=...)
         with ws.scope:
-            ws.scope.bind(BankingContext(
-                account_id="ACC-001",
-                account_name="Operations",
-            ))
+            ws.scope.bind(
+                BankingContext(
+                    account_id="ACC-001",
+                    account_name="Operations",
+                )
+            )
             result = await query_balance(account_id="ACC-001")
             print(f"Balance: {result.balance} {result.currency}")
     """

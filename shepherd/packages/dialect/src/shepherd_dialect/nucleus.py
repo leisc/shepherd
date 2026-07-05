@@ -107,7 +107,7 @@ class Failed:
     retryable: bool | None = None
 
 
-class DeliveryFailed(Exception): # noqa: N818 — the spec's pinned name (CONTRACTS A7)
+class DeliveryFailed(Exception):  # noqa: N818 — the spec's pinned name (CONTRACTS A7)
     """Plain-call unwrap of a non-Finished outcome; carries the Run (A7)."""
 
     def __init__(self, message: str, *, run: Run[Any]) -> None:
@@ -115,27 +115,27 @@ class DeliveryFailed(Exception): # noqa: N818 — the spec's pinned name (CONTRA
         self.run = run
 
 
-class BudgetExhausted(Exception): # noqa: N818 — names the outcome, not an error class
+class BudgetExhausted(Exception):  # noqa: N818 — names the outcome, not an error class
     """A positively identified budget stop (probe a: 'Reached max turns')."""
 
 
-class WorkspaceAlreadyConfigured(Exception): # noqa: N818 — the spec's pinned name
+class WorkspaceAlreadyConfigured(Exception):  # noqa: N818 — the spec's pinned name
     """A conflicting ambient workspace is already configured."""
 
 
-class WorkspaceNotConfigured(Exception): # noqa: N818 — the spec's pinned name
+class WorkspaceNotConfigured(Exception):  # noqa: N818 — the spec's pinned name
     """A task ran before ``workspace(...)`` configured the ambient workspace."""
 
 
-class NoActiveTaskRun(Exception): # noqa: N818 — the spec's pinned name
+class NoActiveTaskRun(Exception):  # noqa: N818 — the spec's pinned name
     """An in-body verb was called outside a task run."""
 
 
-class EffectNotPermitted(Exception): # noqa: N818 — the spec's pinned name
+class EffectNotPermitted(Exception):  # noqa: N818 — the spec's pinned name
     """A run attempted an in-process effect outside its coarse ``may=`` profile."""
 
 
-class ReservedRuntimeParameter(Exception): # noqa: N818 — the spec's pinned outcome name
+class ReservedRuntimeParameter(Exception):  # noqa: N818 — the spec's pinned outcome name
     """A caller attempted to provide a runtime-owned task parameter."""
 
 
@@ -164,7 +164,7 @@ class Run(Generic[T]):
     outcome: Finished[T] | Exhausted | Stopped | Failed
     ref: RunRef
     duration: float
-    artifacts: tuple[Artifact,...] = ()
+    artifacts: tuple[Artifact, ...] = ()
     proof: ProofEnvelope = field(default_factory=runtime_only_envelope)
     _trace_head: str | None = field(default=None, repr=False)
     _trace_payload: Any | None = field(default=None, repr=False)
@@ -175,7 +175,7 @@ class Run(Generic[T]):
         raise DeliveryFailed(f"run {self.ref.id} ended {type(self.outcome).__name__}", run=self)
 
     @property
-    def trace(self) -> Any: # RunTrace | None — the slice-3 read, lazy
+    def trace(self) -> Any:  # RunTrace | None — the slice-3 read, lazy
         """The materialized durable trace, or a Path-A in-memory logical child trace."""
         if self._trace_payload is not None:
             from shepherd_dialect.trace import RunTrace
@@ -252,12 +252,12 @@ _CURRENT_RUN: contextvars.ContextVar[_RunContext | None] = contextvars.ContextVa
     "shepherd_dialect_current_run", default=None
 )
 _RUN_REGISTRY: dict[str, _RunContext] = {}
-_RESPONDERS: contextvars.ContextVar[tuple[tuple[str, Any],...]] = contextvars.ContextVar(
+_RESPONDERS: contextvars.ContextVar[tuple[tuple[str, Any], ...]] = contextvars.ContextVar(
     "shepherd_dialect_responders", default=()
 )
 _PROFILE_IN_PROCESS_EFFECTS: dict[str, frozenset[str] | None] = {
-    "Permissive": None, # all in-process responder effects are allowed.
-    "ReadOnly": frozenset({"operator.decision"}), # operator control is not a workspace/provider effect.
+    "Permissive": None,  # all in-process responder effects are allowed.
+    "ReadOnly": frozenset({"operator.decision"}),  # operator control is not a workspace/provider effect.
 }
 _MAY_DOMINANCE: dict[str, frozenset[str]] = {
     "Permissive": frozenset({"Permissive", "ReadOnly"}),
@@ -469,9 +469,9 @@ def _execute(
         if working_path is not None and fn_accepts_working_path and "working_path" not in call_kwargs:
             call_kwargs = {**kwargs, "working_path": working_path}
         result = fn(*args, **call_kwargs)
-        if inspect.iscoroutine(result): # D2: thin async wrapper over the sync core
+        if inspect.iscoroutine(result):  # D2: thin async wrapper over the sync core
             result = _run_coro(result)
-        for chk in output_checks: # postconditions: raise inside the body -> the wrap discards
+        for chk in output_checks:  # postconditions: raise inside the body -> the wrap discards
             if not chk(result):
                 raise CheckFailed(task_id, "return", result, chk, "postcondition")
         return result
@@ -487,8 +487,7 @@ def _execute(
                 outcome = Failed(
                     error_type="EffectNotPermitted",
                     message=(
-                        f"parent may={parent_ctx.may_profile!r} cannot launch "
-                        f"child may={may_resolution.resolved!r}"
+                        f"parent may={parent_ctx.may_profile!r} cannot launch child may={may_resolution.resolved!r}"
                     ),
                 )
             else:
@@ -537,7 +536,7 @@ def _execute(
         outcome = Exhausted(reason=str(exc))
     except _DeliveryShapeError as exc:
         outcome = Failed(error_type="DeliveryShapeError", message=str(exc))
-    except Exception as exc: # noqa: BLE001 — the no-raise contract: every raise maps shim-side
+    except Exception as exc:  # noqa: BLE001 — the no-raise contract: every raise maps shim-side
         outcome = Failed(error_type=type(exc).__name__, message=str(exc))
     finally:
         _CURRENT_RUN.reset(run_token)
@@ -553,7 +552,7 @@ def _execute(
         from shepherd_dialect.task_meta import dump_task_args
 
         call_args = dump_task_args(fn, args, kwargs)
-    except Exception: # noqa: BLE001 — any serde failure means "no typed key", never "no trace"
+    except Exception:  # noqa: BLE001 — any serde failure means "no typed key", never "no trace"
         call_args = {"call": repr((args, tuple(sorted(kwargs.items()))))}
 
     retained = isinstance(outcome, Finished) and sealed_execution is not None
@@ -574,7 +573,7 @@ def _execute(
         elif merged:
             terminal = "merged"
         elif violation is not None and violation.phase == "precondition":
-            terminal = "refused" # no fork ever happened (S1 seam 3)
+            terminal = "refused"  # no fork ever happened (S1 seam 3)
         else:
             terminal = "discarded"
         run_ctx.safe_point = terminal
@@ -620,7 +619,7 @@ def _execute(
                 trace_ref=trace_ref,
                 sealed_execution=sealed_execution,
             )
-        except Exception as exc: # noqa: BLE001 — custody exists; publish a diagnostic terminal row
+        except Exception as exc:  # noqa: BLE001 — custody exists; publish a diagnostic terminal row
             outcome = Failed(error_type=type(exc).__name__, message=str(exc))
             publication_error = _output_publication_error(outcome, sealed_execution=sealed_execution)
     error = None if publication_error is not None else _run_record_error(outcome)
@@ -940,7 +939,7 @@ class TaskCallable(Generic[T]):
 
     def _detailed_sync(
         self,
-        args: tuple[Any,...],
+        args: tuple[Any, ...],
         kwargs: dict[str, Any],
         *,
         success_disposition: str = "merge",
@@ -950,6 +949,7 @@ class TaskCallable(Generic[T]):
     def detailed(self, *args: Any, **kwargs: Any) -> Any:
         """Run and return the ``Run[T]`` (awaitable for async bodies); never raises."""
         if self._is_async:
+
             async def run() -> Run[T]:
                 return self._detailed_sync(args, kwargs)
 
@@ -964,6 +964,7 @@ class TaskCallable(Generic[T]):
         best-of-N composition.
         """
         if self._is_async:
+
             async def run() -> Run[T]:
                 return self._detailed_sync(args, kwargs, success_disposition="seal")
 
@@ -972,8 +973,9 @@ class TaskCallable(Generic[T]):
 
     def __call__(self, *args: Any, **kwargs: Any) -> Any:
         if self._is_async:
+
             async def run() -> T:
-                _ambient() # WorkspaceNotConfigured raises before any work
+                _ambient()  # WorkspaceNotConfigured raises before any work
                 return self._detailed_sync(args, kwargs).unwrap()
 
             return run()

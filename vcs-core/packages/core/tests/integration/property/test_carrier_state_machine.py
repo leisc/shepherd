@@ -113,9 +113,7 @@ class ClonefileCarrierStateMachine(RuleBasedStateMachine):
     def _model_diff(self, scope_id: str) -> dict[str, bytes | None]:
         mine = self.model[scope_id]
         base = self._base_for(scope_id)
-        diff: dict[str, bytes | None] = {
-            path: content for path, content in mine.items() if base.get(path) != content
-        }
+        diff: dict[str, bytes | None] = {path: content for path, content in mine.items() if base.get(path) != content}
         diff.update({path: None for path in base if path not in mine})
         return diff
 
@@ -219,9 +217,7 @@ class ClonefileCarrierStateMachine(RuleBasedStateMachine):
         for scope_id in self.model:
             actual = {path: content for path, content, _mode in self.backend.diff_layer(scope_id)}
             expected = self._model_diff(scope_id)
-            assert actual == expected, (
-                f"diff_layer({scope_id!r}) diverged:\n actual={actual}\n expected={expected}"
-            )
+            assert actual == expected, f"diff_layer({scope_id!r}) diverged:\n actual={actual}\n expected={expected}"
 
 
 TestCarrierStandard = ClonefileCarrierStateMachine.TestCase

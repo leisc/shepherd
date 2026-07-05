@@ -572,7 +572,10 @@ captures every action an agent took while executing the tasks above, plus the re
 those actions. Click the nodes to learn more about the events.
 """,
         ),
-        ("code", 'viz.show(viz.trace(workspace.flow, runs | {"selector": selector}, height="620px", detail="events"))\n'),
+        (
+            "code",
+            'viz.show(viz.trace(workspace.flow, runs | {"selector": selector}, height="620px", detail="events"))\n',
+        ),
         ("code", "workspace.close()\n"),
         (
             "markdown",

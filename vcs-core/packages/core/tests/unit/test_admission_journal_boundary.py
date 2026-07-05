@@ -30,7 +30,10 @@ def _runtime_request(scope_ref: str) -> ReadinessRequest:
 
 def _open_valid_journal(manager: WorldStorageManager, operation_id: str) -> None:
     manager.open_operation_journal(
-        operation_id=operation_id, operation_kind="shepherd.task", target_ref="refs/vcscore/ground", input_world_oid=None
+        operation_id=operation_id,
+        operation_kind="shepherd.task",
+        target_ref="refs/vcscore/ground",
+        input_world_oid=None,
     )
 
 
@@ -78,7 +81,9 @@ def test_missing_index_falls_back_read_only_then_heals_on_next_write(mg: VcsCore
     rebuild side effect on the gate). The index self-heals on the next co-write, not on the read."""
     manager = open_or_init_default_world_storage(mg._repo_path)
     _open_valid_journal(manager, "op-a")
-    manager.world_store.repo.references.delete(world_open_operation_journal_index_ref(manager.world_store.world_store_id))
+    manager.world_store.repo.references.delete(
+        world_open_operation_journal_index_ref(manager.world_store.world_store_id)
+    )
     assert manager.read_open_operation_journal_index() is None  # missing
 
     bounded = {item.locator for item in _admission_operation_journal_items(mg._repo_path)}

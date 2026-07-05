@@ -22,7 +22,7 @@ from vcs_core._containment import JailNotEstablished
 if TYPE_CHECKING:
     from collections.abc import Sequence
 
-_DEV = '(allow file-write* (subpath "/dev"))' # /dev/null etc. — not the workspace
+_DEV = '(allow file-write* (subpath "/dev"))'  # /dev/null etc. — not the workspace
 
 
 def _sbpl_string(value: str) -> str:

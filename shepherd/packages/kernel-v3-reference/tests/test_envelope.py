@@ -174,9 +174,7 @@ def test_envelope_profile_rejected_forbids_transition() -> None:
         construct="RecordExpr",
     )
     # Build a transition just to pass an object in
-    _state, transition = start_kernel_replay(
-        elaborate(Let("y", Perform("ask", Lit(None)), Return(Var("y"))))
-    )
+    _state, transition = start_kernel_replay(elaborate(Let("y", Perform("ask", Lit(None)), Return(Var("y")))))
     with pytest.raises(ValueError, match="must not carry a transition"):
         KernelResultEnvelope(
             profile=CORE_A,
@@ -198,9 +196,7 @@ def test_envelope_completed_requires_transition() -> None:
 
 
 def test_envelope_completed_requires_completed_payload() -> None:
-    _state, transition = start_kernel_replay(
-        elaborate(Let("y", Perform("ask", Lit(None)), Return(Var("y"))))
-    )
+    _state, transition = start_kernel_replay(elaborate(Let("y", Perform("ask", Lit(None)), Return(Var("y")))))
     # ExternalEffectRequest payload with status='completed' should reject
     with pytest.raises(TypeError, match="CompletedResult"):
         KernelResultEnvelope(
@@ -212,9 +208,7 @@ def test_envelope_completed_requires_completed_payload() -> None:
 
 
 def test_envelope_external_effect_request_pairs_with_request_payload() -> None:
-    _state, transition = start_kernel_replay(
-        elaborate(Let("y", Perform("ask", Lit(None)), Return(Var("y"))))
-    )
+    _state, transition = start_kernel_replay(elaborate(Let("y", Perform("ask", Lit(None)), Return(Var("y")))))
     request = transition.payload
     assert isinstance(request, ExternalEffectRequest)
     env = KernelResultEnvelope(
@@ -233,9 +227,7 @@ def test_envelope_rejected_forbids_profile_admission_payload() -> None:
         diagnostic="bad",
         construct="RecordExpr",
     )
-    _state, transition = start_kernel_replay(
-        elaborate(Let("y", Perform("ask", Lit(None)), Return(Var("y"))))
-    )
+    _state, transition = start_kernel_replay(elaborate(Let("y", Perform("ask", Lit(None)), Return(Var("y")))))
     with pytest.raises(ValueError, match="profile-admission"):
         KernelResultEnvelope(
             profile=CORE_A,

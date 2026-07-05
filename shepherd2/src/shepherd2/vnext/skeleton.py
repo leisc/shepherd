@@ -327,7 +327,7 @@ class Session:
         *,
         parent: Any,
         task: Callable[..., GitRepoHandle],
-        args: tuple[Any,...] = (),
+        args: tuple[Any, ...] = (),
         kwargs: Mapping[str, Any] | None = None,
         run_id: str | None = None,
         child_name: str | None = None,
@@ -433,7 +433,7 @@ class Session:
         parent: Any | None = None,
         binding: str = "workspace",
         state: str | None = None,
-    ) -> tuple[RetainedRunOutput,...]:
+    ) -> tuple[RetainedRunOutput, ...]:
         """Compatibility alias for ``list_run_outputs``."""
         return self.list_run_outputs(parent=parent, binding=binding, state=state)
 
@@ -443,7 +443,7 @@ class Session:
         parent: Any | None = None,
         binding: str | None = None,
         state: str | None = None,
-    ) -> tuple[RetainedRunOutput,...]:
+    ) -> tuple[RetainedRunOutput, ...]:
         """List retained run outputs using lower-layer custody facts."""
         self._ensure_available()
         rows = self._mg.list_retained_outputs(parent=parent, binding=binding, state=state)
@@ -451,8 +451,7 @@ class Session:
         for row in rows:
             if row.state == "invalid":
                 raise SkeletonUnavailableError(
-                    f"skeleton retained-output query found invalid custody for {row.scope_name!r}: "
-                    f"{row.invalid_reason}"
+                    f"skeleton retained-output query found invalid custody for {row.scope_name!r}: {row.invalid_reason}"
                 )
             payload = self._output_payload_from_query_row(row)
             results.append(
@@ -565,9 +564,7 @@ class Session:
             handle = self._mg.retained_workspace_handle(scope_name)
             handoff = self._mg.retained_workspace_handoff(handle)
         except Exception as exc:
-            raise SkeletonUnavailableError(
-                "skeleton run output cannot be validated against retained custody."
-            ) from exc
+            raise SkeletonUnavailableError("skeleton run output cannot be validated against retained custody.") from exc
         parent_identity = self._parent_identity_from_handoff(handoff)
         expected_fields: list[tuple[str, Any]] = [
             ("scope_name", handoff.scope_name),
@@ -794,8 +791,7 @@ class Session:
         current_child_world_oid = self._mg.world_oid(child_scope)
         if result.basis_world_oid != current_child_world_oid:
             raise TypeError(
-                "skeleton task returned a stale GitRepoHandle; "
-                "return the handle produced by the final binding write."
+                "skeleton task returned a stale GitRepoHandle; return the handle produced by the final binding write."
             )
 
     def _validate_input_handle(self, value: GitRepoHandle, *, parent_scope: Any) -> None:
@@ -826,7 +822,7 @@ class Session:
             return
         try:
             self._mg.discard(child)
-        except Exception as discard_error: # noqa: BLE001
+        except Exception as discard_error:  # noqa: BLE001
             primary_error.add_note(
                 "skeleton could not discard failed child "
                 f"{child_scope.name!r}: {type(discard_error).__name__}: {discard_error}"
@@ -851,7 +847,7 @@ class Session:
                 ),
             )
             self._publish_frontier(trace_ids, terminal_receipt.fact_ids[-1])
-        except Exception as trace_error: # noqa: BLE001
+        except Exception as trace_error:  # noqa: BLE001
             primary_error.add_note(
                 "skeleton could not record failure trace "
                 f"for run {run_id!r}: {type(trace_error).__name__}: {trace_error}"
@@ -1097,7 +1093,7 @@ def _require_repo_authority(authority: str) -> None:
         raise SkeletonUnavailableError(f"skeleton GitRepoHandle authority is unsupported: {authority!r}")
 
 
-def _input_handle_bindings(args: tuple[Any,...], kwargs: Mapping[str, Any]) -> frozenset[str]:
+def _input_handle_bindings(args: tuple[Any, ...], kwargs: Mapping[str, Any]) -> frozenset[str]:
     bindings = {item.binding for item in args if isinstance(item, GitRepoHandle)}
     bindings.update(value.binding for value in kwargs.values() if isinstance(value, GitRepoHandle))
     return frozenset(bindings)
@@ -1204,7 +1200,7 @@ def _complete_execution_with_run_output_descriptors_batch(
     append_intent_id: str,
     execution_id: str,
     outputs: dict[str, Any],
-    caused_by: tuple[str,...] = (),
+    caused_by: tuple[str, ...] = (),
 ) -> AppendBatch:
     fact_drafts = tuple(
         run_output_descriptor_fact(

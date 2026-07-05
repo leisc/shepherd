@@ -42,8 +42,7 @@ class AmbiguousBindingError(LookupError):
 
     def __init__(self, target_type: type) -> None:
         super().__init__(
-            f"ambiguous binding: multiple values match type {target_type.__name__!r} "
-            f"at the same Scope depth"
+            f"ambiguous binding: multiple values match type {target_type.__name__!r} at the same Scope depth"
         )
         self.target_type = target_type
 
@@ -52,9 +51,7 @@ class NoBindingForTypeError(LookupError):
     """No binding on the active Scope chain matches ``T``."""
 
     def __init__(self, target_type: type) -> None:
-        super().__init__(
-            f"no binding for type {target_type.__name__!r} in the active Scope chain"
-        )
+        super().__init__(f"no binding for type {target_type.__name__!r} in the active Scope chain")
         self.target_type = target_type
 
 

@@ -29,13 +29,7 @@ def _write_workspace_pyproject(path: Path, members: list[str]) -> None:
     path.parent.mkdir(parents=True, exist_ok=True)
     members_block = ",\n".join(f'    "{member}"' for member in members)
     path.write_text(
-        "[project]\n"
-        'name = "workspace"\n'
-        'version = "0.1.0"\n\n'
-        "[tool.uv.workspace]\n"
-        "members = [\n"
-        f"{members_block}\n"
-        "]\n",
+        f'[project]\nname = "workspace"\nversion = "0.1.0"\n\n[tool.uv.workspace]\nmembers = [\n{members_block}\n]\n',
         encoding="utf-8",
     )
 
@@ -43,9 +37,7 @@ def _write_workspace_pyproject(path: Path, members: list[str]) -> None:
 def _write_package_pyproject(package_dir: Path, name: str) -> None:
     package_dir.mkdir(parents=True, exist_ok=True)
     (package_dir / "pyproject.toml").write_text(
-        "[project]\n"
-        f'name = "{name}"\n'
-        'version = "0.1.0"\n',
+        f'[project]\nname = "{name}"\nversion = "0.1.0"\n',
         encoding="utf-8",
     )
 

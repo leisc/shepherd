@@ -112,12 +112,16 @@ def test_record_digest_excludes_legacy_kind_label() -> None:
     )
 
     assert first_receipt.fact_ids == second_receipt.fact_ids
-    assert store.read_owner_prefix(READ, "owner:label:first", 99).visible_facts_by_id[
-        first_receipt.fact_ids[0]
-    ].fact_kind == "friendly_name"
-    assert store.read_owner_prefix(READ, "owner:label:second", 99).visible_facts_by_id[
-        second_receipt.fact_ids[0]
-    ].fact_kind == "renamed_view_label"
+    assert (
+        store.read_owner_prefix(READ, "owner:label:first", 99).visible_facts_by_id[first_receipt.fact_ids[0]].fact_kind
+        == "friendly_name"
+    )
+    assert (
+        store.read_owner_prefix(READ, "owner:label:second", 99)
+        .visible_facts_by_id[second_receipt.fact_ids[0]]
+        .fact_kind
+        == "renamed_view_label"
+    )
 
 
 def test_witness_records_are_retained_and_non_root_records_have_witnesses() -> None:
@@ -341,7 +345,9 @@ def test_slice_witness_support_is_closed_to_root_under_shape_visibility() -> Non
     store = SQLiteTraceStore()
     receipt = store.append(
         APPEND,
-        AppendBatch("law:witness-closure-shape", (AppendGroup("owner:witness-closure-shape", fact_drafts=(_draft(),)),)),
+        AppendBatch(
+            "law:witness-closure-shape", (AppendGroup("owner:witness-closure-shape", fact_drafts=(_draft(),)),)
+        ),
     )
 
     view = store.read_owner_prefix(
@@ -460,9 +466,7 @@ def test_witness_support_is_deduped_by_record_id() -> None:
 
     view = store.read_owner_prefix(READ, "owner:witness-dedupe", 99)
     witnesses = {
-        visible.envelope.witness_ref
-        for visible in view.visible_facts_by_id.values()
-        if isinstance(visible, Fact)
+        visible.envelope.witness_ref for visible in view.visible_facts_by_id.values() if isinstance(visible, Fact)
     }
 
     assert len(witnesses) == 1

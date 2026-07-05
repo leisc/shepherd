@@ -230,7 +230,9 @@ def test_transcript_summaries_are_structural_and_redaction_safe() -> None:
 
     request_summary = summarize_model_request(request, provider_id="provider.test")
     response_summary = summarize_model_response(response, provider_id="provider.test", model_id="model-1")
-    failure_summary = summarize_model_failure(RuntimeError("secret failure"), request=request, provider_id="provider.test")
+    failure_summary = summarize_model_failure(
+        RuntimeError("secret failure"), request=request, provider_id="provider.test"
+    )
 
     assert request_summary == {
         "provider_id": "provider.test",
@@ -354,9 +356,7 @@ def test_bypass_returns_responder_result() -> None:
         settings=ProviderSettings(model="claude-sonnet"),
     )
 
-    result = asyncio.run(
-        adapter.perform_model_call(request, runtime, tools)
-    )
+    result = asyncio.run(adapter.perform_model_call(request, runtime, tools))
     assert result is expected
 
 
@@ -379,11 +379,7 @@ def test_bypass_supports_async_responder() -> None:
         tools=(),
         settings=ProviderSettings(model="claude-sonnet"),
     )
-    result = asyncio.run(
-        adapter.perform_model_call(
-            request, StubProviderRuntime(), StubToolHandler()
-        )
-    )
+    result = asyncio.run(adapter.perform_model_call(request, StubProviderRuntime(), StubToolHandler()))
     assert result.text == "async response"
 
 
@@ -403,11 +399,7 @@ def test_bypass_rejects_non_modelresponse_responder_return() -> None:
         settings=ProviderSettings(model="claude-sonnet"),
     )
     with pytest.raises(TypeError, match="ModelResponse"):
-        asyncio.run(
-            adapter.perform_model_call(
-                request, StubProviderRuntime(), StubToolHandler()
-            )
-        )
+        asyncio.run(adapter.perform_model_call(request, StubProviderRuntime(), StubToolHandler()))
 
 
 # ---------------------------------------------------------------------------
@@ -435,7 +427,9 @@ def test_stub_recorder_records_full_model_turn_sextet() -> None:
     rret = recorder.resume_return(res, {"text": "ok"})
     cap = recorder.capture(sel, "return", {"text": "ok"})
 
-    assert all(r.startswith(("decl", "sel", "handle", "resume", "rret", "cap")) for r in [decl, sel, handle, res, rret, cap])
+    assert all(
+        r.startswith(("decl", "sel", "handle", "resume", "rret", "cap")) for r in [decl, sel, handle, res, rret, cap]
+    )
     assert len(recorder.calls) == 6
     assert recorder.calls[0][0] == "start_model_call"
     assert recorder.calls[-1][0] == "capture"
@@ -455,9 +449,7 @@ def test_stub_recorder_supports_nested_tool_call() -> None:
         settings=ProviderSettings(model="claude-sonnet"),
     )
     model_decl = recorder.start_model_call(request)
-    tool_decl = recorder.open_tool_call(
-        model_decl, "read_file", {"path": "x"}
-    )
+    tool_decl = recorder.open_tool_call(model_decl, "read_file", {"path": "x"})
     tool_sel = recorder.select_tool_handler(tool_decl, "local.read_file.v1")
     assert tool_decl != model_decl
     assert ("open_tool_call", model_decl, "read_file", {"path": "x"}, tool_decl) in recorder.calls

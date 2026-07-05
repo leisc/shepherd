@@ -63,7 +63,11 @@ def _write_manual_journal_commit(manager: WorldStorageManager, *, payload_bytes:
     repo = manager.world_store.repo
     meta_builder = repo.TreeBuilder()
     insert_tree_entry(
-        repo, meta_builder, OPERATION_JOURNAL_PATH.split("/")[-1], repo.create_blob(payload_bytes), pygit2.GIT_FILEMODE_BLOB
+        repo,
+        meta_builder,
+        OPERATION_JOURNAL_PATH.split("/")[-1],
+        repo.create_blob(payload_bytes),
+        pygit2.GIT_FILEMODE_BLOB,
     )
     root_builder = repo.TreeBuilder()
     insert_tree_entry(repo, root_builder, "meta", meta_builder.write(), pygit2.GIT_FILEMODE_TREE)
@@ -83,7 +87,9 @@ def test_open_scoped_probe_does_not_blob_read_terminal_journals(tmp_path, monkey
     manager = _manager(tmp_path)
     _open_valid_journal(manager, "op-open")
     for n in range(200):  # accumulated terminals admission must not read
-        _write_manual_journal_commit(manager, payload_bytes=b"terminal", ref=operation_journal_ref("closed", f"op-closed-{n}"))
+        _write_manual_journal_commit(
+            manager, payload_bytes=b"terminal", ref=operation_journal_ref("closed", f"op-closed-{n}")
+        )
 
     probed: list[str] = []
     real = oji.probe_operation_journal_ref

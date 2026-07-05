@@ -73,7 +73,7 @@ class _RetainedSelectionAuthorityContext:
     authority_operation_id: str
     settlement_operation_id: str
     prepared: PreparedRetainedOutputSelection
-    decisions: tuple[RetainedOutputAuthorityDecisionRecord,...]
+    decisions: tuple[RetainedOutputAuthorityDecisionRecord, ...]
     permission_plan_digest: str
     permission_plan_descriptor: Mapping[str, object]
     authority_context: Mapping[str, object] | None = None
@@ -341,7 +341,7 @@ def _recover_published_retained_selection(
     parent: ScopeInfo,
     operation_id: str,
     settlement_ref: str,
-    archived_retained: tuple[ValidatedRetainedWorkspace,...] = (),
+    archived_retained: tuple[ValidatedRetainedWorkspace, ...] = (),
 ) -> RetainedOutputSelectionResult | None:
     finalizer = WorldAuthorityFinalizer(manager)
     for attempt_id in _retained_selection_attempt_ids(finalizer, operation_id):
@@ -457,9 +457,7 @@ def _prepare_and_decide_retained_selection_authority(
             expected_authority_surface_plan_digest=authority_surface_plan_digest,
         )
     except PermissionPlanEvidenceError as exc:
-        raise InvalidRepositoryStateError(
-            f"retained-output authority PermissionPlan evidence invalid: {exc}"
-        ) from exc
+        raise InvalidRepositoryStateError(f"retained-output authority PermissionPlan evidence invalid: {exc}") from exc
     validated_permission_plan_digest = cast("str", permission_plan_digest)
     handoff = retained.loaded.handoff
     file_changes = _retained_selection_authority_file_changes(manager, retained=retained, basis_world=basis_world)
@@ -570,8 +568,7 @@ def _prepare_and_decide_retained_selection_authority(
         )
         clear_pending_authority_transaction(owner, context.settlement_operation_id)
         raise InvalidRepositoryStateError(
-            "retained-output selection denied by authority: "
-            f"{_authority_decision_reason(decisions, outcome='denied')}"
+            f"retained-output selection denied by authority: {_authority_decision_reason(decisions, outcome='denied')}"
         )
     return context
 
@@ -581,7 +578,7 @@ def _retained_selection_authority_file_changes(
     *,
     retained: ValidatedRetainedWorkspace,
     basis_world: Any,
-) -> tuple[FileChange,...] | None:
+) -> tuple[FileChange, ...] | None:
     handoff = retained.loaded.handoff
     try:
         basis_head = basis_world.snapshot.head_for(handoff.binding)
@@ -627,10 +624,10 @@ def _retained_selection_authority_file_changes(
 def _retained_selection_authority_requests(
     prepared: PreparedRetainedOutputSelection,
     *,
-    file_changes: tuple[FileChange,...] | None,
+    file_changes: tuple[FileChange, ...] | None,
     parent_world: Any,
     retained: ValidatedRetainedWorkspace,
-) -> tuple[Any,...]:
+) -> tuple[Any, ...]:
     del parent_world
     if file_changes is None:
         if prepared.changed_paths:
@@ -681,7 +678,7 @@ def _retained_selection_authority_requests(
 
 
 def _retained_selection_classification_basis(
-    file_changes: tuple[FileChange,...] | None,
+    file_changes: tuple[FileChange, ...] | None,
     *,
     changed_paths: Sequence[str],
 ) -> RetainedOutputClassificationBasis:
@@ -705,7 +702,7 @@ def _record_retained_output_authority_decisions(
     permission_plan_digest: str,
     permission_plan_descriptor: Mapping[str, object],
     authority_context: Mapping[str, object] | None,
-) -> tuple[RetainedOutputAuthorityDecisionRecord,...]:
+) -> tuple[RetainedOutputAuthorityDecisionRecord, ...]:
     decisions: list[RetainedOutputAuthorityDecisionRecord] = []
     authority_metadata: dict[str, object] = {
         "cohort_id": prepared.cohort_id,
@@ -800,7 +797,7 @@ def _retained_output_authority_pending(
         candidate_digest=context.prepared.candidate_digest,
         outcome=outcome,
         settlement=settlement,
-        commit_outcome=commit_outcome, # type: ignore[arg-type]
+        commit_outcome=commit_outcome,  # type: ignore[arg-type]
         decision_ids=tuple(decision.decision_id for decision in context.decisions),
         reason_code=reason_code,
         transaction_kind="retained_output_selection",
@@ -845,7 +842,7 @@ def record_retained_output_authority_final_settlement(
             cohort_id=cohort_id,
             candidate_digest=candidate_digest,
             outcome=outcome,
-            settlement=settlement, # type: ignore[arg-type]
+            settlement=settlement,  # type: ignore[arg-type]
             commit_outcome=commit_outcome,
             decision_ids=decision_ids,
             reason_code=reason_code,
@@ -869,7 +866,7 @@ def _authority_decision_reason(
     return outcome
 
 
-def _reachable_parent_world_oids(manager: WorldStorageManager, start_oid: str) -> tuple[str,...]:
+def _reachable_parent_world_oids(manager: WorldStorageManager, start_oid: str) -> tuple[str, ...]:
     pending = [start_oid]
     seen: set[str] = set()
     ordered: list[str] = []
@@ -891,7 +888,7 @@ def _validated_archived_candidates(
     selected: ValidatedRetainedWorkspace,
     parent: ScopeInfo,
     binding: str,
-) -> tuple[ValidatedRetainedWorkspace,...]:
+) -> tuple[ValidatedRetainedWorkspace, ...]:
     if not archived:
         return ()
     if isinstance(archived, str):
@@ -933,8 +930,8 @@ def _validated_archived_candidates(
 def _selection_parent_worlds(
     parent_world_oid: str,
     retained: ValidatedRetainedWorkspace,
-    archived_retained: tuple[ValidatedRetainedWorkspace,...],
-) -> tuple[str,...]:
+    archived_retained: tuple[ValidatedRetainedWorkspace, ...],
+) -> tuple[str, ...]:
     parents = [parent_world_oid, retained.loaded.handoff.output_world_oid]
     parents.extend(item.loaded.handoff.output_world_oid for item in archived_retained)
     return tuple(dict.fromkeys(parents))
@@ -963,7 +960,7 @@ def _write_retained_selection_settlement(
     parent_world_before: str,
     parent_world_after: str,
     settlement_ref: str,
-    archived_retained: tuple[ValidatedRetainedWorkspace,...] = (),
+    archived_retained: tuple[ValidatedRetainedWorkspace, ...] = (),
     authority_operation_id: str | None = None,
     authority_settlement_operation_id: str | None = None,
     authority_outcome: str | None = None,
@@ -1019,7 +1016,7 @@ def _validate_retained_selection_world(
     operation_id: str,
     parent_world_before: str,
     parent_world_after: str,
-    archived_retained: tuple[ValidatedRetainedWorkspace,...] = (),
+    archived_retained: tuple[ValidatedRetainedWorkspace, ...] = (),
 ) -> None:
     handoff = retained.loaded.handoff
     world = manager.read_world(parent_world_after)
@@ -1055,7 +1052,7 @@ def _validate_retained_selection_world(
 
 def _validate_archived_handoff_refs(
     transition: dict[str, object],
-    archived_retained: tuple[ValidatedRetainedWorkspace,...],
+    archived_retained: tuple[ValidatedRetainedWorkspace, ...],
 ) -> None:
     raw_refs = transition.get("archived_handoff_refs")
     if not archived_retained:
@@ -1075,7 +1072,7 @@ def _snapshot_head_or_none(world: Any, binding: str) -> Any | None:
 def _validate_candidate_outcomes(
     operation_final: dict[str, object],
     retained: ValidatedRetainedWorkspace,
-    archived_retained: tuple[ValidatedRetainedWorkspace,...],
+    archived_retained: tuple[ValidatedRetainedWorkspace, ...],
 ) -> None:
     raw_outcomes = operation_final.get("candidate_outcomes")
     if not isinstance(raw_outcomes, list):
@@ -1132,7 +1129,7 @@ def _optional_outcome_str(raw_outcome: dict[object, object], field: str, *, defa
     return value
 
 
-def _retained_selection_attempt_ids(finalizer: WorldAuthorityFinalizer, operation_id: str) -> tuple[str,...]:
+def _retained_selection_attempt_ids(finalizer: WorldAuthorityFinalizer, operation_id: str) -> tuple[str, ...]:
     return (
         operation_id,
         *(
@@ -1188,7 +1185,7 @@ def _candidate_set_operation_id(
     *,
     handoff: SealCandidateHandoff,
     settlement_ref: str,
-    archived_retained: tuple[ValidatedRetainedWorkspace,...],
+    archived_retained: tuple[ValidatedRetainedWorkspace, ...],
 ) -> str:
     if not archived_retained:
         return _settlement_operation_id(handoff=handoff, settlement_ref=settlement_ref)

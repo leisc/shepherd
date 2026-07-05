@@ -17,6 +17,7 @@ Usage:
     python packaging/shepherd-ai/build.py           # build sdist + wheel into dist/
     python packaging/shepherd-ai/build.py --version 0.1.3
 """
+
 from __future__ import annotations
 
 import argparse
@@ -195,9 +196,7 @@ def main() -> int:
     """Stage the bundle and build sdist + wheel into --out-dir."""
     ap = argparse.ArgumentParser(description=__doc__)
     ap.add_argument("--version", default=DEFAULT_VERSION)
-    ap.add_argument(
-        "--out-dir", default=str(REPO / "dist"), help="artifact output directory"
-    )
+    ap.add_argument("--out-dir", default=str(REPO / "dist"), help="artifact output directory")
     args = ap.parse_args()
 
     stage(args.version)

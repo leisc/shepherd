@@ -270,7 +270,8 @@ def test_step6_rejects_artifact_source_ref_disagreement_via_source_mutation() ->
     bad_basis = replace(obs.admission_basis, source_ref=fake_source_ref)
     with pytest.raises(AdmittedObservationError) as exc:
         validate_admitted_observation(
-            replace(obs, source=bad_source, admission_basis=bad_basis), state,
+            replace(obs, source=bad_source, admission_basis=bad_basis),
+            state,
         )
     assert exc.value.rejection_class == "restart-artifact-agreement"
     assert "source_ref" in str(exc.value)

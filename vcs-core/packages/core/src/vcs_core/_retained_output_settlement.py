@@ -177,7 +177,7 @@ def _settlement_from_json(value: dict[str, object]) -> RetainedOutputSettlement:
         resource_id=_required_str(value, "resource_id"),
         candidate_id=_required_str(value, "candidate_id"),
         candidate_head=_required_str(value, "candidate_head"),
-        action=action, # type: ignore[arg-type]
+        action=action,  # type: ignore[arg-type]
         operation_id=_required_str(value, "operation_id"),
         parent_world_before=_required_str(value, "parent_world_before"),
         parent_world_after=_required_str(value, "parent_world_after"),

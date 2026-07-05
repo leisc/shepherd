@@ -24,14 +24,14 @@ _macos = pytest.mark.skipif(
 @_macos
 def test_seatbelt_available_and_protocol_conformant() -> None:
     backend = SeatbeltContainmentBackend()
-    assert isinstance(backend, ContainmentBackend) # structurally satisfies the protocol
+    assert isinstance(backend, ContainmentBackend)  # structurally satisfies the protocol
     ok, why = backend.available()
     assert ok, why
     assert backend.name == "seatbelt"
     assert backend.enforcement_tier == "native-syscall-deny"
 
 
-def _permissive(root) -> tuple[str,...]:
+def _permissive(root) -> tuple[str, ...]:
     return (str(root),)
 
 
@@ -42,11 +42,11 @@ def test_lower_to_seatbelt_readonly_vs_permissive(tmp_path) -> None:
     wd = os.path.realpath(str(tmp_path))
     permissive = lower_to_seatbelt(_permissive(tmp_path), allow_network=True)
     assert f'(allow file-write* (subpath "{wd}"))' in permissive
-    assert "(deny network-outbound)" not in permissive # Permissive keeps egress open
+    assert "(deny network-outbound)" not in permissive  # Permissive keeps egress open
 
     readonly = lower_to_seatbelt((), allow_network=False)
     assert "(deny network-outbound)" in readonly
-    assert f'subpath "{wd}"' not in readonly # ReadOnly: no writable root at all
+    assert f'subpath "{wd}"' not in readonly  # ReadOnly: no writable root at all
 
 
 def test_lower_to_seatbelt_multi_root_is_deny_closed(tmp_path) -> None:
@@ -68,12 +68,12 @@ def test_seatbelt_launch_denies_out_of_workdir_write(tmp_path) -> None:
 
     inside = tmp_path / "ok.txt"
     backend.launch(profile, tmp_path, ["/usr/bin/touch", str(inside)])
-    assert inside.exists() # in-WORKDIR write allowed
+    assert inside.exists()  # in-WORKDIR write allowed
 
     outside = tmp_path.parent / "escape.txt"
     outside.unlink(missing_ok=True)
     backend.launch(profile, tmp_path, ["/usr/bin/touch", str(outside)])
-    assert not outside.exists() # out-of-WORKDIR write denied at the syscall
+    assert not outside.exists()  # out-of-WORKDIR write denied at the syscall
 
 
 @_macos
@@ -135,9 +135,9 @@ def test_seatbelt_probe_catches_readonly_mislowered_to_writable(tmp_path) -> Non
     was mis-lowered to a writable WORKDIR (the copy-paste-the-writable-root bug) passes a
     liveness-only probe yet would silently escalate. The deny-closed canary catches it."""
     backend = SeatbeltContainmentBackend()
-    mislowered = lower_to_seatbelt(_permissive(tmp_path), allow_network=True) # BUG: writable WORKDIR
+    mislowered = lower_to_seatbelt(_permissive(tmp_path), allow_network=True)  # BUG: writable WORKDIR
     with pytest.raises(JailNotEstablished):
-        backend.probe(mislowered, tmp_path, writable_roots=()) # claims ReadOnly (no writable root)
+        backend.probe(mislowered, tmp_path, writable_roots=())  # claims ReadOnly (no writable root)
 
 
 @_macos
@@ -163,4 +163,4 @@ def test_seatbelt_handles_workspace_path_with_shell_and_sbpl_metacharacters(tmp_
     backend.probe(backend.profile_for((), allow_network=False), weird, writable_roots=())
     inside = weird / "ok.txt"
     backend.launch(backend.profile_for(_permissive(weird), allow_network=True), weird, ["/usr/bin/touch", str(inside)])
-    assert inside.exists() # in-WORKDIR write lands even with metacharacters in the path
+    assert inside.exists()  # in-WORKDIR write lands even with metacharacters in the path

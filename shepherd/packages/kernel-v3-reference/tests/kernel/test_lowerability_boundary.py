@@ -77,9 +77,7 @@ def test_dynamic_python_handler_is_runtime_only_not_lowerable() -> None:
         ),
     )
 
-    assert run(program) == Completed(
-        {"provider": "example", "payload": {"prompt": "summarize"}}
-    )
+    assert run(program) == Completed({"provider": "example", "payload": {"prompt": "summarize"}})
     with pytest.raises(SourceFormError, match="requires static handler bodies"):
         elaborate(program)
 

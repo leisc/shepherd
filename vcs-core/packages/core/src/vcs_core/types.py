@@ -91,18 +91,18 @@ class OperationHistory:
     """Committed history carried by one staged or archived execution carrier."""
 
     summary: OperationSummary
-    commits: tuple[CommitInfo,...]
+    commits: tuple[CommitInfo, ...]
 
 
 @dataclass(frozen=True)
 class RecoverySnapshot:
     """Current non-canonical recovery/debug state for one repository."""
 
-    orphaned_scope_refs: tuple[str,...] = ()
-    open_operations: tuple[OperationSummary,...] = ()
-    archived_recovery_operations: tuple[OperationSummary,...] = ()
-    orphaned_operations: tuple[OperationSummary,...] = ()
-    workspace_authority_pending: tuple[str,...] = ()
+    orphaned_scope_refs: tuple[str, ...] = ()
+    open_operations: tuple[OperationSummary, ...] = ()
+    archived_recovery_operations: tuple[OperationSummary, ...] = ()
+    orphaned_operations: tuple[OperationSummary, ...] = ()
+    workspace_authority_pending: tuple[str, ...] = ()
 
 
 @dataclass(frozen=True)
@@ -121,7 +121,7 @@ class FileChange:
     """A single file change in a diff."""
 
     path: str
-    status: str # "added", "modified", "deleted"
+    status: str  # "added", "modified", "deleted"
 
 
 @dataclass(frozen=True)
@@ -135,7 +135,7 @@ class DiffSummary:
 class MaterializationPhase:
     """A group of operations sharing a reversibility level."""
 
-    reversibility: str # "auto", "compensable", "none"
+    reversibility: str  # "auto", "compensable", "none"
     file_changes: list[FileChange]
     intents: list[dict[str, object]]
 
@@ -172,7 +172,7 @@ class RebaseResult:
 class RecordedCommandOutcome:
     """Result of recording a substrate command through VcsCore."""
 
-    oids: tuple[str,...] = ()
+    oids: tuple[str, ...] = ()
     value: object | None = None
 
 
@@ -201,7 +201,7 @@ class SealCandidateHandoff:
     candidate_head: str
     candidate_tuple_digest: str
     handoff_ref: str
-    changed_paths: tuple[str,...] = ()
+    changed_paths: tuple[str, ...] = ()
 
 
 @dataclass(frozen=True)
@@ -217,7 +217,7 @@ class RetainedWorkspaceHandle:
     resource_id: str
     head: str
     basis_ref: str
-    changed_paths: tuple[str,...] = ()
+    changed_paths: tuple[str, ...] = ()
 
 
 @dataclass(frozen=True)
@@ -345,7 +345,7 @@ class RetainedOutputQueryResult:
     candidate_id: str | None = None
     candidate_ref: str | None = None
     candidate_head: str | None = None
-    changed_paths: tuple[str,...] = ()
+    changed_paths: tuple[str, ...] = ()
     settlement_ref: str | None = None
     settlement: RetainedOutputSettlement | None = None
     invalid_reason: str | None = None
@@ -420,8 +420,8 @@ class EffectRecord:
 
     effect_type: str
     metadata: dict[str, Any]
-    workspace_changes: tuple[WorkspaceChange,...] = ()
-    supersedes: tuple[str,...] = () # reserved for R2 translation
+    workspace_changes: tuple[WorkspaceChange, ...] = ()
+    supersedes: tuple[str, ...] = ()  # reserved for R2 translation
 
 
 def normalize_command_value(value: object) -> object:
@@ -452,7 +452,7 @@ def normalize_recorded_command_outcome(outcome: RecordedCommandOutcome) -> dict[
 def _normalize_driver_ingress_result(result: DriverIngressResult) -> dict[str, object]:
     from vcs_core._substrate_driver import DriverIngressResult
 
-    if not isinstance(result, DriverIngressResult): # pragma: no cover - guarded by caller
+    if not isinstance(result, DriverIngressResult):  # pragma: no cover - guarded by caller
         raise TypeError(f"Expected DriverIngressResult, got {type(result).__name__}.")
     return {
         "schema": DRIVER_INGRESS_RESULT_VALUE_SCHEMA,

@@ -134,7 +134,7 @@ def test_open_forwards_substrate_backend(monkeypatch: pytest.MonkeyPatch) -> Non
 
 def test_unknown_attribute_raises() -> None:
     with pytest.raises(AttributeError):
-        _ = sp.definitely_not_a_public_symbol # type: ignore[attr-defined]
+        _ = sp.definitely_not_a_public_symbol  # type: ignore[attr-defined]
 
 
 def test_out_of_scope_surface_stays_absent() -> None:

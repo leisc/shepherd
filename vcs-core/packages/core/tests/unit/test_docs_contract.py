@@ -218,10 +218,10 @@ def test_release_readiness_doc_pins_current_command_surface() -> None:
 
 def test_current_command_surface_docs_do_not_teach_retired_compatibility_paths() -> None:
     retired_current_guidance = (
-        "`_command_" "coercion.py`",
-        "`_schema_" "validation.py`",
-        "test_command_" "coercion.py",
-        "test_schema_" "validation.py",
+        "`_command_coercion.py`",
+        "`_schema_validation.py`",
+        "test_command_coercion.py",
+        "test_schema_validation.py",
         "vcs_core.experimental",
         "experimental modules keep compatibility",
         "temporary `dict` alias",

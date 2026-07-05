@@ -30,7 +30,7 @@ class SandboxError(Exception):
     """A jailed run failed for a non-policy reason (launch/runner error)."""
 
 
-class SandboxDenied(SandboxError): # noqa: N818
+class SandboxDenied(SandboxError):  # noqa: N818
     """An out-of-`may=` operation was refused at the syscall (EPERM/EACCES).
 
     The native syscall-deny tier's signal — stronger than the carrier's optimistic
@@ -39,7 +39,7 @@ class SandboxDenied(SandboxError): # noqa: N818
     """
 
 
-class JailNotEstablished(SandboxError): # noqa: N818
+class JailNotEstablished(SandboxError):  # noqa: N818
     """Fail-closed: confinement could not be established, so the run refuses."""
 
 
@@ -63,12 +63,12 @@ class ContainmentBackend(Protocol):
     name: str
     enforcement_tier: str
 
-    def available(self) -> tuple[bool, str]:...
+    def available(self) -> tuple[bool, str]: ...
 
-    def profile_for(self, writable_roots: Sequence[str], *, allow_network: bool) -> str:...
+    def profile_for(self, writable_roots: Sequence[str], *, allow_network: bool) -> str: ...
 
-    def probe(self, profile: str, working_root: Any, *, writable_roots: Sequence[str]) -> None:...
+    def probe(self, profile: str, working_root: Any, *, writable_roots: Sequence[str]) -> None: ...
 
     def launch(
         self, profile: str, working_root: Any, command: list[str], *, env: dict[str, str] | None = None
-    ) -> subprocess.CompletedProcess[str]:...
+    ) -> subprocess.CompletedProcess[str]: ...

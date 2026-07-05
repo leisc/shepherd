@@ -39,8 +39,7 @@ def test_uc1_review_helper_persists_multiple_artifact_refs_across_reopen(launch_
             for variant in launch_helpers.variant_prompts()
         }
         candidate_refs = {
-            f"candidate_{name}": launch_helpers.artifact_ref(run, label=name)
-            for name, run in attempts.items()
+            f"candidate_{name}": launch_helpers.artifact_ref(run, label=name) for name, run in attempts.items()
         }
         reviewer = launch_helpers.run_with_artifact_refs(
             workspace,
@@ -169,9 +168,7 @@ def test_uc3_retry_helper_cites_plan_review_and_diagnosis_boundaries(launch_help
             output_content=launch_helpers.diagnosis_content(issues),
             after=[reviewer],
         )
-        diagnosis_ref = launch_helpers.artifact_ref(
-            inspector, launch_helpers.DIAGNOSIS_PATH, label="retry-diagnosis"
-        )
+        diagnosis_ref = launch_helpers.artifact_ref(inspector, launch_helpers.DIAGNOSIS_PATH, label="retry-diagnosis")
         retry = launch_helpers.run_with_artifact_refs(
             workspace,
             name="retry",

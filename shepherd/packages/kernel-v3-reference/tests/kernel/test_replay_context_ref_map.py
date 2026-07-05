@@ -160,10 +160,7 @@ def test_nested_handler_program_carries_all_distinct_ctx_refs() -> None:
 
     transition = start_replayable_kernel_transition(elaborate(_nested_handler_program()))
     cited = _cited_ctx_refs(transition)
-    assert len(cited) >= 2, (
-        f"nested-handler program should cite multiple distinct ctx refs; "
-        f"got {sorted(cited)!r}"
-    )
+    assert len(cited) >= 2, f"nested-handler program should cite multiple distinct ctx refs; got {sorted(cited)!r}"
     _assert_sidecar_covers_cited(transition)
 
 
@@ -179,7 +176,5 @@ def test_context_ref_map_round_trips_through_json() -> None:
     transition = start_replayable_kernel_transition(elaborate(_handled_effect_program()))
     assert transition.context_ref_map, "test premise: sidecar mode should populate the map"
 
-    round_tripped = replayable_kernel_transition_from_json(
-        replayable_kernel_transition_to_json(transition)
-    )
+    round_tripped = replayable_kernel_transition_from_json(replayable_kernel_transition_to_json(transition))
     assert dict(round_tripped.context_ref_map) == dict(transition.context_ref_map)

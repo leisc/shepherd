@@ -84,9 +84,7 @@ class QualityGateConfigResult:
 
 @task(guidance=QUALITY_GATE_GUIDANCE)
 async def configure_quality_gate(
-    hints: Annotated[
-        str, InputMarker(description="Optional user hints")
-    ] = "",
+    hints: Annotated[str, InputMarker(description="Optional user hints")] = "",
 ) -> QualityGateConfigResult:
     """Analyze a codebase to infer quality gate configuration.
 

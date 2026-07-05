@@ -134,7 +134,7 @@ class TaskControl:
                         ),
                     ),
                 ),
-            )
+            ),
         )
         self._causal_tail = receipt.fact_ids[-1]
         fact = self.store.read_fact(TRUSTED_READ_CONTEXT, receipt.fact_ids[-1])
@@ -170,7 +170,7 @@ class TaskControl:
                 child_execution_id=child_execution_id,
                 child_frontier_id=child_frontier_id,
                 caused_by=(self._causal_tail,),
-            )
+            ),
         )
         relation_fact = self.store.read_fact(TRUSTED_READ_CONTEXT, relation_receipt.fact_ids[0])
         if not isinstance(relation_fact, Fact):
@@ -234,7 +234,7 @@ class TaskControl:
                 child_execution_id=execution_id,
                 child_frontier_id=frontier_id,
                 caused_by=(self._causal_tail,),
-            )
+            ),
         )
         relation_fact = self.store.read_fact(TRUSTED_READ_CONTEXT, relation_receipt.fact_ids[0])
         if not isinstance(relation_fact, Fact):
@@ -266,7 +266,7 @@ class TaskControl:
                 child_execution_id=handle.execution_id,
                 child_frontier_id=handle.frontier_id,
                 caused_by=caused_by,
-            )
+            ),
         )
         relation_fact = self.store.read_fact(TRUSTED_READ_CONTEXT, relation_receipt.fact_ids[0])
         if not isinstance(relation_fact, Fact):
@@ -347,7 +347,7 @@ def _run_task_sync(
             inputs=inputs,
             parent_execution_id=parent_execution_id,
             caused_by=create_caused_by,
-        )
+        ),
     )
     control = TaskControl(
         store=trace_store,
@@ -367,7 +367,7 @@ def _run_task_sync(
                 execution_id=execution_id,
                 error=f"{type(exc).__name__}: {exc}",
                 caused_by=(control.causal_tail,),
-            )
+            ),
         )
     else:
         terminal_receipt = trace_store.append(
@@ -377,7 +377,7 @@ def _run_task_sync(
                 execution_id=execution_id,
                 outputs=_coerce_outputs(result),
                 caused_by=(control.causal_tail,),
-            )
+            ),
         )
 
     publish_execution_frontier(

@@ -100,7 +100,11 @@ def _make_workspace(
 
 
 def _authority_effects(history: Any) -> list[dict[str, object]]:
-    return [commit.metadata for commit in history.commits if str(commit.metadata.get("type", "")).startswith(("Authority", "RetainedOutput", "Prepared"))]
+    return [
+        commit.metadata
+        for commit in history.commits
+        if str(commit.metadata.get("type", "")).startswith(("Authority", "RetainedOutput", "Prepared"))
+    ]
 
 
 def _assert_execution_enforcement(record: RunRecord, **expected: object) -> dict[str, object]:
@@ -331,9 +335,7 @@ def fix_bug(repo, issue: str):
             record.operation_refs.authority_operation,
             scope=workspace.mg.ground,
         )
-        decision = next(
-            effect for effect in _authority_effects(history) if effect["type"] == "AuthorityDecision"
-        )
+        decision = next(effect for effect in _authority_effects(history) if effect["type"] == "AuthorityDecision")
         assert decision["outcome"] == "allowed"
         assert decision["authority_context"]["shepherd"]["run_ref"] == record.run_ref
         assert decision["authority_context"]["shepherd"]["task_id"] == "sample_tasks.fix_bug"
@@ -345,9 +347,7 @@ def fix_bug(repo, issue: str):
             scope=workspace.mg.ground,
         )
         settlement = next(
-            effect
-            for effect in _authority_effects(settlement_history)
-            if effect["type"] == "AuthoritySettlement"
+            effect for effect in _authority_effects(settlement_history) if effect["type"] == "AuthoritySettlement"
         )
         assert isinstance(settlement.get("parent_world_before"), str)
         assert settlement["parent_world_before"] != record.terminal_workspace_world_oid
@@ -411,9 +411,7 @@ def fix_bug(repo, issue: str):
             scope=workspace.mg.ground,
         )
         settlement = next(
-            effect
-            for effect in _authority_effects(settlement_history)
-            if effect["type"] == "AuthoritySettlement"
+            effect for effect in _authority_effects(settlement_history) if effect["type"] == "AuthoritySettlement"
         )
         assert settlement["outcome"] == "denied"
         assert settlement["settlement"] == "discarded"
@@ -472,9 +470,7 @@ def fix_bug(repo, issue: str):
             scope=workspace.mg.ground,
         )
         settlement = next(
-            effect
-            for effect in _authority_effects(settlement_history)
-            if effect["type"] == "AuthoritySettlement"
+            effect for effect in _authority_effects(settlement_history) if effect["type"] == "AuthoritySettlement"
         )
         assert settlement["outcome"] == "allowed"
         assert settlement["settlement"] == "merged"
@@ -531,9 +527,7 @@ def fix_bug(repo, issue: str):
             scope=workspace.mg.ground,
         )
         settlement = next(
-            effect
-            for effect in _authority_effects(settlement_history)
-            if effect["type"] == "AuthoritySettlement"
+            effect for effect in _authority_effects(settlement_history) if effect["type"] == "AuthoritySettlement"
         )
         assert settlement["outcome"] == "allowed"
         assert settlement["settlement"] == "merged"
@@ -1469,7 +1463,9 @@ def fix_bug(repo, issue: str):
     assert read_missing_result.exit_code != 0
     assert "no file" in read_missing_result.output
 
-    read_json_conflict = runner.invoke(cli.main, ["run", "changeset", record.run_ref, "--read", "candidate.txt", "--json"])
+    read_json_conflict = runner.invoke(
+        cli.main, ["run", "changeset", record.run_ref, "--read", "candidate.txt", "--json"]
+    )
     assert read_json_conflict.exit_code != 0
     assert "mutually exclusive" in read_json_conflict.output
 
@@ -1718,7 +1714,7 @@ def test_workspace_defaults_trace_store_to_documented_sqlite_path(
 ) -> None:
     # Pre-launch cut: the semantic TraceStore ABI ships on the SQLite reference backend at the
     # documented default path. A workspace built without an explicit trace_store_path must resolve to
-    #.vcscore/shepherd/trace.sqlite, a run must persist that backing store on disk, and outputs must
+    # .vcscore/shepherd/trace.sqlite, a run must persist that backing store on disk, and outputs must
     # still resolve through it.
     source = _write_task_module(
         tmp_path,
@@ -1735,7 +1731,7 @@ def fix_bug(repo, issue: str):
         workspace.tasks.register(source, may_default="ReadWrite")
         record = _start_fenced_run(workspace, "sample_tasks.fix_bug", args={"issue": "parser"})
         assert record.status == "retained"
-        assert workspace.trace_store_path.exists() # the SQLite backend persisted at the documented path
+        assert workspace.trace_store_path.exists()  # the SQLite backend persisted at the documented path
         output_refs = workspace.runs.outputs(run_ref=record.run_ref)
         assert output_refs[0].descriptor.output_name == "workspace"
     finally:
@@ -1747,7 +1743,7 @@ def test_workspace_reopen_resolves_outputs_from_persisted_default_sqlite(
 ) -> None:
     # Pre-launch persistence (the real launch question): a FRESH workspace -- new VcsCore + Store + trace
     # connection, the new-process equivalent -- must resolve a prior run's outputs from the on-disk default
-    #.vcscore/shepherd/trace.sqlite + vcs-core custody, given ONLY the durable run_ref string (not in-memory
+    # .vcscore/shepherd/trace.sqlite + vcs-core custody, given ONLY the durable run_ref string (not in-memory
     # state). File-exists proves bytes persisted; this proves a fresh workspace can RESOLVE through them.
     source = _write_task_module(
         tmp_path,
@@ -3332,8 +3328,8 @@ def fix_bug(repo):
         original_read_task_artifact = workspace_module._read_task_artifact
 
         def forged_task_artifact(mg: object, ref: object) -> dict[str, object]:
-            payload = dict(original_read_task_artifact(mg, ref)) # type: ignore[arg-type]
-            files = [dict(file) for file in payload["files"]] # type: ignore[index]
+            payload = dict(original_read_task_artifact(mg, ref))  # type: ignore[arg-type]
+            files = [dict(file) for file in payload["files"]]  # type: ignore[index]
             files[0]["path"] = "../escape.py"
             payload["files"] = files
             return payload
@@ -3519,7 +3515,7 @@ def fix_bug(repo, issue: str):
         forged = RunOutput(workspace, replace(output.ref, descriptor=forged_descriptor, store_id="forged-store"))
 
         with pytest.raises(WorkspaceControlError, match="RunOutput from this workspace"):
-            workspace.release(output.ref) # type: ignore[arg-type]
+            workspace.release(output.ref)  # type: ignore[arg-type]
 
         with pytest.raises(InvalidRepositoryStateError, match="handle disagrees"):
             workspace.release(forged)

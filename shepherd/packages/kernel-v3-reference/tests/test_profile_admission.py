@@ -110,8 +110,7 @@ def test_nested_handlers_both_resume_shape_admit() -> None:
     )
     program = Handle(
         Handle(
-            Let("a", Perform("inner", Lit(None)),
-                Let("b", Perform("outer", Lit(None)), Return(Var("a")))),
+            Let("a", Perform("inner", Lit(None)), Let("b", Perform("outer", Lit(None)), Return(Var("a")))),
             HandlerEnv((inner,)),
         ),
         HandlerEnv((outer,)),
@@ -203,7 +202,8 @@ def test_multi_shot_resume_rejects() -> None:
         handled_result_schema=IntSchema(),
         payload_name="_p",
         body=Let(
-            "a", Resume(Lit(1)),
+            "a",
+            Resume(Lit(1)),
             Let("b", Resume(Lit(2)), Return(Var("a"))),
         ),
     )
@@ -230,8 +230,7 @@ def test_mixed_resume_abort_rejects() -> None:
     )
     with pytest.raises(ProfileAdmissionError) as exc:
         validate_profile_admission(program)
-    assert "mixed" in exc.value.rejection.construct.lower() \
-        or "Resume+Abort" in exc.value.rejection.construct
+    assert "mixed" in exc.value.rejection.construct.lower() or "Resume+Abort" in exc.value.rejection.construct
 
 
 def test_abort_shape_with_trailing_return_rejects() -> None:

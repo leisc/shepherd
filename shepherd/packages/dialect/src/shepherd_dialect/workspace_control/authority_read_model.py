@@ -79,7 +79,7 @@ class RunOutputSettlementPolicy:
     settlement_policy: JsonObject | None
     custody_owner: str = "vcs-core.retained-output"
     consume_once: bool = True
-    settlement_verbs: tuple[str,...] = ("select", "release", "discard")
+    settlement_verbs: tuple[str, ...] = ("select", "release", "discard")
 
     def to_json(self) -> JsonObject:
         """Return a stable JSON-shaped settlement-policy inspection payload."""
@@ -223,9 +223,7 @@ def run_output_settlement_evidence_from_record(
     settlement = getattr(retained_row, "settlement", None)
     settlement_action = getattr(settlement, "action", None) if settlement is not None else None
     settlement_operation_id = getattr(settlement, "operation_id", None) if settlement is not None else None
-    authority_operation_id = (
-        getattr(settlement, "authority_operation_id", None) if settlement is not None else None
-    )
+    authority_operation_id = getattr(settlement, "authority_operation_id", None) if settlement is not None else None
     authority_settlement_operation_id = (
         getattr(settlement, "authority_settlement_operation_id", None) if settlement is not None else None
     )
@@ -249,9 +247,7 @@ def run_output_settlement_evidence_from_record(
         settlement_action=settlement_action if isinstance(settlement_action, str) else None,
         settlement_operation_id=settlement_operation_id if isinstance(settlement_operation_id, str) else None,
         authority=authority,
-        authority_operation_id=(
-            authority_operation_id if isinstance(authority_operation_id, str) else None
-        ),
+        authority_operation_id=(authority_operation_id if isinstance(authority_operation_id, str) else None),
         authority_settlement_operation_id=(
             authority_settlement_operation_id if isinstance(authority_settlement_operation_id, str) else None
         ),

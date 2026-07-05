@@ -73,10 +73,18 @@ def test_phase1_behavioral_spine_without_mock_provider(tmp_path) -> None:
         surface = run.trace.surface
         assert all(record.claim_level == "phase1-runtime" for record in surface)
         assert all(record.proof_profile == "runtime_only" for record in surface)
-        assert any(record.kind == "effect_requested" and record.effect_key == "phase1_async.pick_one" for record in surface)
-        assert any(record.kind == "handler_selected" and record.effect_key == "phase1_async.pick_one" for record in surface)
-        assert any(record.kind == "handler_returned" and record.effect_key == "phase1_async.pick_one" for record in surface)
-        assert any(record.kind == "effect_requested" and record.effect_key == "phase1_async.audit" for record in surface)
+        assert any(
+            record.kind == "effect_requested" and record.effect_key == "phase1_async.pick_one" for record in surface
+        )
+        assert any(
+            record.kind == "handler_selected" and record.effect_key == "phase1_async.pick_one" for record in surface
+        )
+        assert any(
+            record.kind == "handler_returned" and record.effect_key == "phase1_async.pick_one" for record in surface
+        )
+        assert any(
+            record.kind == "effect_requested" and record.effect_key == "phase1_async.audit" for record in surface
+        )
         assert any(
             record.kind == "handler_selected"
             and record.effect_key == "phase1_async.audit"
@@ -142,8 +150,12 @@ def test_phase1_sync_task_spine_uses_top_level_ask_tell(tmp_path) -> None:
         validate_runtime_trace(run.trace.kernel)
 
         surface = run.trace.surface
-        assert any(record.kind == "effect_requested" and record.effect_key == "phase1_sync.pick_one" for record in surface)
-        assert any(record.kind == "handler_returned" and record.effect_key == "phase1_sync.pick_one" for record in surface)
+        assert any(
+            record.kind == "effect_requested" and record.effect_key == "phase1_sync.pick_one" for record in surface
+        )
+        assert any(
+            record.kind == "handler_returned" and record.effect_key == "phase1_sync.pick_one" for record in surface
+        )
         assert any(
             record.kind == "handler_selected"
             and record.effect_key == "phase1_sync.audit"

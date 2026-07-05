@@ -22,7 +22,7 @@ class FlowRunContext:
     flow_id: str
     name: str
     sequence: int
-    after: tuple[str,...] = ()
+    after: tuple[str, ...] = ()
     metadata: Mapping[str, object] = field(default_factory=dict)
 
     def __post_init__(self) -> None:

@@ -30,8 +30,7 @@ class _OverlayBackend:
     def diff_layer(self, scope_id: str) -> list[tuple[str, bytes | None, int]]:
         layer = self.layers.get(scope_id, {})
         return [
-            (path, state.content, state.mode) if state is not None else (path, None, 0)
-            for path, state in layer.items()
+            (path, state.content, state.mode) if state is not None else (path, None, 0) for path, state in layer.items()
         ]
 
     def commit_layer(self, scope_id: str, *, into_scope_id: str | None) -> None:

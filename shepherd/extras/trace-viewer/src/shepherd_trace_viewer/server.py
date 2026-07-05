@@ -46,7 +46,7 @@ class _Handler(BaseHTTPRequestHandler):
             body = json.dumps(self.view_json).encode()
             self._send(200, body, "application/json")
         elif path.startswith("/assets/"):
-            self._serve_asset(path[len("/assets/"):])
+            self._serve_asset(path[len("/assets/") :])
         else:
             self._send(404, b"not found", "text/plain; charset=utf-8")
 

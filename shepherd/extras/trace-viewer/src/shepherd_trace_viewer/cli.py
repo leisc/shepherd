@@ -75,7 +75,9 @@ def _cmd_serve(args: argparse.Namespace) -> int:
         return 2
 
     if args.bind != "127.0.0.1":
-        sys.stdout.write(f"!! --bind {args.bind}: the viewer exposes the following to anyone who can reach this port:\n")
+        sys.stdout.write(
+            f"!! --bind {args.bind}: the viewer exposes the following to anyone who can reach this port:\n"
+        )
         for cat in _BIND_WARNING_CATEGORIES:
             sys.stdout.write(f"   - {cat}\n")
 
@@ -116,7 +118,9 @@ def build_parser() -> argparse.ArgumentParser:
     serve.add_argument("--visibility", choices=("shape_only", "payload", "full_internal"), default="payload")
     serve.add_argument("--mode", choices=("declarations_only", "captures_only", "both"), default="both")
     serve.add_argument("--actor", default="trace-viewer", help="ReadContext actor_ref for TraceStore reads")
-    serve.add_argument("--trusted-internal", action="store_true", help="present trusted:internal for full_internal reads")
+    serve.add_argument(
+        "--trusted-internal", action="store_true", help="present trusted:internal for full_internal reads"
+    )
     serve.add_argument("--workspace", type=Path, default=Path(), help="workspace holding .vcscore")
     serve.add_argument("--port", type=int, default=8767)
     serve.add_argument("--bind", default="127.0.0.1", help="network interface (default: 127.0.0.1)")

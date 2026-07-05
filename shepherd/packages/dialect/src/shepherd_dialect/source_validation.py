@@ -42,22 +42,53 @@ class SourceValidationError(Exception):
 
 FORBIDDEN_IMPORTS = frozenset(
     {
-        "os", "sys", "subprocess", "ctypes", "importlib", "builtins", "socket",
-        "multiprocessing", "threading", "signal", "shutil", "tempfile", "pathlib", "io",
+        "os",
+        "sys",
+        "subprocess",
+        "ctypes",
+        "importlib",
+        "builtins",
+        "socket",
+        "multiprocessing",
+        "threading",
+        "signal",
+        "shutil",
+        "tempfile",
+        "pathlib",
+        "io",
     }
 )
 
 FORBIDDEN_NAMES = frozenset(
     {
-        "eval", "exec", "compile", "__import__", "open", "globals", "locals",
-        "vars", "dir", "breakpoint", "input", "memoryview",
+        "eval",
+        "exec",
+        "compile",
+        "__import__",
+        "open",
+        "globals",
+        "locals",
+        "vars",
+        "dir",
+        "breakpoint",
+        "input",
+        "memoryview",
     }
 )
 
 FORBIDDEN_ATTRIBUTES = frozenset(
     {
-        "__class__", "__bases__", "__subclasses__", "__mro__", "__globals__",
-        "__code__", "__builtins__", "__reduce__", "__reduce_ex__", "__getstate__", "__setstate__",
+        "__class__",
+        "__bases__",
+        "__subclasses__",
+        "__mro__",
+        "__globals__",
+        "__code__",
+        "__builtins__",
+        "__reduce__",
+        "__reduce_ex__",
+        "__getstate__",
+        "__setstate__",
     }
 )
 

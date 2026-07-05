@@ -317,7 +317,9 @@ class Pipeline(Generic[T]):
         if scope is None:
             scope = current_scope()
         if scope is None:
-            raise ScopeNotConfiguredError("No scope available. Pass scope=... or run inside shepherd_runtime.scope.Scope.")
+            raise ScopeNotConfiguredError(
+                "No scope available. Pass scope=... or run inside shepherd_runtime.scope.Scope."
+            )
 
         task_callable = self.build()
         result = await task_callable(kwargs, scope)

@@ -1,7 +1,5 @@
 """Model right-sizing genre over the gradient-descent tile gate."""
 
-# ruff: noqa: D101,D103
-
 from __future__ import annotations
 
 import json
@@ -160,8 +158,7 @@ def caught_hard_failures(verdicts: Mapping[str, object], labels: Mapping[str, st
     caught = sum(
         1
         for cid in expected
-        if by_id.get(cid, {}).get("verdict") == "fail"
-        or by_id.get(cid, {}).get("direction_check") == "fail"
+        if by_id.get(cid, {}).get("verdict") == "fail" or by_id.get(cid, {}).get("direction_check") == "fail"
     )
     return caught, len(expected)
 

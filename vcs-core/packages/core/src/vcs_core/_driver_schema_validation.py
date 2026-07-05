@@ -106,7 +106,11 @@ def _validate_mapping(driver_id: str, label: str, value: object) -> None:
 def _validate_storage_profile(driver_id: str, profile: object) -> None:
     if not isinstance(profile, RevisionStorageProfile):
         raise DriverSchemaValidationError(f"Driver '{driver_id}' storage_profile must be a RevisionStorageProfile.")
-    if profile.shape == "json-snapshot" and profile.growth_bound == "unbounded" and not profile.allow_totalized_snapshot:
+    if (
+        profile.shape == "json-snapshot"
+        and profile.growth_bound == "unbounded"
+        and not profile.allow_totalized_snapshot
+    ):
         raise DriverSchemaValidationError(
             f"Driver '{driver_id}' declares unbounded json-snapshot storage; use an addressable shape "
             "or set allow_totalized_snapshot with a reviewed reason."

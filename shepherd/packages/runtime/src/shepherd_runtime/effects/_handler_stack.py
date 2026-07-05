@@ -71,8 +71,7 @@ async def invoke_handler(binding: HandlerBinding, payload: object) -> Any:
     """Invoke a pure-response handler, awaiting async results."""
     if binding.shape != "pure_response":
         raise HandlerSignatureError(
-            f"{binding.handler_id}: supervisor handlers are not supported by "
-            "the Phase 1 pure-response dispatch path"
+            f"{binding.handler_id}: supervisor handlers are not supported by the Phase 1 pure-response dispatch path"
         )
     result = binding.fn(payload)
     if inspect.isawaitable(result):
@@ -92,8 +91,7 @@ def _normalize_key(key: object) -> str | type:
     if isinstance(key, type):
         return key
     raise HandlerSignatureError(
-        "handle(...) effect key must be an effect class or effect-kind string; "
-        f"got {type(key).__name__}"
+        f"handle(...) effect key must be an effect class or effect-kind string; got {type(key).__name__}"
     )
 
 

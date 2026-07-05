@@ -299,9 +299,9 @@ def test_supervised_approve_under_drafts(mg: VcsCore) -> None:
         supervisors=(drafts_only_supervisor,),
     )
     assert error is None
-    assert any(
-        e.metadata.get("path") == "drafts/notes.md" for e in _merged_effects(mg)
-    ), "the approved write must merge"
+    assert any(e.metadata.get("path") == "drafts/notes.md" for e in _merged_effects(mg)), (
+        "the approved write must merge"
+    )
     decisions = [e for e in _stored_payload(mg, head)["events"] if e["kind"] == "supervisor.decision"]
     assert decisions
     assert decisions[0]["decision"] == "approved"
@@ -338,9 +338,9 @@ def test_supervised_deny_outside_drafts(mg: VcsCore, tmp_path: Path) -> None:
     assert isinstance(error, SupervisorDenied)
     assert "src/main.py" in error.reason
     assert not (tmp_path / "ws" / "src" / "main.py").exists()
-    assert not any(
-        e.metadata.get("path") == "src/main.py" for e in _merged_effects(mg)
-    ), "the denied write must never reach merged history"
+    assert not any(e.metadata.get("path") == "src/main.py" for e in _merged_effects(mg)), (
+        "the denied write must never reach merged history"
+    )
     stored = _stored_payload(mg, head)
     decisions = [e for e in stored["events"] if e["kind"] == "supervisor.decision"]
     assert decisions

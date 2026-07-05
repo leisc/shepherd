@@ -37,8 +37,7 @@ def test_default_world_storage_opens_stable_workspace_store(tmp_path) -> None:
     assert DEFAULT_SHEPHERD_TASK_ARTIFACTS_STORE_ID in manager.stores
     assert reopened.locator_hints()[DEFAULT_WORKSPACE_STORE_ID] == "substrates/workspace.git"
     assert (
-        reopened.locator_hints()[DEFAULT_SHEPHERD_TASK_ARTIFACTS_STORE_ID]
-        == "substrates/shepherd-task-artifacts.git"
+        reopened.locator_hints()[DEFAULT_SHEPHERD_TASK_ARTIFACTS_STORE_ID] == "substrates/shepherd-task-artifacts.git"
     )
     assert existing.locator_hints()[DEFAULT_WORKSPACE_STORE_ID] == "substrates/workspace.git"
 

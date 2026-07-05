@@ -129,9 +129,7 @@ class ModelResponse:
     tool_calls: tuple[ToolCallRecord, ...] = ()
     usage: Usage = field(default_factory=Usage)
     session_id: str | None = None
-    finish_reason: Literal[
-        "end_turn", "max_tokens", "stop_sequence", "tool_use"
-    ] = "end_turn"
+    finish_reason: Literal["end_turn", "max_tokens", "stop_sequence", "tool_use"] = "end_turn"
 
     def __post_init__(self) -> None:
         active = sum(

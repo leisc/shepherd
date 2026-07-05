@@ -268,9 +268,7 @@ def test_exact_and_descendants_exclusions_cover_subtree() -> None:
 
 
 def test_negated_kind_clause_disjointness_uses_subset_not_disjointness() -> None:
-    right = (~Match.field("severity", "eq", 0) | ~Match.field("severity", "eq", 2)) & ~Match.exact(
-        ReasoningChild
-    )
+    right = (~Match.field("severity", "eq", 0) | ~Match.field("severity", "eq", 2)) & ~Match.exact(ReasoningChild)
 
     assert Match.exact(ReasoningRoot).subset_of(right) is Subset.Unknown
 

@@ -529,7 +529,9 @@ class SQLiteTraceStore:
         )
         return tuple(contexts), tuple(witness_plans.values()), tuple(facts), receipt
 
-    def _preview_fact_ids(self, batch: AppendBatch, append_context: AppendContext | OperationContext) -> tuple[FactId, ...]:
+    def _preview_fact_ids(
+        self, batch: AppendBatch, append_context: AppendContext | OperationContext
+    ) -> tuple[FactId, ...]:
         local_fact_ids: dict[AppendLocalId, FactId] = {}
         fact_ids: list[FactId] = []
         for group_index, group in enumerate(batch.groups):
@@ -632,7 +634,9 @@ class SQLiteTraceStore:
         loaded = tuple(
             (entry, fact)
             for entry in path_entries
-            if _mode_matches((fact := self._read_fact_at_path(entry.record_id, entry.path_ref, entry.path_ordinal)), mode_filter)
+            if _mode_matches(
+                (fact := self._read_fact_at_path(entry.record_id, entry.path_ref, entry.path_ordinal)), mode_filter
+            )
         )
         selected = {entry.record_id for entry, _fact in loaded}
         facts_by_id: dict[FactId, VisibleFact] = {}
@@ -931,9 +935,7 @@ class SQLiteTraceStore:
         return RetainedContext(
             context_id=str(row["context_id"]),
             active_binding_refs=_json_tuple(row["active_binding_refs_json"], "active_binding_refs_json"),
-            capability_witness_refs=_json_tuple(
-                row["capability_witness_refs_json"], "capability_witness_refs_json"
-            ),
+            capability_witness_refs=_json_tuple(row["capability_witness_refs_json"], "capability_witness_refs_json"),
             semantic_environment_refs=_json_tuple(
                 row["semantic_environment_refs_json"], "semantic_environment_refs_json"
             ),
@@ -1350,10 +1352,7 @@ def _batch_digest(batch: AppendBatch, append_context: AppendContext | OperationC
 
 
 def _context_payload_to_json(payload: dict[str, Any]) -> dict[str, object]:
-    return {
-        key: list(value) if isinstance(value, tuple) else value
-        for key, value in payload.items()
-    }
+    return {key: list(value) if isinstance(value, tuple) else value for key, value in payload.items()}
 
 
 def _context_draft_to_json(draft: RetainedContextDraft) -> dict[str, object]:

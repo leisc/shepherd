@@ -31,7 +31,7 @@ class CompiledParameterGrant:
 class CompiledWorkspaceAuthorityDeclaration:
     """Compiled authority declarations for one workspace-control task signature."""
 
-    signature_grants: tuple[CompiledParameterGrant,...]
+    signature_grants: tuple[CompiledParameterGrant, ...]
 
     @property
     def workspace_gitrepo_grant(self) -> GitRepoGrantDescriptor | None:
@@ -103,7 +103,7 @@ def raw_annotation_looks_like_authority(annotation: object) -> bool:
     return "May[" in text or ("Annotated[" in text and "GitRepo" in text)
 
 
-def _subscript_args(node: ast.Subscript) -> tuple[ast.expr,...]:
+def _subscript_args(node: ast.Subscript) -> tuple[ast.expr, ...]:
     if isinstance(node.slice, ast.Tuple):
         return tuple(node.slice.elts)
     return (node.slice,)

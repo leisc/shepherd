@@ -123,7 +123,7 @@ class BindingRootGrant:
     writable: bool
 
 
-def validate_disjoint_roots(roots: Iterable[str]) -> tuple[str,...]:
+def validate_disjoint_roots(roots: Iterable[str]) -> tuple[str, ...]:
     """Fail closed unless every bound root is disjoint (none nests inside another).
 
     Returns the canonicalized (realpath) roots on success. Raises
@@ -133,7 +133,7 @@ def validate_disjoint_roots(roots: Iterable[str]) -> tuple[str,...]:
     """
     canonical = [Path(os.path.realpath(str(root))) for root in roots]
     for i, a in enumerate(canonical):
-        for b in canonical[i + 1:]:
+        for b in canonical[i + 1 :]:
             if a == b or a.is_relative_to(b) or b.is_relative_to(a):
                 raise OverlappingBoundRootsError(
                     f"bound roots overlap or nest: {a} vs {b}. Per-binding grants require disjoint roots "

@@ -149,7 +149,7 @@ _RESET_RECOVERY_KINDS = frozenset({"sibling_group_blocker"})
 class ReadinessPolicy:
     command: ReadinessCommand
     mutates: bool = False
-    baseline_required_bindings: tuple[RequiredBinding,...] = ()
+    baseline_required_bindings: tuple[RequiredBinding, ...] = ()
     default_freshness: ReadinessFreshness | None = None
     default_allow_best_effort: bool | None = None
     observed_domains: frozenset[str] = frozenset()
@@ -416,9 +416,9 @@ class RuntimeAdmissionContext:
     """Owner-computed runtime-only context for readiness admission."""
 
     record_class: str | None = None
-    nested_authorizations: tuple[Any,...] = ()
-    authorized_operations: tuple[ReadinessOperationAuthority,...] = ()
-    allowed_blocker_item_ids: tuple[str,...] = ()
+    nested_authorizations: tuple[Any, ...] = ()
+    authorized_operations: tuple[ReadinessOperationAuthority, ...] = ()
+    allowed_blocker_item_ids: tuple[str, ...] = ()
     authority_source: ReadinessAuthoritySource = "runtime_admission_sidecar"
 
 
@@ -438,11 +438,11 @@ class ReadinessRequest:
 
     command: ReadinessCommand = "shepherd.status"
     scope_selector: str = "ground"
-    required_bindings: tuple[RequiredBinding,...] = ()
+    required_bindings: tuple[RequiredBinding, ...] = ()
     requested_freshness: ReadinessFreshness | None = None
     allow_best_effort: bool | None = None
-    targets: tuple[ReadinessTarget,...] = ()
-    authorized_operations: tuple[ReadinessOperationAuthority,...] = ()
+    targets: tuple[ReadinessTarget, ...] = ()
+    authorized_operations: tuple[ReadinessOperationAuthority, ...] = ()
 
     def __post_init__(self) -> None:
         normalized_command = normalize_mutation_class(self.command)
@@ -474,11 +474,11 @@ class ReadinessRequest:
         *,
         command: str = "shepherd.status",
         scope: str | None = None,
-        required_bindings: tuple[RequiredBinding,...] | None = None,
+        required_bindings: tuple[RequiredBinding, ...] | None = None,
         requested_freshness: str | None = None,
         allow_best_effort: bool | None = None,
-        targets: tuple[ReadinessTarget,...] = (),
-        authorized_operations: tuple[ReadinessOperationAuthority,...] = (),
+        targets: tuple[ReadinessTarget, ...] = (),
+        authorized_operations: tuple[ReadinessOperationAuthority, ...] = (),
     ) -> ReadinessRequest:
         normalized_command = normalize_mutation_class(command)
         normalized_freshness = None if requested_freshness is None else _normalize_freshness(requested_freshness)
@@ -578,7 +578,7 @@ class MutationPrecondition:
     scope_ref: str
     snapshot_id: str
     mode: ReadinessFreshness
-    item_ids: tuple[str,...]
+    item_ids: tuple[str, ...]
     source_identities: dict[str, dict[str, object]]
     checked_at_unix_ns: int
 
@@ -623,7 +623,7 @@ class MutationPrecondition:
         request: ReadinessRequest,
         scope_ref: str,
         snapshot: InventorySnapshot,
-        item_ids: tuple[str,...],
+        item_ids: tuple[str, ...],
     ) -> MutationPrecondition:
         items_by_id = {item.id: item for item in snapshot.items}
         identities = {item_id: dict(items_by_id[item_id].source_identity) for item_id in item_ids}
@@ -658,7 +658,7 @@ class ReadinessResult:
     scope_name: str
     scope_ref: str
     snapshot: InventorySnapshot
-    blockers: tuple[ReadinessBlocker,...]
+    blockers: tuple[ReadinessBlocker, ...]
     state: ReadinessState
     allowed: bool
     admission_authoritative: bool
@@ -669,7 +669,7 @@ class ReadinessResult:
     system_health_state: SystemHealthState = "healthy"
     # Open shell-capture lease operation ids excluded as the live daemon's own
     # active context (M3). Surfaced for auditability; empty outside a daemon.
-    excluded_daemon_lease_ids: tuple[str,...] = ()
+    excluded_daemon_lease_ids: tuple[str, ...] = ()
 
     def to_json(self) -> dict[str, object]:
         return {
@@ -721,7 +721,7 @@ def normalize_mutation_class(command: str) -> ReadinessCommand:
         raise ValueError(f"unknown readiness command: {command!r}") from exc
 
 
-def known_readiness_commands() -> tuple[str,...]:
+def known_readiness_commands() -> tuple[str, ...]:
     """Accepted ``--command`` values (aliases + canonical), sorted.
 
     Exposed for the CLI to enumerate in help and in the structured error it
@@ -749,14 +749,14 @@ def readiness_command_metadata(command: str) -> dict[str, object]:
     }
 
 
-def _baseline_required_bindings(command: ReadinessCommand) -> tuple[RequiredBinding,...]:
+def _baseline_required_bindings(command: ReadinessCommand) -> tuple[RequiredBinding, ...]:
     return _policy_for(command).baseline_required_bindings
 
 
 def _merge_required_bindings(
-    baseline: tuple[RequiredBinding,...],
-    extras: tuple[RequiredBinding,...],
-) -> tuple[RequiredBinding,...]:
+    baseline: tuple[RequiredBinding, ...],
+    extras: tuple[RequiredBinding, ...],
+) -> tuple[RequiredBinding, ...]:
     merged: list[RequiredBinding] = []
     seen: set[RequiredBinding] = set()
     for binding in (*baseline, *extras):
@@ -950,7 +950,7 @@ def _readiness_with_stale_precondition(
 
 
 def _precondition_subject_item(
-    items: tuple[InventoryItem,...],
+    items: tuple[InventoryItem, ...],
     precondition: MutationPrecondition,
     changed_item_id: str | None,
 ) -> InventoryItem:
@@ -973,7 +973,7 @@ def _operation_authorities_for_request(
     owner: VcsCore | None,
     *,
     runtime_admission_context: RuntimeAdmissionContext | None = None,
-) -> tuple[_SourcedOperationAuthority,...]:
+) -> tuple[_SourcedOperationAuthority, ...]:
     if request.command != "vcscore.runtime":
         return ()
     merged: dict[str, _SourcedOperationAuthority] = {}
@@ -1032,7 +1032,7 @@ def _nested_authorizations_for_request(
     owner: VcsCore | None,
     scope_ref: str,
     runtime_admission_context: RuntimeAdmissionContext | None,
-) -> tuple[Any,...]:
+) -> tuple[Any, ...]:
     authorizations: list[Any] = []
     if runtime_admission_context is not None:
         authorizations.extend(runtime_admission_context.nested_authorizations)
@@ -1043,7 +1043,7 @@ def _nested_authorizations_for_request(
     return tuple(authorizations)
 
 
-def _implicit_runtime_operation_authorities(owner: VcsCore | None) -> tuple[ReadinessOperationAuthority,...]:
+def _implicit_runtime_operation_authorities(owner: VcsCore | None) -> tuple[ReadinessOperationAuthority, ...]:
     if owner is None:
         return ()
     operation_stack = getattr(owner._pipeline.context, "operation_stack", ())
@@ -1067,12 +1067,12 @@ def _implicit_runtime_operation_authorities(owner: VcsCore | None) -> tuple[Read
 
 def _operation_authority_items(
     store: Store,
-    authorities: tuple[_SourcedOperationAuthority,...],
+    authorities: tuple[_SourcedOperationAuthority, ...],
     *,
     scope_ref: str,
-    nested_authorizations: tuple[Any,...] = (),
+    nested_authorizations: tuple[Any, ...] = (),
     runtime_admission_context: RuntimeAdmissionContext | None = None,
-) -> tuple[tuple[InventoryItem,...], set[str]]:
+) -> tuple[tuple[InventoryItem, ...], set[str]]:
     if not authorities:
         return (), set()
     open_operations = tuple(store.list_open_operations())
@@ -1113,7 +1113,7 @@ def _operation_authority_items(
 
 
 def _nested_authority_admits(
-    nested_authorizations: tuple[Any,...],
+    nested_authorizations: tuple[Any, ...],
     *,
     parent_scope_ref: str,
     child_scope_ref: str,
@@ -1126,7 +1126,7 @@ def _nested_authority_admits(
 
 
 def _matching_open_operation(
-    open_operations: tuple[Any,...],
+    open_operations: tuple[Any, ...],
     authority: ReadinessOperationAuthority,
 ) -> Any | None:
     for operation in open_operations:
@@ -1150,7 +1150,7 @@ def _matching_open_operation(
 
 
 def _candidate_open_operation(
-    open_operations: tuple[Any,...],
+    open_operations: tuple[Any, ...],
     authority: ReadinessOperationAuthority,
 ) -> Any | None:
     for operation in open_operations:
@@ -1435,13 +1435,13 @@ def _nested_child_quiescence_blocker_item(
 
 
 def _filter_authorized_operation_recovery_items(
-    items: tuple[InventoryItem,...],
+    items: tuple[InventoryItem, ...],
     authorized_operation_refs: set[str],
     *,
     request: ReadinessRequest,
     scope_ref: str,
     current_session_id: str | None,
-) -> tuple[InventoryItem,...]:
+) -> tuple[InventoryItem, ...]:
     if not authorized_operation_refs and request.command != "vcscore.runtime":
         return items
     return tuple(
@@ -1500,7 +1500,7 @@ def _operation_source_identity(store: Store, operation: Any) -> dict[str, object
     }
     try:
         commit = store.resolve_to_commit(ref)
-    except Exception: # noqa: BLE001
+    except Exception:  # noqa: BLE001
         return identity
     if commit is not None:
         identity["ref_target_oid"] = str(commit.id)
@@ -1514,10 +1514,10 @@ def _inventory_items_for_policy(
     scope_ref: str,
     *,
     owner: VcsCore | None,
-    operation_authorities: tuple[_SourcedOperationAuthority,...],
-    nested_authorizations: tuple[Any,...] = (),
+    operation_authorities: tuple[_SourcedOperationAuthority, ...],
+    nested_authorizations: tuple[Any, ...] = (),
     runtime_admission_context: RuntimeAdmissionContext | None = None,
-) -> tuple[InventoryItem,...]:
+) -> tuple[InventoryItem, ...]:
     items: list[InventoryItem] = []
     domains = policy.observed_domains
     store = owner.store if owner is not None else None
@@ -1578,7 +1578,7 @@ def _inventory_items_for_policy(
 _ADMISSION_JOURNAL_FAMILY = "open"
 
 
-def _admission_operation_journal_items(repo_path: str | Path) -> tuple[InventoryItem,...]:
+def _admission_operation_journal_items(repo_path: str | Path) -> tuple[InventoryItem, ...]:
     """Bounded admission source: read the open-journal index, probe ONLY those refs (no namespace scan).
 
     The only ``operation_journal`` source a *mutating* policy observes. Index present → bounded;
@@ -1592,12 +1592,12 @@ def _admission_operation_journal_items(repo_path: str | Path) -> tuple[Inventory
         return ()
     try:
         manager = open_existing_default_world_storage(repo_path)
-    except Exception: # noqa: BLE001
+    except Exception:  # noqa: BLE001
         return ()
     return admission_operation_journal_items(manager)
 
 
-def _status_operation_journal_items(repo_path: str | Path) -> tuple[InventoryItem,...]:
+def _status_operation_journal_items(repo_path: str | Path) -> tuple[InventoryItem, ...]:
     """Status source (may scan): enumerate the open family off the mutation gate (step-2 behavior).
 
     Read-only/status policies keep the O(total-refs) open scan; it never gates mutation. Splitting
@@ -1609,7 +1609,7 @@ def _status_operation_journal_items(repo_path: str | Path) -> tuple[InventoryIte
         return ()
     try:
         manager = open_existing_default_world_storage(repo_path)
-    except Exception: # noqa: BLE001
+    except Exception:  # noqa: BLE001
         return ()
     return probe_operation_journals(manager.world_store.repo, family=_ADMISSION_JOURNAL_FAMILY)
 
@@ -1619,7 +1619,7 @@ def _recovery_inventory_items(
     store: Store,
     *,
     owner: VcsCore | None,
-) -> tuple[InventoryItem,...]:
+) -> tuple[InventoryItem, ...]:
     if owner is not None:
         return recovery_inventory_snapshot(owner).items
     return recovery_inventory_snapshot_for_store(repo_path, store).items
@@ -1628,8 +1628,8 @@ def _recovery_inventory_items(
 def _derive_blockers(
     request: ReadinessRequest,
     policy: ReadinessPolicy,
-    items: tuple[InventoryItem,...],
-) -> tuple[tuple[ReadinessBlocker,...], tuple[InventoryIssue,...]]:
+    items: tuple[InventoryItem, ...],
+) -> tuple[tuple[ReadinessBlocker, ...], tuple[InventoryIssue, ...]]:
     if not policy.mutates:
         return (), ()
     blockers: list[ReadinessBlocker] = []
@@ -1657,9 +1657,7 @@ def _derive_blockers(
                 item,
                 code="readiness_authority_settlement_pending",
                 message="authority settlement recovery is pending",
-                recovery_hint=(
-                    "Run recover_authority_settlements() before starting mutating work."
-                ),
+                recovery_hint=("Run recover_authority_settlements() before starting mutating work."),
             )
             policy_issues.append(issue)
             if _target_recovery_allows(request, item, issue, target_match):
@@ -1726,8 +1724,8 @@ def _derive_blockers(
 
 
 def _system_recovery_required(
-    items: tuple[InventoryItem,...],
-    policy_issues: tuple[InventoryIssue,...],
+    items: tuple[InventoryItem, ...],
+    policy_issues: tuple[InventoryIssue, ...],
     policy: ReadinessPolicy,
 ) -> bool:
     if any(_issue_is_recoverable(issue) for issue in policy_issues):
@@ -1756,7 +1754,7 @@ def _system_recovery_required(
     return False
 
 
-def _consumed_item_ids(policy: ReadinessPolicy, items: tuple[InventoryItem,...]) -> tuple[str,...]:
+def _consumed_item_ids(policy: ReadinessPolicy, items: tuple[InventoryItem, ...]) -> tuple[str, ...]:
     if not policy.mutates:
         return ()
     return tuple(
@@ -1774,19 +1772,19 @@ def _policy_blocks_recovery_item(policy: ReadinessPolicy, item: InventoryItem) -
     return item.kind in policy.blocking_recovery_kinds
 
 
-def _targets_from_json(value: object) -> tuple[ReadinessTarget,...]:
+def _targets_from_json(value: object) -> tuple[ReadinessTarget, ...]:
     if not isinstance(value, list):
         raise TypeError("targets must be an array")
     return tuple(ReadinessTarget.from_json(item) for item in value)
 
 
-def _authorized_operations_from_json(value: object) -> tuple[ReadinessOperationAuthority,...]:
+def _authorized_operations_from_json(value: object) -> tuple[ReadinessOperationAuthority, ...]:
     if not isinstance(value, list):
         raise TypeError("authorized_operations must be an array")
     return tuple(ReadinessOperationAuthority.from_json(item) for item in value)
 
 
-def _validate_targets_for_command(command: ReadinessCommand, targets: tuple[ReadinessTarget,...]) -> None:
+def _validate_targets_for_command(command: ReadinessCommand, targets: tuple[ReadinessTarget, ...]) -> None:
     if command not in _RECOVERY_COMMANDS:
         return
     for target in targets:
@@ -1800,7 +1798,7 @@ def _validate_targets_for_command(command: ReadinessCommand, targets: tuple[Read
 
 def _validate_authorized_operations_for_command(
     command: ReadinessCommand,
-    authorized_operations: tuple[ReadinessOperationAuthority,...],
+    authorized_operations: tuple[ReadinessOperationAuthority, ...],
 ) -> None:
     if not authorized_operations:
         return
@@ -1878,9 +1876,9 @@ def _issue_is_recoverable(issue: InventoryIssue | None) -> bool:
 
 def _missing_recovery_target_issues(
     request: ReadinessRequest,
-    items: tuple[InventoryItem,...],
+    items: tuple[InventoryItem, ...],
     matched_target_item_ids: set[str],
-) -> tuple[InventoryIssue,...]:
+) -> tuple[InventoryIssue, ...]:
     issues: list[InventoryIssue] = []
     for target in request.targets:
         matched_items = tuple(item for item in items if _target_matches_item(target, item))
@@ -1920,7 +1918,7 @@ def _missing_recovery_target_issues(
     return tuple(issues)
 
 
-def _recovery_target_subject_item(items: tuple[InventoryItem,...]) -> InventoryItem:
+def _recovery_target_subject_item(items: tuple[InventoryItem, ...]) -> InventoryItem:
     for item in items:
         if item.domain == "scope":
             return item
@@ -1928,9 +1926,9 @@ def _recovery_target_subject_item(items: tuple[InventoryItem,...]) -> InventoryI
 
 
 def _unverifiable_consumed_fact_issues(
-    items: tuple[InventoryItem,...],
-    item_ids: tuple[str,...],
-) -> tuple[InventoryIssue,...]:
+    items: tuple[InventoryItem, ...],
+    item_ids: tuple[str, ...],
+) -> tuple[InventoryIssue, ...]:
     issues: list[InventoryIssue] = []
     for item_id in item_ids:
         item = _item_by_id(items, item_id)
@@ -1947,7 +1945,7 @@ def _unverifiable_consumed_fact_issues(
     return tuple(issues)
 
 
-def _item_by_id(items: tuple[InventoryItem,...], item_id: str) -> InventoryItem:
+def _item_by_id(items: tuple[InventoryItem, ...], item_id: str) -> InventoryItem:
     for item in items:
         if item.id == item_id:
             return item
@@ -1976,7 +1974,7 @@ def _policy_issue(item: InventoryItem, *, code: str, message: str, recovery_hint
     )
 
 
-def _bindings_from_json(value: object) -> tuple[RequiredBinding,...]:
+def _bindings_from_json(value: object) -> tuple[RequiredBinding, ...]:
     if not isinstance(value, list):
         raise TypeError("required_bindings must be an array")
     bindings: list[RequiredBinding] = []
@@ -2022,7 +2020,7 @@ def _optional_bool(payload: dict[str, object], key: str, *, default: bool | None
 
 def _normalize_freshness(value: str) -> ReadinessFreshness:
     if value in {"best_effort", "locked", "revalidated"}:
-        return value # type: ignore[return-value]
+        return value  # type: ignore[return-value]
     raise ValueError(f"unknown readiness freshness: {value!r}")
 
 

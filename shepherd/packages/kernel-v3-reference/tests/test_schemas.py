@@ -51,9 +51,9 @@ def test_schema_fingerprint_is_structural() -> None:
     assert schema_fingerprint(AnySchema()) == {"schema": "any"}
     assert schema_fingerprint(TypeSchema(int)) != schema_fingerprint(TypeSchema(str))
     assert schema_fingerprint(TaggedRecordSchema("Draft")) != schema_fingerprint(TaggedRecordSchema("Prompt"))
-    assert schema_fingerprint(RecordSchema({"x": TypeSchema(int), "y": TaggedRecordSchema("Draft")})) == schema_fingerprint(
-        RecordSchema({"y": TaggedRecordSchema("Draft"), "x": TypeSchema(int)})
-    )
+    assert schema_fingerprint(
+        RecordSchema({"x": TypeSchema(int), "y": TaggedRecordSchema("Draft")})
+    ) == schema_fingerprint(RecordSchema({"y": TaggedRecordSchema("Draft"), "x": TypeSchema(int)}))
 
 
 def test_schema_fingerprint_rejects_unstable_custom_schema() -> None:

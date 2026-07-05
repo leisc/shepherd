@@ -27,8 +27,7 @@ def _active_shepherd_python_files() -> list[Path]:
     return [
         path
         for path in sorted(SHEPHERD_PACKAGES.rglob("*.py"))
-        if "/tests/" not in path.as_posix()
-        and "/__pycache__/" not in path.as_posix()
+        if "/tests/" not in path.as_posix() and "/__pycache__/" not in path.as_posix()
     ]
 
 

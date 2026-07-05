@@ -6,7 +6,7 @@ minimum; the planted defect shows the path moving uphill. The static gate and
 critic both key off that same decision-critical direction.
 """
 
-# ruff: noqa: D101,D103,TC003
+# ruff: noqa: TC003
 
 from __future__ import annotations
 
@@ -87,13 +87,20 @@ UC1_SPECS = (
 
 UC2_SPECS = (
     TileSpec(id="sonnet", state="selected", model="sonnet", cost="medium"),
-    TileSpec(id="haiku", style="vectors", accent="#7a6ff0", secondary="#ef6f6c", state="discarded",
-             defect="wrong_direction", model="haiku", cost="low"),
+    TileSpec(
+        id="haiku",
+        style="vectors",
+        accent="#7a6ff0",
+        secondary="#ef6f6c",
+        state="discarded",
+        defect="wrong_direction",
+        model="haiku",
+        cost="low",
+    ),
     TileSpec(id="opus", accent="#3f7fca", secondary="#d66a3f", state="not_selected", model="opus", cost="high"),
 )
 
-UC3_DRAFT = TileSpec(id="draft_v1", accent="#a65f00", secondary="#c84b62", state="discarded",
-                     defect="wrong_direction")
+UC3_DRAFT = TileSpec(id="draft_v1", accent="#a65f00", secondary="#c84b62", state="discarded", defect="wrong_direction")
 UC3_RETRY = TileSpec(id="draft_retry", state="selected")
 
 SPEC_BY_ID = {spec.id: spec for spec in (*UC1_SPECS, *UC2_SPECS, UC3_DRAFT, UC3_RETRY)}
@@ -212,7 +219,9 @@ def _stamp_fixture_contract(html: str, *, spec: TileSpec, generator: str, model:
     stamped = _strip_known_attrs(html, attrs)
     attr_text = "".join(f' {key}="{_html.escape(value, quote=True)}"' for key, value in attrs.items())
 
-    stamped, replaced = re.subn(r"<main\b([^>]*)>", lambda match: f"<main{match.group(1)}{attr_text}>", stamped, count=1)
+    stamped, replaced = re.subn(
+        r"<main\b([^>]*)>", lambda match: f"<main{match.group(1)}{attr_text}>", stamped, count=1
+    )
     if replaced:
         return stamped
 
@@ -221,7 +230,9 @@ def _stamp_fixture_contract(html: str, *, spec: TileSpec, generator: str, model:
         head, sep, tail = stamped.rpartition("</div>")
         return f"{head}</main>{tail}" if sep else stamped
 
-    stamped, replaced = re.subn(r"<body\b([^>]*)>", lambda match: f"<body{match.group(1)}{attr_text}>", stamped, count=1)
+    stamped, replaced = re.subn(
+        r"<body\b([^>]*)>", lambda match: f"<body{match.group(1)}{attr_text}>", stamped, count=1
+    )
     return stamped if replaced else stamped.replace("<html", f"<html{attr_text}", 1)
 
 
@@ -278,11 +289,7 @@ def evaluate_gate(*, branch: str, html: str, changed_paths: tuple[str, ...], bri
     if assets == "fail":
         failures.append("external asset(s), must be single-file")
 
-    wrong = (
-        'data-direction="uphill"' in html
-        or 'class="path bad"' in html
-        or "wrong_direction" in html
-    )
+    wrong = 'data-direction="uphill"' in html or 'class="path bad"' in html or "wrong_direction" in html
     direction = "fail" if wrong else "pass"
     if wrong:
         failures.append("descent path moves uphill away from the minimum")
@@ -376,7 +383,10 @@ def visual_contract(spec: TileSpec) -> str:
 
 def _external_assets(html: str) -> list[str]:
     patterns = (
-        re.compile(r"<(?:img|link|script|iframe|source|video|audio|track|embed)\b[^>]*?\b(?:src|href)\s*=\s*['\"]?\s*(?:https?:)?//", re.IGNORECASE | re.DOTALL),
+        re.compile(
+            r"<(?:img|link|script|iframe|source|video|audio|track|embed)\b[^>]*?\b(?:src|href)\s*=\s*['\"]?\s*(?:https?:)?//",
+            re.IGNORECASE | re.DOTALL,
+        ),
         re.compile(r"url\(\s*['\"]?\s*(?:https?:)?//", re.IGNORECASE),
         re.compile(r"@import\b[^;]*?(?:https?:)?//", re.IGNORECASE),
     )

@@ -168,9 +168,12 @@ def test_start_capture_session_surfaces_daemon_start_error(monkeypatch, tmp_path
     monkeypatch.setattr(session_mod, "SessionDaemon", FakeDaemon)
     monkeypatch.setattr(ipc, "read_session_info", lambda repo_path: None)
 
-    with pytest.raises(SessionCaptureError, match="boom") as excinfo, start_capture_session(
-        tmp_path,
-        startup_timeout=1.0,
+    with (
+        pytest.raises(SessionCaptureError, match="boom") as excinfo,
+        start_capture_session(
+            tmp_path,
+            startup_timeout=1.0,
+        ),
     ):
         pass
 

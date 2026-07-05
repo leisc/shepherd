@@ -69,7 +69,7 @@ def append_run_trace(mg: Any, revision: Mapping[str, Any], *, scope: Any = None)
 
 TRACE_RUNTIME = "shepherd.trace.provider-neutral.v1"
 VCSCORE_DOMAIN = "vcscore.canonical.v2"
-SHEPHERD_KERNEL_DOMAIN = CANONICAL_VERSION # "shepherd.kernel.canonical.v2"
+SHEPHERD_KERNEL_DOMAIN = CANONICAL_VERSION  # "shepherd.kernel.canonical.v2"
 
 
 def _lift_selector(selector: Any) -> Callable[[Mapping[str, Any]], bool]:
@@ -108,14 +108,14 @@ class RunTrace:
     payload: Mapping[str, Any]
 
     @property
-    def events(self) -> tuple[Mapping[str, Any],...]:
+    def events(self) -> tuple[Mapping[str, Any], ...]:
         return tuple(self.payload.get("events") or ())
 
     @property
     def run_ref(self) -> str | None:
         return self.payload.get("run_ref")
 
-    def filter(self, selector: Any) -> tuple[Mapping[str, Any],...]:
+    def filter(self, selector: Any) -> tuple[Mapping[str, Any], ...]:
         """Events matching ``selector`` (kind string | effect type | predicate)."""
         predicate = _lift_selector(selector)
         return tuple(event for event in self.events if predicate(event))
@@ -184,8 +184,7 @@ class RunTrace:
         kinds = set(mine["kinds"]) | set(theirs["kinds"])
         return {
             "same_invocation": (
-                mine["invocation_digest"] is not None
-                and mine["invocation_digest"] == theirs["invocation_digest"]
+                mine["invocation_digest"] is not None and mine["invocation_digest"] == theirs["invocation_digest"]
             ),
             "invocation_digest": (mine["invocation_digest"], theirs["invocation_digest"]),
             "terminal_status": (mine["terminal_status"], theirs["terminal_status"]),
@@ -267,7 +266,7 @@ def build_run_trace_revision(
     invocation = task_invocation_record(task_id=task_id, args=args, may_profile=may_profile)
     transition = {
         "id": "workspace-transition",
-        "kind": "substrate.transition", # pointer half: cites world OIDs, no record digest
+        "kind": "substrate.transition",  # pointer half: cites world OIDs, no record digest
         "binding": "workspace",
         "head_from": input_world_oid,
         "head_to": output_world_oid,
@@ -296,7 +295,7 @@ def build_run_trace_revision(
         "trace_owner_id": trace_owner_id,
         "frontier_id": frontier_id,
         "run_ref": run_ref,
-        "identity_domain": VCSCORE_DOMAIN, # hoisted header; fourth-row events override
+        "identity_domain": VCSCORE_DOMAIN,  # hoisted header; fourth-row events override
         "events": events,
         "causal_edges": [[a, b] for a, b in pairwise(ids)],
         "owner_paths": {trace_owner_id: ids},

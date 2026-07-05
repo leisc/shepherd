@@ -125,7 +125,9 @@ def test_record_digest_changes_when_retained_witness_record_id_changes() -> None
 
 def test_witness_body_digest_changes_with_substrate_and_containment() -> None:
     base = witness_body_digest(schema_ref=WITNESS_SCHEMA_REF, body=_witness_body())
-    different_substrate = witness_body_digest(schema_ref=WITNESS_SCHEMA_REF, body=_witness_body(substrate_ref="fs.local.v1"))
+    different_substrate = witness_body_digest(
+        schema_ref=WITNESS_SCHEMA_REF, body=_witness_body(substrate_ref="fs.local.v1")
+    )
     different_containment = witness_body_digest(schema_ref=WITNESS_SCHEMA_REF, body=_witness_body(containment="full"))
 
     assert base != different_substrate
@@ -141,7 +143,9 @@ def test_witness_body_digest_is_not_the_retained_witness_record_id() -> None:
 def test_root_witness_body_digest_is_deterministic() -> None:
     assert root_witness_body()["substrate_ref"] == "kernel"
     assert root_witness_body()["containment"] == "full"
-    assert root_witness_body_digest() == witness_body_digest(schema_ref=ROOT_WITNESS_SCHEMA_REF, body=root_witness_body())
+    assert root_witness_body_digest() == witness_body_digest(
+        schema_ref=ROOT_WITNESS_SCHEMA_REF, body=root_witness_body()
+    )
 
 
 def test_record_input_rejects_invalid_mode() -> None:

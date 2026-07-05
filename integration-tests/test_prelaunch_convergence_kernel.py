@@ -1,6 +1,5 @@
 """Promoted pre-launch convergence proof over root commons-vcs."""
 
-
 from __future__ import annotations
 
 import importlib

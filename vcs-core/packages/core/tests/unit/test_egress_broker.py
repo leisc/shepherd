@@ -77,9 +77,7 @@ def test_negation_is_grant_local_not_a_cross_grant_veto() -> None:
 
 
 def test_escalate_is_deny_loud_in_the_mvp() -> None:
-    policy = EgressPolicy(
-        grants=(HostGrant(positive=(HostAtom("exact", "approve.me"),), verdict=Verdict.ESCALATE),)
-    )
+    policy = EgressPolicy(grants=(HostGrant(positive=(HostAtom("exact", "approve.me"),), verdict=Verdict.ESCALATE),))
     decision = policy.decide("approve.me", 443)
     assert decision.verdict is Verdict.ESCALATE
     assert decision.kind == "broker:connect-escalate-unbuilt"  # auditable, never a silent allow

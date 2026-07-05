@@ -848,7 +848,7 @@ def test_non_reversible_run_requires_bool_before_fork_or_body(
                 "run",
                 scope=mg.ground,
                 behavior="noop",
-                execution_options=CommandExecutionOptions(non_reversible_run=value), # type: ignore[arg-type]
+                execution_options=CommandExecutionOptions(non_reversible_run=value),  # type: ignore[arg-type]
             )
         assert driver.admissions == []
         assert driver.seen == []
@@ -1030,7 +1030,7 @@ def test_recovery_of_orphaned_reversible_run_never_auto_merges_and_archives(tmp_
     mg1._restored_scopes.clear()
     mg1._patch_manager.uninstall_all()
     for substrate in reversed(mg1.lifecycle_substrates):
-        if hasattr(substrate, "deactivate"): # SPI drivers have no activation lifecycle
+        if hasattr(substrate, "deactivate"):  # SPI drivers have no activation lifecycle
             substrate.deactivate()
     release_session_lock(mg1._repo_path, mg1._session_id)
 

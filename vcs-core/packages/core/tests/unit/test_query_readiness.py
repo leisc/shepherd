@@ -1025,7 +1025,7 @@ def test_vcscore_control_policies_block_sibling_groups(mg: VcsCore, command: str
     assert any(item["kind"] == "sibling_group_blocker" for item in payload["items"])
 
 
-def test_authority_ref_probe_reports_unreadable_world_storage_as_invalid(workspace) -> None: # type: ignore[no-untyped-def]
+def test_authority_ref_probe_reports_unreadable_world_storage_as_invalid(workspace) -> None:  # type: ignore[no-untyped-def]
     store = Store(str(workspace / ".vcscore"))
     store.create_root_commit()
     storage_root = default_world_storage_root(store._repo_path)
@@ -1039,7 +1039,7 @@ def test_authority_ref_probe_reports_unreadable_world_storage_as_invalid(workspa
     assert item.health.issue_codes == ("authority_ref_unreadable",)
 
 
-def test_readiness_blocks_unreadable_world_storage_as_invalid(workspace) -> None: # type: ignore[no-untyped-def]
+def test_readiness_blocks_unreadable_world_storage_as_invalid(workspace) -> None:  # type: ignore[no-untyped-def]
     store = Store(str(workspace / ".vcscore"))
     store.create_root_commit()
     storage_root = default_world_storage_root(store._repo_path)
@@ -1284,7 +1284,9 @@ def test_readiness_allows_revalidated_run_after_workspace_selection(mg: VcsCore)
 
 def test_revalidate_readiness_precondition_accepts_unchanged_state(mg: VcsCore) -> None:
     mg.exec("filesystem", "write", scope=mg.ground, path="ready.txt", content=b"ready")
-    request = ReadinessRequest.create(command="shepherd.run", requested_freshness="revalidated", allow_best_effort=False)
+    request = ReadinessRequest.create(
+        command="shepherd.run", requested_freshness="revalidated", allow_best_effort=False
+    )
     result = mg.query_readiness(request)
     payload = result.to_json()
 
@@ -1297,7 +1299,9 @@ def test_revalidate_readiness_precondition_accepts_unchanged_state(mg: VcsCore) 
 
 def test_revalidate_readiness_precondition_rejects_changed_source_identity(mg: VcsCore) -> None:
     mg.exec("filesystem", "write", scope=mg.ground, path="ready.txt", content=b"ready")
-    request = ReadinessRequest.create(command="shepherd.run", requested_freshness="revalidated", allow_best_effort=False)
+    request = ReadinessRequest.create(
+        command="shepherd.run", requested_freshness="revalidated", allow_best_effort=False
+    )
     payload = mg.query_readiness(request).to_json()
 
     mg.exec("filesystem", "write", scope=mg.ground, path="changed.txt", content=b"changed")
@@ -1313,7 +1317,9 @@ def test_revalidate_readiness_precondition_rejects_changed_source_identity(mg: V
 
 def test_revalidate_readiness_precondition_rejects_command_mismatch(mg: VcsCore) -> None:
     mg.exec("filesystem", "write", scope=mg.ground, path="ready.txt", content=b"ready")
-    request = ReadinessRequest.create(command="shepherd.run", requested_freshness="revalidated", allow_best_effort=False)
+    request = ReadinessRequest.create(
+        command="shepherd.run", requested_freshness="revalidated", allow_best_effort=False
+    )
     payload = mg.query_readiness(request).to_json()
     recover_request = ReadinessRequest.create(
         command="shepherd.recover",
@@ -1777,13 +1783,15 @@ def test_corrupt_index_recovery_not_deadlocked_by_unrelated_workspace_authority_
     repo = manager.world_store.repo
     sig = pygit2.Signature("t", "t@e.invalid")
     corrupt = repo.create_commit(None, sig, sig, "corrupt", repo.TreeBuilder().write(), [])
-    repo.references.create(world_open_operation_journal_index_ref(manager.world_store.world_store_id), corrupt, force=True)
-    _write_workspace_authority_pending(mg, "op-wa") # the unrelated blocker
+    repo.references.create(
+        world_open_operation_journal_index_ref(manager.world_store.world_store_id), corrupt, force=True
+    )
+    _write_workspace_authority_pending(mg, "op-wa")  # the unrelated blocker
 
     # NOT deadlocked: the projection repair runs despite the unrelated WA-pending fact (before the fix
     # this raised WorkspaceAuthorityRecoveryRequiredError from the recovery-admission gate).
     assert mg.recover_open_operation_journal_index() is True
-    assert manager.open_operation_journal_index_corruption() is None # the index is repaired
+    assert manager.open_operation_journal_index_corruption() is None  # the index is repaired
 
 
 def _sibling_group(mg: VcsCore, *, group_id: str) -> SiblingGroupRecord:
@@ -1835,7 +1843,10 @@ def _write_corrupt_operation_journal(mg: VcsCore, operation_id: str) -> None:
     # probes and blocks on. (A manual open ref that bypassed the co-write would be out-of-model stale
     # drift, invisible to bounded admission until fsck/recovery rebuilds the index.)
     manager.open_operation_journal(
-        operation_id=operation_id, operation_kind="shepherd.task", target_ref="refs/vcscore/ground", input_world_oid=None
+        operation_id=operation_id,
+        operation_kind="shepherd.task",
+        target_ref="refs/vcscore/ground",
+        input_world_oid=None,
     )
     repo = manager.world_store.repo
     meta_builder = repo.TreeBuilder()

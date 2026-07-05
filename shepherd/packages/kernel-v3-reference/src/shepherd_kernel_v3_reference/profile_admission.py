@@ -129,8 +129,7 @@ def _admit_expr(expr: Expr, path: _Path) -> None:
     if isinstance(expr, RecordExpr):
         raise _reject(
             "RecordExpr",
-            "RecordExpr is not admitted by core-reference-v0-lite "
-            "(records arrive in -json)",
+            "RecordExpr is not admitted by core-reference-v0-lite (records arrive in -json)",
             path,
         )
     # Any other expression form is a profile-admission rejection by exclusion
@@ -155,8 +154,7 @@ def _admit_value(value: Any, path: _Path) -> None:
         return
     raise _reject(
         type(value).__name__,
-        f"value of type {type(value).__name__} is not admitted by "
-        f"core-reference-v0-lite (only int and null)",
+        f"value of type {type(value).__name__} is not admitted by core-reference-v0-lite (only int and null)",
         path,
     )
 
@@ -272,15 +270,13 @@ def _admit_handler_body(body: Computation, path: _Path) -> None:
     if n_abort > 1:
         raise _reject(
             "multiple Abort in handler body",
-            f"core-reference-v0-lite admits at most one Abort per handler body "
-            f"(found {n_abort})",
+            f"core-reference-v0-lite admits at most one Abort per handler body (found {n_abort})",
             path,
         )
     if n_resume == 1 and n_abort == 1:
         raise _reject(
             "mixed Resume+Abort handler body",
-            "core-reference-v0-lite admits handler bodies in Resume-shape OR "
-            "Abort-shape, not both",
+            "core-reference-v0-lite admits handler bodies in Resume-shape OR Abort-shape, not both",
             path,
         )
 
@@ -296,8 +292,7 @@ def _admit_handler_body(body: Computation, path: _Path) -> None:
     elif not _terminates_in_abort(body):
         raise _reject(
             "Abort-shape handler body has computation after Abort",
-            "core-reference-v0-lite Abort-shape rejects computation after "
-            "the Abort (Abort is the terminal answer)",
+            "core-reference-v0-lite Abort-shape rejects computation after the Abort (Abort is the terminal answer)",
             path,
         )
 

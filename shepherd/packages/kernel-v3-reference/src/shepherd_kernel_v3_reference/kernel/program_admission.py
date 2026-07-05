@@ -110,10 +110,7 @@ class PreparedKernelProgram:
         raise AttributeError("PreparedKernelProgram is read-only")
 
     def __repr__(self) -> str:
-        return (
-            f"PreparedKernelProgram(program={self.program!r}, "
-            f"index={self.index!r}, profile={self.profile.name!r})"
-        )
+        return f"PreparedKernelProgram(program={self.program!r}, index={self.index!r}, profile={self.profile.name!r})"
 
 
 _PREPARED_KERNEL_PROGRAM_SEAL = object()
@@ -185,7 +182,8 @@ def _prepare_unchecked(
     )
     index = _AdmissionBuilder(program_snapshot).build()
     return PreparedKernelProgram(
-        program_snapshot, index,
+        program_snapshot,
+        index,
         profile=profile,
         _seal=_PREPARED_KERNEL_PROGRAM_SEAL,
     )

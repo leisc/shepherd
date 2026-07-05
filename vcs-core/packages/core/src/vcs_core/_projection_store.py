@@ -78,6 +78,7 @@ def scope_status_is_runtime_open(status: ScopeRegistryStatus) -> bool:
 def scope_status_is_terminal(status: ScopeRegistryStatus) -> bool:
     return status in TERMINAL_SCOPE_STATUSES
 
+
 SEAL_AND_SELECT_ENV = "VCS_CORE_SEAL_AND_SELECT"
 
 

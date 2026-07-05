@@ -97,7 +97,9 @@ def test_keyed_json_tree_store_draft_rejects_put_delete_conflict() -> None:
 
 def test_keyed_json_tree_store_selected_read_helpers_delegate_to_vcscore_api() -> None:
     class FakeVcsCore:
-        def read_selected_binding_json_entry(self, binding: str, path: str, *, scope: object = None) -> dict[str, object]:
+        def read_selected_binding_json_entry(
+            self, binding: str, path: str, *, scope: object = None
+        ) -> dict[str, object]:
             assert binding == "shepherd.runs"
             assert path == "data/runs/by-ref/ru/run-1.json"
             assert scope == "ground"

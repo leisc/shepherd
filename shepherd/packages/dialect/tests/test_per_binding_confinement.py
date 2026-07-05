@@ -76,7 +76,7 @@ def test_readwrite_grants_become_writable_roots(tmp_path) -> None:
 def test_all_readonly_grants_lower_to_no_writable_root(tmp_path) -> None:
     docs = tmp_path / "docs"
     spec = lower_grants_to_confinement([BindingRootGrant(binding="docs", root=str(docs), writable=False)])
-    assert spec.writable_roots == () # the ReadOnly / deny-closed floor
+    assert spec.writable_roots == ()  # the ReadOnly / deny-closed floor
 
 
 def test_multiple_readwrite_roots_union(tmp_path) -> None:
@@ -126,20 +126,20 @@ def test_lowered_spec_is_deny_closed_at_the_seatbelt_jail(tmp_path) -> None:
         ]
     )
     writable_roots, allow_network = _resolve_spec(spec)
-    assert not allow_network # deny-all lowered through
+    assert not allow_network  # deny-all lowered through
 
     jail = SeatbeltContainmentBackend()
     profile = jail.profile_for(writable_roots, allow_network=allow_network)
-    jail.probe(profile, tmp_path, writable_roots=writable_roots) # fail-closed pre-flight
+    jail.probe(profile, tmp_path, writable_roots=writable_roots)  # fail-closed pre-flight
 
     ok = backend_dir / "candidate.txt"
     jail.launch(profile, tmp_path, ["/usr/bin/touch", "--", str(ok)])
-    assert ok.exists() # write beneath the ReadWrite root lands
+    assert ok.exists()  # write beneath the ReadWrite root lands
 
     denied = docs_dir / "nope.txt"
     jail.launch(profile, tmp_path, ["/usr/bin/touch", "--", str(denied)])
-    assert not denied.exists() # write beneath the ReadOnly root refused at the syscall
+    assert not denied.exists()  # write beneath the ReadOnly root refused at the syscall
 
     unbound = tmp_path / "stray.txt"
     jail.launch(profile, tmp_path, ["/usr/bin/touch", "--", str(unbound)])
-    assert not unbound.exists() # unbound in-workspace write refused at the syscall
+    assert not unbound.exists()  # unbound in-workspace write refused at the syscall

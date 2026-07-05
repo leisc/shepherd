@@ -620,13 +620,7 @@ def _contract_text(obj: object) -> str:
     doc_block = (
         ' """' + doc.replace('"""', '\\"\\"\\"') + '"""'
         if "\n" not in doc
-        else (
-            ' """'
-            + doc.splitlines()[0]
-            + "\n"
-            + textwrap.indent("\n".join(doc.splitlines()[1:]), " ")
-            + '\n """'
-        )
+        else (' """' + doc.splitlines()[0] + "\n" + textwrap.indent("\n".join(doc.splitlines()[1:]), " ") + '\n """')
     )
     contract_lines = lines[: max(0, fn.body[0].lineno - 1)] if fn.body else lines
     return "\n".join([*contract_lines, doc_block, "..."])

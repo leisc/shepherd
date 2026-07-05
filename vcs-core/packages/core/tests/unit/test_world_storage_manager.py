@@ -2153,7 +2153,9 @@ def test_world_storage_manager_rejects_import_selection_without_original_provena
     )
     world_oid = manager.create_unsafe_world(
         snapshot=_snapshot(
-            manager.substrate_head("store_workspace", binding="workspace", head=workspace, role="shepherd.WorkspaceRef"),
+            manager.substrate_head(
+                "store_workspace", binding="workspace", head=workspace, role="shepherd.WorkspaceRef"
+            ),
         ),
         transition=_transition("op-legacy-import"),
         operation_final=_workspace_existing_head_final(
@@ -2186,7 +2188,9 @@ def test_world_storage_manager_accepts_import_selection_with_original_provenance
     )
     world_oid = manager.create_unsafe_world(
         snapshot=_snapshot(
-            manager.substrate_head("store_workspace", binding="workspace", head=workspace, role="shepherd.WorkspaceRef"),
+            manager.substrate_head(
+                "store_workspace", binding="workspace", head=workspace, role="shepherd.WorkspaceRef"
+            ),
         ),
         transition=_transition("op-prepared-import"),
         operation_final=_workspace_existing_head_final(

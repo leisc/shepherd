@@ -22,9 +22,7 @@ import vcs_core._world_operation_journal as journal_module
 # The enumerated membership writers. A genuinely non-membership RefMove (e.g. a future
 # closed->archived move that does NOT change open-set membership) added here would be a conscious
 # allowlist edit, paired with confirming it need not co-write the open-journal index.
-_SANCTIONED_OPEN_MEMBERSHIP_WRITERS = frozenset(
-    {"prepare_open", "prepare_terminal", "prepare_cleanup_stale_open_ref"}
-)
+_SANCTIONED_OPEN_MEMBERSHIP_WRITERS = frozenset({"prepare_open", "prepare_terminal", "prepare_cleanup_stale_open_ref"})
 
 _MODULE_SOURCE = Path(journal_module.__file__).read_text()
 _MODULE_TREE = ast.parse(_MODULE_SOURCE)

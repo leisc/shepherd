@@ -36,7 +36,7 @@ def test_landlock_profile_for_readonly_vs_permissive(tmp_path) -> None:
     backend = LandlockContainmentBackend()
     wd = os.path.realpath(str(tmp_path))
     assert backend.profile_for((str(tmp_path),), allow_network=True) == json.dumps([wd])
-    assert backend.profile_for((), allow_network=False) == json.dumps([]) # no writable root
+    assert backend.profile_for((), allow_network=False) == json.dumps([])  # no writable root
     # multi-root: one entry per granted root (Landlock is FS-only; allow_network is ignored).
     backend_dir = os.path.realpath(str(tmp_path / "backend"))
     assert backend.profile_for((str(tmp_path / "backend"),), allow_network=False) == json.dumps([backend_dir])
@@ -48,12 +48,12 @@ def test_landlock_permissive_allows_in_workdir_denies_outside(tmp_path) -> None:
 
     inside = tmp_path / "ok.txt"
     assert backend.launch(profile, tmp_path, ["/usr/bin/touch", "--", str(inside)]).returncode == 0
-    assert inside.exists() # in-WORKDIR write allowed
+    assert inside.exists()  # in-WORKDIR write allowed
 
     outside = tmp_path.parent / "escape.txt"
     outside.unlink(missing_ok=True)
     assert backend.launch(profile, tmp_path, ["/usr/bin/touch", "--", str(outside)]).returncode != 0
-    assert not outside.exists() # out-of-WORKDIR write denied at the syscall
+    assert not outside.exists()  # out-of-WORKDIR write denied at the syscall
 
 
 def test_landlock_readonly_denies_in_workdir(tmp_path) -> None:

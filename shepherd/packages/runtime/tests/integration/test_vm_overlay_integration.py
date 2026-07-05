@@ -532,7 +532,7 @@ class TestVMEffectExtraction:
                     f'echo "new file" > "{overlay.merged}/created.txt"',
                     f'echo "changed" > "{overlay.merged}/to_modify.txt"',
                     f'rm "{overlay.merged}/to_delete.txt"',
-                ]
+                ],
             )
 
             manager.unmount_overlay(overlay)
@@ -581,7 +581,7 @@ class TestVMEffectExtraction:
                     f'echo "# modified" > "{overlay.merged}/src/utils/helper.py"',
                     f'mkdir -p "{overlay.merged}/src/utils/new_dir"',
                     f'echo "new" > "{overlay.merged}/src/utils/new_dir/new_file.py"',
-                ]
+                ],
             )
 
             manager.unmount_overlay(overlay)

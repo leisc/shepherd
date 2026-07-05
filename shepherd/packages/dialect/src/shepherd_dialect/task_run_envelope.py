@@ -157,8 +157,7 @@ def normalize_task_run_params(params: Mapping[str, Any]) -> NormalizedTaskRun:
         supplied_conflicts = sorted(field for field in _CONFLICTING_TOP_LEVEL_FIELDS if field in params)
         if supplied_conflicts:
             raise TaskRunEnvelopeError(
-                "envelope cannot be combined with top-level run field(s): "
-                + ", ".join(supplied_conflicts)
+                "envelope cannot be combined with top-level run field(s): " + ", ".join(supplied_conflicts)
             )
         return NormalizedTaskRun(envelope=parse_task_run_envelope(envelope_value), sidecars=sidecars)
 

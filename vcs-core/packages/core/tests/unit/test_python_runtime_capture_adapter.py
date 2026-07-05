@@ -46,9 +46,7 @@ def _ctx() -> DriverContext:
         operation_id="op-test",
         binding="workspace",
         role="shepherd.WorkspaceRef",
-        store_identity=SubstrateStoreIdentity(
-            store_id="store_workspace", kind="filesystem", resource_id="ws:test"
-        ),
+        store_identity=SubstrateStoreIdentity(store_id="store_workspace", kind="filesystem", resource_id="ws:test"),
     )
 
 
@@ -110,9 +108,7 @@ def test_adapter_identity_properties() -> None:
 def test_evidence_kinds_are_mechanism_prefixed() -> None:
     adapter = PythonRuntimeCaptureAdapter()
     for kind in adapter.evidence_kinds:
-        assert kind.startswith(f"{Mechanism.PYTHON_RUNTIME}:"), (
-            f"evidence_kind {kind!r} is not mechanism-prefixed"
-        )
+        assert kind.startswith(f"{Mechanism.PYTHON_RUNTIME}:"), f"evidence_kind {kind!r} is not mechanism-prefixed"
 
 
 # ---------------------------------------------------------------------------
@@ -334,9 +330,7 @@ def test_parse_does_not_read_driver_context_in_v01() -> None:
         operation_id="completely-different-op",
         binding="workspace",
         role="shepherd.WorkspaceRef",
-        store_identity=SubstrateStoreIdentity(
-            store_id="store_workspace", kind="filesystem", resource_id="ws:other"
-        ),
+        store_identity=SubstrateStoreIdentity(store_id="store_workspace", kind="filesystem", resource_id="ws:other"),
     )
 
     event = _write_event(path="a.py", global_seq=1, command_operation_id="op-cmd")

@@ -60,9 +60,7 @@ def test_filesystem_write_publishes_tree_backed_v2_workspace(mg: VcsCore) -> Non
     selected_head = selected_world.snapshot.head_for("workspace").head
     substrate = manager.store("store_workspace")
     metadata = substrate.read_revision_metadata(selected_head)
-    assert metadata.byte_authority == "tree-backed", (
-        f"expected tree-backed workspace, got {metadata.byte_authority!r}"
-    )
+    assert metadata.byte_authority == "tree-backed", f"expected tree-backed workspace, got {metadata.byte_authority!r}"
     assert metadata.git_tree_oid is not None
     assert len(metadata.git_tree_oid) == 40
 
@@ -211,31 +209,19 @@ def test_sequential_writes_serve_latest_substrate_tree_bytes(mg: VcsCore) -> Non
     mg.exec("filesystem", "write", scope=mg.ground, path="evolving.txt", content=b"first\n")
     first_served = mg._read_v2_workspace_file_for_materialization("evolving.txt")
     assert first_served == (b"first\n", 0o100644)
-    first_metadata_head = (
-        mg._world_storage()
-        .read_world(mg.ground.ref)
-        .snapshot.head_for("workspace")
-        .head
-    )
+    first_metadata_head = mg._world_storage().read_world(mg.ground.ref).snapshot.head_for("workspace").head
 
     mg.exec("filesystem", "write", scope=mg.ground, path="evolving.txt", content=b"second\n")
     second_served = mg._read_v2_workspace_file_for_materialization("evolving.txt")
     assert second_served == (b"second\n", 0o100644), (
-        "byte source must serve the latest substrate-tree content, not a "
-        "cached prior revision"
+        "byte source must serve the latest substrate-tree content, not a cached prior revision"
     )
-    second_metadata_head = (
-        mg._world_storage()
-        .read_world(mg.ground.ref)
-        .snapshot.head_for("workspace")
-        .head
-    )
+    second_metadata_head = mg._world_storage().read_world(mg.ground.ref).snapshot.head_for("workspace").head
     # The selected substrate head must have advanced; otherwise the byte
     # source served the same revision and the assertion above proves
     # nothing about the freshness of the read.
     assert second_metadata_head != first_metadata_head, (
-        "ground workspace head did not advance between writes; the freshness "
-        "assertion is vacuous"
+        "ground workspace head did not advance between writes; the freshness assertion is vacuous"
     )
 
 

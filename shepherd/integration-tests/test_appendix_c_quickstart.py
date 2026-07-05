@@ -120,6 +120,7 @@ def test_workspace_already_configured_raises_on_conflict(tmp_path) -> None:
 
 def test_workspace_not_configured_raises_for_task_call(tmp_path) -> None:
     """Calling a task without an ambient workspace raises WorkspaceNotConfigured."""
+
     @task
     async def needs_workspace() -> str:
         return await deliver(str, goal="...")

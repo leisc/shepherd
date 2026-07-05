@@ -44,9 +44,7 @@ PROOF_SURFACE_THEOREM_IDS = (
     "core0h_trace_monotonic",
     "single_child_branch_replay_sound",
 )
-EXTENSION_PROOF_SURFACE_THEOREM_IDS = (
-    "vcscore_run_record_sound",
-)
+EXTENSION_PROOF_SURFACE_THEOREM_IDS = ("vcscore_run_record_sound",)
 
 
 class ProofEnvelopeError(ValueError):
@@ -159,9 +157,7 @@ class ProofEnvelope:
         if strength == ProofStrength.RUNTIME_ONLY and theorem_ids:
             raise ProofEnvelopeError("runtime_only envelopes must not list Lean theorem ids")
         if profile in _PROFILE_THEOREM_IDS and theorem_ids != _PROFILE_THEOREM_IDS[profile]:
-            raise ProofEnvelopeError(
-                f"profile {profile.value!r} theorem ids must be {_PROFILE_THEOREM_IDS[profile]!r}"
-            )
+            raise ProofEnvelopeError(f"profile {profile.value!r} theorem ids must be {_PROFILE_THEOREM_IDS[profile]!r}")
         if profile == ProofProfile.EXTENSION and strength == ProofStrength.SEMANTIC_ADEQUACY:
             if not theorem_ids:
                 raise ProofEnvelopeError("semantic_adequacy extension envelopes require Lean theorem ids")
@@ -346,7 +342,9 @@ def _require_program_ref_or_none(value: Ref | None) -> None:
 
 def _require_trace_ref_or_none(value: Ref | None) -> None:
     if value is not None and _TRACE_REF_RE.fullmatch(value) is None:
-        raise ProofEnvelopeError("ProofEnvelope.trace_ref must be a trace:sha256:<digest> or trace-prefix:sha256:<digest> ref")
+        raise ProofEnvelopeError(
+            "ProofEnvelope.trace_ref must be a trace:sha256:<digest> or trace-prefix:sha256:<digest> ref"
+        )
 
 
 def _require_proof_evidence_ref(value: Ref | None) -> None:

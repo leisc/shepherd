@@ -40,9 +40,7 @@ def test_v01_evidence_commands_pin_current_release_floor() -> None:
         "retry_until_acceptable_example",
     ]
     assert pending == []
-    assert "test_workspace_control_public_surface.py" in " ".join(
-        commands["public_handle_floor"].argv
-    )
+    assert "test_workspace_control_public_surface.py" in " ".join(commands["public_handle_floor"].argv)
     assert commands["public_handle_floor"].min_executed_tests == 10
     assert commands["authority_and_output_read_models"].min_executed_tests == 54
     assert "test_jailed_run.py" in " ".join(commands["lower_path_jailed_enforcement"].argv)
@@ -55,15 +53,9 @@ def test_v01_evidence_commands_pin_current_release_floor() -> None:
 
 def test_v01_evidence_claim_rows_prove_current_release_claim() -> None:
     """Claim rows prove the release claim once every named command is green."""
-    commands = [
-        {"name": command.name, "status": "passed"}
-        for command in run_v01_evidence.COMMANDS
-    ]
+    commands = [{"name": command.name, "status": "passed"} for command in run_v01_evidence.COMMANDS]
 
-    claims = {
-        claim["name"]: claim
-        for claim in run_v01_evidence._evaluate_claims(commands)
-    }
+    claims = {claim["name"]: claim for claim in run_v01_evidence._evaluate_claims(commands)}
 
     assert claims["workstream_2_public_handle_floor"]["state"] == "proven"
     assert claims["lower_path_jailed_enforcement"]["state"] == "proven"
@@ -78,12 +70,15 @@ def test_v01_packet_status_passes_for_proven_claims_or_incomplete_for_skipped_pr
     commands = [{"name": command.name, "status": "passed"} for command in run_v01_evidence.COMMANDS]
     claims = run_v01_evidence._evaluate_claims(commands)
 
-    assert run_v01_evidence._packet_status(
-        commands=commands,
-        claims=claims,
-        workspace_status_failed=False,
-        command_failed=False,
-    ) == "passed"
+    assert (
+        run_v01_evidence._packet_status(
+            commands=commands,
+            claims=claims,
+            workspace_status_failed=False,
+            command_failed=False,
+        )
+        == "passed"
+    )
 
     skipped_commands = [
         {"name": command.name, "status": "skipped" if command.name == "lower_path_jailed_enforcement" else "passed"}
@@ -91,16 +86,16 @@ def test_v01_packet_status_passes_for_proven_claims_or_incomplete_for_skipped_pr
     ]
     skipped_claims = run_v01_evidence._evaluate_claims(skipped_commands)
 
-    assert run_v01_evidence._packet_status(
-        commands=skipped_commands,
-        claims=skipped_claims,
-        workspace_status_failed=False,
-        command_failed=False,
-    ) == "incomplete"
-    assert {
-        claim["name"]: claim["state"]
-        for claim in skipped_claims
-    }["lower_path_jailed_enforcement"] == "incomplete"
+    assert (
+        run_v01_evidence._packet_status(
+            commands=skipped_commands,
+            claims=skipped_claims,
+            workspace_status_failed=False,
+            command_failed=False,
+        )
+        == "incomplete"
+    )
+    assert {claim["name"]: claim["state"] for claim in skipped_claims}["lower_path_jailed_enforcement"] == "incomplete"
 
 
 def test_v01_public_floor_claim_needs_executed_proof_tests() -> None:
@@ -110,18 +105,18 @@ def test_v01_public_floor_claim_needs_executed_proof_tests() -> None:
         for command in run_v01_evidence.COMMANDS
     ]
 
-    claims = {
-        claim["name"]: claim
-        for claim in run_v01_evidence._evaluate_claims(skipped_commands)
-    }
+    claims = {claim["name"]: claim for claim in run_v01_evidence._evaluate_claims(skipped_commands)}
 
     assert claims["workstream_2_public_handle_floor"]["state"] == "incomplete"
-    assert run_v01_evidence._packet_status(
-        commands=skipped_commands,
-        claims=list(claims.values()),
-        workspace_status_failed=False,
-        command_failed=False,
-    ) == "incomplete"
+    assert (
+        run_v01_evidence._packet_status(
+            commands=skipped_commands,
+            claims=list(claims.values()),
+            workspace_status_failed=False,
+            command_failed=False,
+        )
+        == "incomplete"
+    )
 
 
 def test_v01_claim_pending_evidence_is_not_only_metadata() -> None:
@@ -130,15 +125,10 @@ def test_v01_claim_pending_evidence_is_not_only_metadata() -> None:
     original_claims = run_v01_evidence.CLAIMS
     try:
         run_v01_evidence.CLAIMS = tuple(
-            replace(claim, pending_evidence=("future_proof",))
-            if claim.name == "v01_release_claim"
-            else claim
+            replace(claim, pending_evidence=("future_proof",)) if claim.name == "v01_release_claim" else claim
             for claim in original_claims
         )
-        claims = {
-            claim["name"]: claim
-            for claim in run_v01_evidence._evaluate_claims(commands)
-        }
+        claims = {claim["name"]: claim for claim in run_v01_evidence._evaluate_claims(commands)}
     finally:
         run_v01_evidence.CLAIMS = original_claims
 

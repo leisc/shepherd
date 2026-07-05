@@ -239,9 +239,7 @@ def test_replayable_kernel_transition_completed_result_round_trips() -> None:
 
 
 def test_compact_replay_transition_requires_journal_serialization() -> None:
-    program = elaborate(
-        Let("draft", Perform("provider.llm.generate", Lit({"prompt": "draft"})), Return(Var("draft")))
-    )
+    program = elaborate(Let("draft", Perform("provider.llm.generate", Lit({"prompt": "draft"})), Return(Var("draft"))))
     session, transition = KernelReplaySession.start(program)
     assert isinstance(transition.payload, ExternalEffectRequestRef)
 
@@ -273,9 +271,7 @@ def test_completed_replayable_kernel_transition_rejects_program_ref_tampering() 
 
 
 def test_replayable_kernel_transition_json_rejects_tampering() -> None:
-    program = elaborate(
-        Let("draft", Perform("provider.llm.generate", Lit({"prompt": "draft"})), Return(Var("draft")))
-    )
+    program = elaborate(Let("draft", Perform("provider.llm.generate", Lit({"prompt": "draft"})), Return(Var("draft"))))
     request_transition = start_replayable_kernel_transition(program)
     assert request_transition.status == "external-effect-request"
     assert isinstance(request_transition.payload, ExternalEffectRequest)
@@ -424,9 +420,7 @@ def test_replayable_external_effect_resume_emits_trace_delta() -> None:
 
 
 def test_replayable_external_effect_resume_binds_host_observation() -> None:
-    program = elaborate(
-        Let("draft", Perform("provider.llm.generate", Lit({"prompt": "draft"})), Return(Var("draft")))
-    )
+    program = elaborate(Let("draft", Perform("provider.llm.generate", Lit({"prompt": "draft"})), Return(Var("draft"))))
     request_transition = start_replayable_kernel_transition(program)
     assert isinstance(request_transition.payload, ExternalEffectRequest)
 
@@ -651,9 +645,7 @@ def test_replayable_external_effect_resume_can_emit_next_request() -> None:
 
 
 def test_kernel_replay_state_resumes_one_external_request_to_completion() -> None:
-    program = elaborate(
-        Let("draft", Perform("provider.llm.generate", Lit({"prompt": "draft"})), Return(Var("draft")))
-    )
+    program = elaborate(Let("draft", Perform("provider.llm.generate", Lit({"prompt": "draft"})), Return(Var("draft"))))
 
     state, request_transition = start_kernel_replay(program)
     assert isinstance(state, KernelReplayState)
@@ -717,9 +709,7 @@ def test_kernel_replay_state_advances_across_sequential_external_requests() -> N
 
 
 def test_kernel_replay_session_direct_state_construction_is_not_supported() -> None:
-    program = elaborate(
-        Let("draft", Perform("provider.llm.generate", Lit({"prompt": "draft"})), Return(Var("draft")))
-    )
+    program = elaborate(Let("draft", Perform("provider.llm.generate", Lit({"prompt": "draft"})), Return(Var("draft"))))
 
     state, _request_transition = start_kernel_replay(program)
 
@@ -728,9 +718,7 @@ def test_kernel_replay_session_direct_state_construction_is_not_supported() -> N
 
 
 def test_kernel_replay_session_partial_live_construction_is_not_supported() -> None:
-    program = elaborate(
-        Let("draft", Perform("provider.llm.generate", Lit({"prompt": "draft"})), Return(Var("draft")))
-    )
+    program = elaborate(Let("draft", Perform("provider.llm.generate", Lit({"prompt": "draft"})), Return(Var("draft"))))
 
     state, request_transition = start_kernel_replay(program)
 
@@ -739,9 +727,7 @@ def test_kernel_replay_session_partial_live_construction_is_not_supported() -> N
 
 
 def test_kernel_replay_session_rejects_non_current_resume_request() -> None:
-    program = elaborate(
-        Let("draft", Perform("provider.llm.generate", Lit({"prompt": "draft"})), Return(Var("draft")))
-    )
+    program = elaborate(Let("draft", Perform("provider.llm.generate", Lit({"prompt": "draft"})), Return(Var("draft"))))
     other_program = elaborate(
         Let("other", Perform("provider.llm.generate", Lit({"prompt": "other"})), Return(Var("other")))
     )
@@ -786,9 +772,7 @@ def test_kernel_replay_journal_round_trips_and_derives_state() -> None:
         program_ref=state.program_ref,
         transitions=(first_transition, second_transition, completed_transition),
     )
-    decoded_journal = kernel_replay_journal_from_json(
-        json.loads(json.dumps(kernel_replay_journal_to_json(journal)))
-    )
+    decoded_journal = kernel_replay_journal_from_json(json.loads(json.dumps(kernel_replay_journal_to_json(journal))))
     derived_state = kernel_replay_state_from_journal(program, decoded_journal)
 
     assert derived_state.terminal is True
@@ -848,9 +832,7 @@ def test_kernel_replay_journal_serializes_external_requests_through_catalog_refs
 
 
 def test_kernel_replay_journal_materializes_current_request_after_round_trip() -> None:
-    program = elaborate(
-        Let("draft", Perform("provider.llm.generate", Lit({"prompt": "draft"})), Return(Var("draft")))
-    )
+    program = elaborate(Let("draft", Perform("provider.llm.generate", Lit({"prompt": "draft"})), Return(Var("draft"))))
     state, request_transition = start_kernel_replay(program)
     assert isinstance(request_transition.payload, ExternalEffectRequest)
     journal = KernelReplayJournal(program_ref=state.program_ref, transitions=(request_transition,))
@@ -873,9 +855,7 @@ def test_kernel_replay_journal_materializes_current_request_after_round_trip() -
 
 
 def test_kernel_replay_journal_rejects_unclosed_compact_session_transitions() -> None:
-    program = elaborate(
-        Let("draft", Perform("provider.llm.generate", Lit({"prompt": "draft"})), Return(Var("draft")))
-    )
+    program = elaborate(Let("draft", Perform("provider.llm.generate", Lit({"prompt": "draft"})), Return(Var("draft"))))
     session, request_transition = KernelReplaySession.start(program)
     assert isinstance(request_transition.payload, ExternalEffectRequestRef)
 
@@ -925,9 +905,7 @@ def test_external_effect_request_descriptors_match_full_and_compact_requests() -
 def test_kernel_replay_journal_descriptor_does_not_materialize_executable_request(
     monkeypatch: pytest.MonkeyPatch,
 ) -> None:
-    program = elaborate(
-        Let("draft", Perform("provider.llm.generate", Lit({"prompt": "draft"})), Return(Var("draft")))
-    )
+    program = elaborate(Let("draft", Perform("provider.llm.generate", Lit({"prompt": "draft"})), Return(Var("draft"))))
     session, request_transition = KernelReplaySession.start(program)
     assert isinstance(request_transition.payload, ExternalEffectRequestRef)
     journal = session.to_journal()
@@ -945,9 +923,7 @@ def test_kernel_replay_journal_descriptor_does_not_materialize_executable_reques
 
 
 def test_external_effect_request_descriptor_payload_is_not_live_request_payload() -> None:
-    program = elaborate(
-        Let("draft", Perform("provider.llm.generate", Lit({"prompt": "draft"})), Return(Var("draft")))
-    )
+    program = elaborate(Let("draft", Perform("provider.llm.generate", Lit({"prompt": "draft"})), Return(Var("draft"))))
     session, _request_transition = KernelReplaySession.start(program)
     descriptor = session.current_request_descriptor()
     assert descriptor is not None
@@ -963,9 +939,7 @@ def test_external_effect_request_descriptor_payload_is_not_live_request_payload(
 
 
 def test_replay_artifact_catalog_materializes_closed_compact_request() -> None:
-    program = elaborate(
-        Let("draft", Perform("provider.llm.generate", Lit({"prompt": "draft"})), Return(Var("draft")))
-    )
+    program = elaborate(Let("draft", Perform("provider.llm.generate", Lit({"prompt": "draft"})), Return(Var("draft"))))
     session, request_transition = KernelReplaySession.start(program)
     assert isinstance(request_transition.payload, ExternalEffectRequestRef)
     journal = session.to_journal()
@@ -978,9 +952,7 @@ def test_replay_artifact_catalog_materializes_closed_compact_request() -> None:
 
 
 def test_kernel_replay_journal_reuses_validated_catalog() -> None:
-    program = elaborate(
-        Let("draft", Perform("provider.llm.generate", Lit({"prompt": "draft"})), Return(Var("draft")))
-    )
+    program = elaborate(Let("draft", Perform("provider.llm.generate", Lit({"prompt": "draft"})), Return(Var("draft"))))
     session, _request_transition = KernelReplaySession.start(program)
     journal = session.to_journal()
 
@@ -1006,9 +978,7 @@ def test_kernel_replay_journal_current_request_materializes_request_local_closur
 
 
 def test_kernel_replay_journal_rejects_missing_non_root_closure_object() -> None:
-    program = elaborate(
-        Let("draft", Perform("provider.llm.generate", Lit({"prompt": "draft"})), Return(Var("draft")))
-    )
+    program = elaborate(Let("draft", Perform("provider.llm.generate", Lit({"prompt": "draft"})), Return(Var("draft"))))
     session, request_transition = KernelReplaySession.start(program)
     assert isinstance(request_transition.payload, ExternalEffectRequestRef)
     journal = session.to_journal()
@@ -1026,18 +996,14 @@ def test_kernel_replay_journal_rejects_missing_non_root_closure_object() -> None
 
 
 def test_kernel_replay_journal_json_rejects_missing_non_root_closure_object() -> None:
-    program = elaborate(
-        Let("draft", Perform("provider.llm.generate", Lit({"prompt": "draft"})), Return(Var("draft")))
-    )
+    program = elaborate(Let("draft", Perform("provider.llm.generate", Lit({"prompt": "draft"})), Return(Var("draft"))))
     session, request_transition = KernelReplaySession.start(program)
     assert isinstance(request_transition.payload, ExternalEffectRequestRef)
     journal = session.to_journal()
     encoded = kernel_replay_journal_to_json(journal)
     missing_ref = next(ref for ref in journal.continuation_objects if ref != request_transition.payload.root_ref)
     encoded["continuation_objects"] = [
-        entry
-        for entry in encoded["continuation_objects"]
-        if entry["ref"] != missing_ref
+        entry for entry in encoded["continuation_objects"] if entry["ref"] != missing_ref
     ]
 
     with pytest.raises(ContinuationReplayError, match="missing continuation object"):
@@ -1045,9 +1011,7 @@ def test_kernel_replay_journal_json_rejects_missing_non_root_closure_object() ->
 
 
 def test_kernel_replay_direct_resume_rejects_compact_request_without_consumption() -> None:
-    program = elaborate(
-        Let("draft", Perform("provider.llm.generate", Lit({"prompt": "draft"})), Return(Var("draft")))
-    )
+    program = elaborate(Let("draft", Perform("provider.llm.generate", Lit({"prompt": "draft"})), Return(Var("draft"))))
     state, request_transition = start_kernel_replay(program)
     assert isinstance(request_transition.payload, ExternalEffectRequest)
     journal = KernelReplayJournal(program_ref=state.program_ref, transitions=(request_transition,))
@@ -1064,9 +1028,7 @@ def test_kernel_replay_direct_resume_rejects_compact_request_without_consumption
 
 
 def test_kernel_replay_journal_current_request_returns_none_for_terminal_journal() -> None:
-    program = elaborate(
-        Let("draft", Perform("provider.llm.generate", Lit({"prompt": "draft"})), Return(Var("draft")))
-    )
+    program = elaborate(Let("draft", Perform("provider.llm.generate", Lit({"prompt": "draft"})), Return(Var("draft"))))
     state, request_transition = start_kernel_replay(program)
     assert isinstance(request_transition.payload, ExternalEffectRequest)
     state, completed_transition = resume_kernel_replay(state, request_transition.payload, HostCompleted("accepted"))
@@ -1078,9 +1040,7 @@ def test_kernel_replay_journal_current_request_returns_none_for_terminal_journal
 
 
 def test_kernel_replay_journal_is_trusted_local_not_semantic_admission() -> None:
-    program = elaborate(
-        Let("draft", Perform("provider.llm.generate", Lit({"prompt": "draft"})), Return(Var("draft")))
-    )
+    program = elaborate(Let("draft", Perform("provider.llm.generate", Lit({"prompt": "draft"})), Return(Var("draft"))))
     state, request_transition = start_kernel_replay(program)
     assert isinstance(request_transition.payload, ExternalEffectRequest)
     _state, completed_transition = resume_kernel_replay(state, request_transition.payload, HostCompleted("real"))
@@ -1185,9 +1145,7 @@ def test_kernel_replay_state_json_round_trips_runtime_states() -> None:
 
 
 def test_kernel_replay_state_json_process_style_resume() -> None:
-    program = elaborate(
-        Let("draft", Perform("provider.llm.generate", Lit({"prompt": "draft"})), Return(Var("draft")))
-    )
+    program = elaborate(Let("draft", Perform("provider.llm.generate", Lit({"prompt": "draft"})), Return(Var("draft"))))
     state, request_transition = start_kernel_replay(program)
     assert isinstance(request_transition.payload, ExternalEffectRequest)
 
@@ -1212,9 +1170,7 @@ def test_kernel_replay_state_json_process_style_resume() -> None:
 
 
 def test_kernel_replay_state_trace_is_diagnostic_unless_journal_reconstructed() -> None:
-    program = elaborate(
-        Let("draft", Perform("provider.llm.generate", Lit({"prompt": "draft"})), Return(Var("draft")))
-    )
+    program = elaborate(Let("draft", Perform("provider.llm.generate", Lit({"prompt": "draft"})), Return(Var("draft"))))
     state, request_transition = start_kernel_replay(program)
     assert isinstance(request_transition.payload, ExternalEffectRequest)
 
@@ -1242,9 +1198,7 @@ def test_kernel_replay_state_trace_is_diagnostic_unless_journal_reconstructed() 
 
 
 def test_kernel_replay_state_json_rejects_malformed_state() -> None:
-    program = elaborate(
-        Let("draft", Perform("provider.llm.generate", Lit({"prompt": "draft"})), Return(Var("draft")))
-    )
+    program = elaborate(Let("draft", Perform("provider.llm.generate", Lit({"prompt": "draft"})), Return(Var("draft"))))
     other_program = elaborate(Return(Lit("other")))
     state, request_transition = start_kernel_replay(program)
     assert isinstance(request_transition.payload, ExternalEffectRequest)
@@ -1298,9 +1252,7 @@ def test_kernel_replay_state_json_rejects_malformed_state() -> None:
 
 
 def test_kernel_replay_state_rejects_invalid_resume_order() -> None:
-    program = elaborate(
-        Let("draft", Perform("provider.llm.generate", Lit({"prompt": "draft"})), Return(Var("draft")))
-    )
+    program = elaborate(Let("draft", Perform("provider.llm.generate", Lit({"prompt": "draft"})), Return(Var("draft"))))
     other_program = elaborate(
         Let("draft", Perform("provider.llm.generate", Lit({"prompt": "other"})), Return(Var("draft")))
     )
@@ -1328,9 +1280,7 @@ def test_kernel_replay_state_rejects_invalid_resume_order() -> None:
 
 
 def test_kernel_replay_state_rejects_tampered_open_request_before_consumption() -> None:
-    program = elaborate(
-        Let("draft", Perform("provider.llm.generate", Lit({"prompt": "draft"})), Return(Var("draft")))
-    )
+    program = elaborate(Let("draft", Perform("provider.llm.generate", Lit({"prompt": "draft"})), Return(Var("draft"))))
     state, request_transition = start_kernel_replay(program)
     assert isinstance(request_transition.payload, ExternalEffectRequest)
     request = request_transition.payload
@@ -1375,7 +1325,10 @@ def test_kernel_replay_state_schema_rejection_consumes_source() -> None:
     assert rejected_transition.resume_observation_ref is not None
     assert isinstance(rejected_transition.payload, ReplayableRejected)
     assert rejected_transition.payload.source_key == request_transition.payload.source_key
-    assert rejected_transition.payload.request_ref == state.open_requests[request_transition.payload.source_key].request_ref
+    assert (
+        rejected_transition.payload.request_ref
+        == state.open_requests[request_transition.payload.source_key].request_ref
+    )
     assert rejected_transition.payload.reason_type == "ValidationError"
     assert rejected_state.rejected is True
     assert rejected_state.terminal is False

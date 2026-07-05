@@ -140,23 +140,26 @@ class ShepherdRunDriver(BaseSubstrateDriver):
                 description="In-process Python task callable.",
             ),
             "task_id": ParamSpec(
-                type="str", required=False,
+                type="str",
+                required=False,
                 description="Tier-A task identity: the fully-qualified import path ('pkg.module:attr').",
             ),
             "args": ParamSpec(type="object", required=False),
             "may": ParamSpec(
-                type="str", required=False,
+                type="str",
+                required=False,
                 description="Declared effect-surface profile name. Recorded as provenance; "
-                            "advisory in-process — enforced at the jail from B3c.",
+                "advisory in-process — enforced at the jail from B3c.",
             ),
             "runtime": ParamSpec(
                 type="object",
                 required=False,
                 description="Runtime option envelope. Current branch records it as provenance; "
-                            "execution selection still uses the explicit provider instance.",
+                "execution selection still uses the explicit provider instance.",
             ),
             "provider": ParamSpec(
-                type="ExecutionProvider", required=False,
+                type="ExecutionProvider",
+                required=False,
                 projectable=False,
                 description="ExecutionProvider instance; defaults to the in-process dev-tier provider.",
             ),
@@ -180,8 +183,8 @@ class ShepherdRunDriver(BaseSubstrateDriver):
             commands={
                 "run": CommandSpec(
                     description="Run a task through the execution-mechanism verbs: reversible by "
-                                "default, body pointed at the run scope's working path, delta "
-                                "captured implicitly at merge.",
+                    "default, body pointed at the run scope's working path, delta "
+                    "captured implicitly at merge.",
                     params=run_params,
                     required_one_of=(("task_body", "task_id"),),
                 ),
@@ -210,9 +213,7 @@ class ShepherdRunDriver(BaseSubstrateDriver):
         task_body = params.get("task_body")
         task_id = params.get("task_id")
         if (task_body is None) == (task_id is None):
-            raise TaskIdResolutionError(
-                "exactly one of 'task_body' / 'task_id' must be supplied to the run command"
-            )
+            raise TaskIdResolutionError("exactly one of 'task_body' / 'task_id' must be supplied to the run command")
         if task_body is None:
             if not isinstance(task_id, str):
                 raise TaskIdResolutionError("'task_id' must be a string when supplied")

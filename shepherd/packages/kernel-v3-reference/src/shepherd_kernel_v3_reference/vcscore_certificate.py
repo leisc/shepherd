@@ -191,7 +191,9 @@ def vcscore_run_certificate_from_run_record(record: Mapping[str, JsonValue]) -> 
     operation_refs = _required_mapping(record, "operation_refs")
     terminalization = _required_mapping(record, "terminalization")
     outputs = _optional_mapping(record, "outputs")
-    _validate_outputs(outputs, trace_ref=trace_ref, terminal_world=_optional_str(record, "terminal_workspace_world_oid"))
+    _validate_outputs(
+        outputs, trace_ref=trace_ref, terminal_world=_optional_str(record, "terminal_workspace_world_oid")
+    )
     return VcsCoreRunCertificate(
         run_ref=_required_str(record, "run_ref"),
         task_id=_required_str(record, "task_id"),

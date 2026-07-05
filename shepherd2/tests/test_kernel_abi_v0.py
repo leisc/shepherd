@@ -53,15 +53,21 @@ def test_kernel_abi_v0_witness_golden_vectors_are_exact() -> None:
     assert root_witness_body_digest() == golden["root_witness"]["body_digest"]
     assert root_witness_record_id() == golden["root_witness"]["record_id"]
     assert canonical_digest(golden["root_witness"]["record_input"]) == golden["root_witness"]["record_id"]
-    assert witness_body_digest(
-        schema_ref=golden["ordinary_witness"]["schema_ref"],
-        body=golden["ordinary_witness"]["body"],
-    ) == golden["ordinary_witness"]["body_digest"]
+    assert (
+        witness_body_digest(
+            schema_ref=golden["ordinary_witness"]["schema_ref"],
+            body=golden["ordinary_witness"]["body"],
+        )
+        == golden["ordinary_witness"]["body_digest"]
+    )
     assert canonical_digest(golden["ordinary_witness"]["record_input"]) == golden["ordinary_witness"]["record_id"]
-    assert witness_body_digest(
-        schema_ref=golden["alternate_witness"]["schema_ref"],
-        body=golden["alternate_witness"]["body"],
-    ) == golden["alternate_witness"]["body_digest"]
+    assert (
+        witness_body_digest(
+            schema_ref=golden["alternate_witness"]["schema_ref"],
+            body=golden["alternate_witness"]["body"],
+        )
+        == golden["alternate_witness"]["body_digest"]
+    )
     assert canonical_digest(golden["alternate_witness"]["record_input"]) == golden["alternate_witness"]["record_id"]
 
 

@@ -47,7 +47,7 @@ from shepherd_runtime.task.markers import InputMarker
 
 @dataclass(frozen=True)
 class _Pick(Ask[str]):
-    options: tuple[str,...]
+    options: tuple[str, ...]
 
 
 @dataclass(frozen=True)
@@ -74,7 +74,7 @@ def test_shepherd_facade_wiring() -> None:
     for name in ("GitRepo", "May", "RunOutput", "ShepherdWorkspace", "open", "Flow"):
         assert name in module.__all__
         assert getattr(module, name) is not None
-    #...and (below) that each re-export is the real owner-package object.
+    # ...and (below) that each re-export is the real owner-package object.
     assert module.workspace is workspace
     assert module.Workspace is Workspace
     assert module.task is task

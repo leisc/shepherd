@@ -107,10 +107,7 @@ class Trace:
         """
         version = payload.get("schema_version")
         if version != SCHEMA_VERSION:
-            raise ValueError(
-                f"Trace.from_json schema_version={version!r} not supported "
-                f"(expected {SCHEMA_VERSION})"
-            )
+            raise ValueError(f"Trace.from_json schema_version={version!r} not supported (expected {SCHEMA_VERSION})")
         return cls(
             run_ref=_run_ref_from_json(payload["run_ref"]),
             kernel=tuple(trace_from_json(payload["kernel"])),

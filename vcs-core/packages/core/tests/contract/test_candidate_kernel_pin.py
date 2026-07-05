@@ -19,6 +19,7 @@ If a change here is *intentional*, regenerate the golden and review the diff:
     REGEN_CANDIDATE_KERNEL_PIN=1 uv run --group test pytest \\
         tests/contract/test_candidate_kernel_pin.py
 """
+
 from __future__ import annotations
 
 import dataclasses
@@ -84,24 +85,17 @@ def _live_contract() -> dict:
         "operation_final_schema": OPERATION_FINAL_SCHEMA,
         "candidate_outcome_status_args": list(typing.get_args(CandidateOutcomeStatus)),
         "signatures": {
-            "OperationFinalBuilder.select_candidate_plan": _sig(
-                OperationFinalBuilder.select_candidate_plan
-            ),
+            "OperationFinalBuilder.select_candidate_plan": _sig(OperationFinalBuilder.select_candidate_plan),
             "OperationFinalBuilder.archive_candidate": _sig(OperationFinalBuilder.archive_candidate),
             "OperationFinalBuilder.build_prepared": _sig(OperationFinalBuilder.build_prepared),
-            "WorldAuthorityFinalizer.publish_prepared": _sig(
-                WorldAuthorityFinalizer.publish_prepared
-            ),
-            "SubstrateStore.create_candidate_from_prepared": _sig(
-                SubstrateStore.create_candidate_from_prepared
-            ),
+            "WorldAuthorityFinalizer.publish_prepared": _sig(WorldAuthorityFinalizer.publish_prepared),
+            "SubstrateStore.create_candidate_from_prepared": _sig(SubstrateStore.create_candidate_from_prepared),
             "SubstrateStore.create_unsafe_unprepared_candidate": _sig(
                 SubstrateStore.create_unsafe_unprepared_candidate
             ),
         },
         "candidate_outcome_record_fields": [
-            [f.name, getattr(f.type, "__name__", str(f.type))]
-            for f in dataclasses.fields(CandidateOutcomeRecord)
+            [f.name, getattr(f.type, "__name__", str(f.type))] for f in dataclasses.fields(CandidateOutcomeRecord)
         ],
         "candidate_outcome_record_to_json": rec.to_json(final_operation_id="op-1"),
         "candidate_outcome_record_to_record_json": rec.to_record_json(final_operation_id="op-1"),
@@ -145,9 +139,7 @@ def test_candidate_primitive_signatures_frozen() -> None:
 
 
 def test_candidate_outcome_record_fields_frozen() -> None:
-    assert _live_contract()["candidate_outcome_record_fields"] == (
-        _golden()["candidate_outcome_record_fields"]
-    ), _FIX
+    assert _live_contract()["candidate_outcome_record_fields"] == (_golden()["candidate_outcome_record_fields"]), _FIX
 
 
 def test_candidate_outcome_record_serialization_frozen() -> None:
@@ -156,9 +148,7 @@ def test_candidate_outcome_record_serialization_frozen() -> None:
     rec = _representative_record()
     golden = _golden()
     assert rec.to_json(final_operation_id="op-1") == golden["candidate_outcome_record_to_json"], _FIX
-    assert rec.to_record_json(final_operation_id="op-1") == (
-        golden["candidate_outcome_record_to_record_json"]
-    ), _FIX
+    assert rec.to_record_json(final_operation_id="op-1") == (golden["candidate_outcome_record_to_record_json"]), _FIX
 
 
 def test_full_and_legacy_candidate_paths_both_present() -> None:
@@ -236,11 +226,7 @@ def _build_operation_final_payload(repo_root: Path) -> dict:
         parents=(parent,),
     )
     snapshot = WorldSnapshot(
-        (
-            manager.substrate_head(
-                "store_workspace", binding="workspace", head=bundle.candidate.head, role="r"
-            ),
-        )
+        (manager.substrate_head("store_workspace", binding="workspace", head=bundle.candidate.head, role="r"),)
     )
     plan = manager.plan_candidate_selection(
         operation_id="op-1", selection=CandidateSelection.from_bundle(bundle), role="r"

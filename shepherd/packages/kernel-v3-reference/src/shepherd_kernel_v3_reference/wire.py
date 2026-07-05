@@ -121,11 +121,7 @@ def semantic_batch_to_wire(batch: SemanticTransitionBatch) -> dict[str, Any]:
         "transition_id": batch.transition_id,
         "idempotency_key": batch.idempotency_key,
         "transition_kind": batch.transition_kind,
-        "admission_basis": (
-            None
-            if batch.admission_basis is None
-            else _admission_basis_to_wire(batch.admission_basis)
-        ),
+        "admission_basis": (None if batch.admission_basis is None else _admission_basis_to_wire(batch.admission_basis)),
         "profile": _profile_to_wire(batch.profile),
         "program_ref": batch.program_ref,
         "parent_transition_refs": list(batch.parent_transition_refs),
@@ -135,9 +131,7 @@ def semantic_batch_to_wire(batch: SemanticTransitionBatch) -> dict[str, Any]:
             "map_schema_version": batch.ref_map.map_schema_version,
         },
         "continuation_objects": [dict(obj) for obj in batch.continuation_objects],
-        "external_evidence_links": [
-            _external_evidence_link_to_wire(link) for link in batch.external_evidence_links
-        ],
+        "external_evidence_links": [_external_evidence_link_to_wire(link) for link in batch.external_evidence_links],
         "semantic_context": dict(batch.semantic_context),
         "batch_schema_version": batch.batch_schema_version,
         "kernel_version": batch.kernel_version,
@@ -224,9 +218,7 @@ def kernel_result_envelope_to_wire(envelope: KernelResultEnvelope) -> dict[str, 
         "profile": _profile_to_wire(envelope.profile),
         "status": envelope.status,
         "kernel_version": envelope.kernel_version,
-        "transition_id": (
-            None if envelope.transition is None else envelope.transition.transition_id
-        ),
+        "transition_id": (None if envelope.transition is None else envelope.transition.transition_id),
         "payload": _payload_to_wire(envelope.payload),
     }
 

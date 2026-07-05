@@ -77,7 +77,7 @@ class RunOutput:
         return self._ref.resource_id
 
     @property
-    def changed_paths(self) -> tuple[str,...]:
+    def changed_paths(self) -> tuple[str, ...]:
         return self._ref.changed_paths
 
     @property

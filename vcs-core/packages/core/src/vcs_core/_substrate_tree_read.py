@@ -54,9 +54,7 @@ def read_substrate_workspace_file(
     return _read_path(substrate_repo, workspace_tree, path)
 
 
-def _read_path(
-    repo: pygit2.Repository, root: pygit2.Tree, path: str
-) -> tuple[bytes, int] | None:
+def _read_path(repo: pygit2.Repository, root: pygit2.Tree, path: str) -> tuple[bytes, int] | None:
     parts = path.split("/")
     current: pygit2.Tree = root
     for part in parts[:-1]:

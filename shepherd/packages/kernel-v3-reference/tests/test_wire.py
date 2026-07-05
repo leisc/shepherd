@@ -50,15 +50,17 @@ def _handled_resume_batch() -> SemanticTransitionBatch:
 
     program = Handle(
         Let("y", Perform("ask", Lit(None)), Return(Var("y"))),
-        HandlerEnv((
-            StaticHandlerInstall(
-                effect_kind="ask",
-                handler_id="ask.v1",
-                handled_result_schema=AnySchema(),
-                payload_name="_payload",
-                body=Let("r", Resume(Lit(42)), Return(Var("r"))),
-            ),
-        )),
+        HandlerEnv(
+            (
+                StaticHandlerInstall(
+                    effect_kind="ask",
+                    handler_id="ask.v1",
+                    handled_result_schema=AnySchema(),
+                    payload_name="_payload",
+                    body=Let("r", Resume(Lit(42)), Return(Var("r"))),
+                ),
+            )
+        ),
     )
     prepared = ensure_prepared_kernel_program(elaborate(program))
     session, transition = KernelReplaySession.start(prepared)
@@ -164,15 +166,17 @@ def test_envelope_wire_encodes_transition_as_id_reference() -> None:
     batch = _handled_resume_batch()
     program = Handle(
         Let("y", Perform("ask", Lit(None)), Return(Var("y"))),
-        HandlerEnv((
-            StaticHandlerInstall(
-                effect_kind="ask",
-                handler_id="ask.v1",
-                handled_result_schema=AnySchema(),
-                payload_name="_payload",
-                body=Let("r", Resume(Lit(42)), Return(Var("r"))),
-            ),
-        )),
+        HandlerEnv(
+            (
+                StaticHandlerInstall(
+                    effect_kind="ask",
+                    handler_id="ask.v1",
+                    handled_result_schema=AnySchema(),
+                    payload_name="_payload",
+                    body=Let("r", Resume(Lit(42)), Return(Var("r"))),
+                ),
+            )
+        ),
     )
     prepared = ensure_prepared_kernel_program(elaborate(program))
     session, transition = KernelReplaySession.start(prepared)

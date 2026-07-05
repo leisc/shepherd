@@ -81,9 +81,8 @@ class _MemoryDriver:
             )
             return DriverIngressResult(observations=(observation,), transitions=(transition,))
         from vcs_core._substrate_driver import UnsupportedRequestError
-        raise UnsupportedRequestError(
-            driver_id=self.driver_id, request_type=type(request)
-        )
+
+        raise UnsupportedRequestError(driver_id=self.driver_id, request_type=type(request))
 
     def capture_adapters(self, context: DriverContext) -> tuple[()]:
         return ()

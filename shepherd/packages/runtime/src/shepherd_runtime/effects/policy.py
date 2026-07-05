@@ -196,7 +196,7 @@ class Plan(Generic[T]):
 
     __slots__ = ("_installations",)
 
-    def __init__(self, installations: tuple[Installation,...] = ()) -> None:
+    def __init__(self, installations: tuple[Installation, ...] = ()) -> None:
         self._installations = installations
 
     def allow_only(self, matcher: MatcherForm, ref: str | None = None) -> Plan[T]:
@@ -218,7 +218,7 @@ class Plan(Generic[T]):
     def observe(self, matcher: MatcherForm, fn: object, ref: str | None = None) -> Plan[T]:
         return self._append(Installation("observe", Match.of(matcher), ref=ref, fn=fn))
 
-    def installations(self) -> tuple[Installation,...]:
+    def installations(self) -> tuple[Installation, ...]:
         return self._installations
 
     def installation(self, ref: str) -> Installation:
@@ -264,7 +264,7 @@ class Plan(Generic[T]):
         return f"Plan(installations={self._installations!r})"
 
 
-class EffectNotPermitted(Exception): # noqa: N818
+class EffectNotPermitted(Exception):  # noqa: N818
     """A task attempted an effect outside its effective surface."""
 
     def __init__(
@@ -284,7 +284,7 @@ class EffectNotPermitted(Exception): # noqa: N818
         super().__init__(f"effect kind {self.attempted_kind!r} is not permitted by {effective!r}")
 
 
-class EffectSurfaceTooWide(Exception): # noqa: N818
+class EffectSurfaceTooWide(Exception):  # noqa: N818
     """A child task's declared surface is wider than the caller's surface."""
 
     def __init__(
@@ -303,7 +303,7 @@ class EffectSurfaceTooWide(Exception): # noqa: N818
         super().__init__(f"callee surface {callee_may!r} is wider than caller surface {caller_may!r}")
 
 
-class EffectSurfaceEmpty(Exception): # noqa: N818
+class EffectSurfaceEmpty(Exception):  # noqa: N818
     """An effective surface admits no effects."""
 
     def __init__(
@@ -311,7 +311,7 @@ class EffectSurfaceEmpty(Exception): # noqa: N818
         *,
         task: object | None = None,
         declared: Match | None = None,
-        policy_chain: tuple[Plan[Any],...] = (),
+        policy_chain: tuple[Plan[Any], ...] = (),
         reason: str = "effective surface is empty",
     ) -> None:
         self.task = task
@@ -321,17 +321,19 @@ class EffectSurfaceEmpty(Exception): # noqa: N818
         super().__init__(reason)
 
 
-class PlanNotExtractable(ValueError): # noqa: N818
+class PlanNotExtractable(ValueError):  # noqa: N818
     """A ``Plan`` used as ``may=`` lacks an ``allow_only`` surface."""
 
     def __init__(self, plan: Plan[Any], *, task: object | None = None) -> None:
         self.task = task
         self.plan = plan
-        self.reason = "Plan used as may= must declare an allow_only; add.allow_only(...) or pass a Match value directly."
+        self.reason = (
+            "Plan used as may= must declare an allow_only; add.allow_only(...) or pass a Match value directly."
+        )
         super().__init__(self.reason)
 
 
-class OverbroadHandler(ValueError): # noqa: N818
+class OverbroadHandler(ValueError):  # noqa: N818
     """An authoritative handler was installed over an overbroad matcher."""
 
     def __init__(self, matcher: Match, *, install_site: str = "unknown") -> None:
@@ -367,8 +369,7 @@ def _kind_pattern(mode: str, kind_or_class: str | type[Any]) -> _KindPattern:
         sugar_mode, kind = parse_matcher_kind_sugar(kind_or_class)
         if sugar_mode != "exact":
             raise ValueError(
-                f"wildcard matcher sugar {kind_or_class!r} is accepted only by Match.of(...), "
-                f"not Match.{mode}(...)"
+                f"wildcard matcher sugar {kind_or_class!r} is accepted only by Match.of(...), not Match.{mode}(...)"
             )
         return _KindPattern(mode=mode, kind=kind)
     if not isinstance(kind_or_class, type):
@@ -404,13 +405,13 @@ def _normalize(node: _Node) -> _Node:
     if node.tag in {"all", "nothing", "kind", "field", "predicate"}:
         return node
     if node.tag == "not":
-        inner = _normalize(node.args[0]) # type: ignore[arg-type]
+        inner = _normalize(node.args[0])  # type: ignore[arg-type]
         if inner.tag == "all":
             return _Node("nothing")
         if inner.tag == "nothing":
             return _Node("all")
         if inner.tag == "not":
-            return inner.args[0] # type: ignore[return-value]
+            return inner.args[0]  # type: ignore[return-value]
         if _contains_predicate(inner):
             return _Node("not", (inner,))
         if inner.tag == "or":
@@ -421,7 +422,7 @@ def _normalize(node: _Node) -> _Node:
     if node.tag in {"or", "and"}:
         terms: list[_Node] = []
         for raw in node.args:
-            term = _normalize(raw) # type: ignore[arg-type]
+            term = _normalize(raw)  # type: ignore[arg-type]
             if node.tag == "or" and term.tag == "all":
                 return _Node("all")
             if node.tag == "and" and term.tag == "nothing":
@@ -431,7 +432,7 @@ def _normalize(node: _Node) -> _Node:
             if node.tag == "and" and term.tag == "all":
                 continue
             if term.tag == node.tag:
-                terms.extend(term.args) # type: ignore[arg-type]
+                terms.extend(term.args)  # type: ignore[arg-type]
             else:
                 terms.append(term)
         if any(_contains_predicate(term) for term in terms):
@@ -462,7 +463,7 @@ def _normalize(node: _Node) -> _Node:
     raise ValueError(f"unknown Match node tag {node.tag!r}")
 
 
-def _normalize_predicate_mixed_boolean(tag: str, terms: tuple[_Node,...]) -> _Node:
+def _normalize_predicate_mixed_boolean(tag: str, terms: tuple[_Node, ...]) -> _Node:
     kept: list[_Node] = []
     for term in terms:
         if tag == "or" and term.tag == "nothing":
@@ -497,10 +498,10 @@ def _sort_key(node: _Node) -> str:
     return _repr_node(node)
 
 
-def _has_incompatible_kind_terms(terms: tuple[_Node,...]) -> bool:
+def _has_incompatible_kind_terms(terms: tuple[_Node, ...]) -> bool:
     kind_terms = [term.args[0] for term in terms if term.tag == "kind"]
     for index, left in enumerate(kind_terms):
-        for right in kind_terms[index + 1:]:
+        for right in kind_terms[index + 1 :]:
             if isinstance(left, _KindPattern) and isinstance(right, _KindPattern) and _kind_disjoint(left, right):
                 return True
     negative_kind_terms = [
@@ -519,7 +520,7 @@ def _has_incompatible_kind_terms(terms: tuple[_Node,...]) -> bool:
     return False
 
 
-def _absorb_and(terms: tuple[_Node,...]) -> tuple[_Node,...]:
+def _absorb_and(terms: tuple[_Node, ...]) -> tuple[_Node, ...]:
     kept: list[_Node] = []
     for term in terms:
         if term.tag == "or" and any(other in term.args for other in terms if other is not term):
@@ -528,7 +529,7 @@ def _absorb_and(terms: tuple[_Node,...]) -> tuple[_Node,...]:
     return tuple(kept)
 
 
-def _absorb_or(terms: tuple[_Node,...]) -> tuple[_Node,...]:
+def _absorb_or(terms: tuple[_Node, ...]) -> tuple[_Node, ...]:
     kept: list[_Node] = []
     for term in terms:
         if term.tag == "and" and any(other in term.args for other in terms if other is not term):
@@ -543,21 +544,21 @@ def _matches(node: _Node, event: object) -> bool:
     if node.tag == "nothing":
         return False
     if node.tag == "kind":
-        return _kind_matches(node.args[0], event) # type: ignore[arg-type]
+        return _kind_matches(node.args[0], event)  # type: ignore[arg-type]
     if node.tag == "field":
-        return _field_matches(node.args[0], event) # type: ignore[arg-type]
+        return _field_matches(node.args[0], event)  # type: ignore[arg-type]
     if node.tag == "predicate":
         predicate = node.args[0]
-        return bool(predicate.fn(event)) # type: ignore[attr-defined]
+        return bool(predicate.fn(event))  # type: ignore[attr-defined]
     if node.tag == "or":
-        return any(_matches(term, event) for term in node.args) # type: ignore[arg-type]
+        return any(_matches(term, event) for term in node.args)  # type: ignore[arg-type]
     if node.tag == "and":
         terms = tuple(term for term in node.args if isinstance(term, _Node))
         structural_terms = tuple(term for term in terms if not _contains_predicate(term))
         opaque_terms = tuple(term for term in terms if _contains_predicate(term))
         return all(_matches(term, event) for term in (*structural_terms, *opaque_terms))
     if node.tag == "not":
-        return not _matches(node.args[0], event) # type: ignore[arg-type]
+        return not _matches(node.args[0], event)  # type: ignore[arg-type]
     raise ValueError(f"unknown Match node tag {node.tag!r}")
 
 
@@ -655,13 +656,13 @@ def _repr_node(node: _Node) -> str:
         return f"Match.{node.tag}()"
     if node.tag == "kind":
         pattern = node.args[0]
-        return f"Match.{pattern.mode}({pattern.kind!r})" # type: ignore[attr-defined]
+        return f"Match.{pattern.mode}({pattern.kind!r})"  # type: ignore[attr-defined]
     if node.tag == "field":
         predicate = node.args[0]
-        return f"Match.field({predicate.name!r}, {predicate.op!r}, {predicate.value!r})" # type: ignore[attr-defined]
+        return f"Match.field({predicate.name!r}, {predicate.op!r}, {predicate.value!r})"  # type: ignore[attr-defined]
     if node.tag == "predicate":
         return "Match.predicate(<fn>)"
     if node.tag == "not":
-        return f"~{_repr_node(node.args[0])}" # type: ignore[arg-type]
+        return f"~{_repr_node(node.args[0])}"  # type: ignore[arg-type]
     sep = " | " if node.tag == "or" else " & "
-    return "(" + sep.join(_repr_node(term) for term in node.args) + ")" # type: ignore[arg-type]
+    return "(" + sep.join(_repr_node(term) for term in node.args) + ")"  # type: ignore[arg-type]

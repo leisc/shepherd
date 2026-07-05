@@ -476,7 +476,9 @@ class VcsCoreApp:
         if execution_options is None:
             execution_options = CommandExecutionOptions()
         if not isinstance(execution_options, CommandExecutionOptions):
-            raise TypeError(f"execution_options must be CommandExecutionOptions, got {type(execution_options).__name__}.")
+            raise TypeError(
+                f"execution_options must be CommandExecutionOptions, got {type(execution_options).__name__}."
+            )
         scope = self._resolve_runtime_scope(command="exec", scope_name=scope_name)
         try:
             return self._mg._execute_recorded_params(
@@ -553,9 +555,7 @@ class VcsCoreApp:
             raise AppCommandBlocked(command="archive-orphaned-scopes", blockers=blockers)
 
         try:
-            return self._mg.archive_orphaned_scopes(
-                exclude_refs=cleanup_classification.protected_ref_owning_refs
-            )
+            return self._mg.archive_orphaned_scopes(exclude_refs=cleanup_classification.protected_ref_owning_refs)
         except (
             OpenScopeError,
             OrphanedOperationsError,

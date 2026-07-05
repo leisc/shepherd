@@ -170,8 +170,7 @@ def _build_observation_stream(
             reuse_index = spec["reuse_index"]
             if reuse_index >= len(built):
                 raise ValueError(
-                    f"{fixture.case}: observations[{i}].reuse_index={reuse_index} "
-                    f"refers to a not-yet-built observation"
+                    f"{fixture.case}: observations[{i}].reuse_index={reuse_index} refers to a not-yet-built observation"
                 )
             built.append(built[reuse_index])
             continue
@@ -192,9 +191,7 @@ def _build_observation_stream(
             # (resume_kernel_replay validates this), which is exactly the
             # closure-free property. Closure-free replay acceptance criteria
             # (#2/#3) in 260521-0600-kernel.md.
-            request = external_effect_request_from_json(
-                external_effect_request_to_json(request)
-            )
+            request = external_effect_request_from_json(external_effect_request_to_json(request))
 
         obs = _observation_for(state, request, value=spec["value"])
         built.append(obs)
@@ -205,6 +202,7 @@ def _build_observation_stream(
             # Step forward to expose the next open request, but only if
             # the next spec needs to be built against a fresh state.
             from shepherd_kernel_v3_reference.run import resume_kernel_run
+
             state, envelope = resume_kernel_run(state, obs)
 
     return state, tuple(built)
@@ -234,9 +232,7 @@ def _project_transition_to_wire(
     admission_basis: AdmissionBasis | None,
 ) -> dict:
     catalog = dict(session._evaluator.continuation_objects)
-    batch = semantic_batch_from_transition(
-        transition, session.state, catalog, admission_basis=admission_basis
-    )
+    batch = semantic_batch_from_transition(transition, session.state, catalog, admission_basis=admission_basis)
     if isinstance(batch, SemanticTransitionBatch):
         validate_semantic_batch(batch)
         return semantic_batch_to_wire(batch)
@@ -287,9 +283,7 @@ def collect_batches_wire(fixture: Fixture) -> list[dict]:
         registry=fixture.registry,
     )
     session, transition = KernelReplaySession.start(prepared, registry=fixture.registry)
-    batches: list[dict] = [
-        _project_transition_to_wire(transition, session, admission_basis=None)
-    ]
+    batches: list[dict] = [_project_transition_to_wire(transition, session, admission_basis=None)]
 
     for i, spec in enumerate(fixture.observations):
         if "reuse_index" in spec:
@@ -299,16 +293,10 @@ def collect_batches_wire(fixture: Fixture) -> list[dict]:
             )
         request = session.current_request()
         if request is None:
-            raise ValueError(
-                f"{fixture.case}: observations[{i}] has no open request to resume"
-            )
+            raise ValueError(f"{fixture.case}: observations[{i}] has no open request to resume")
         basis = _lite_admission_basis(session.state, request, value=spec["value"])
-        transition = session.resume(
-            request, HostCompleted(value=spec["value"]), registry=fixture.registry
-        )
-        batches.append(
-            _project_transition_to_wire(transition, session, admission_basis=basis)
-        )
+        transition = session.resume(request, HostCompleted(value=spec["value"]), registry=fixture.registry)
+        batches.append(_project_transition_to_wire(transition, session, admission_basis=basis))
     return batches
 
 
@@ -330,9 +318,7 @@ def test_every_fixture_has_unique_case_name() -> None:
 
 def test_every_negative_fixture_kind_is_a_negative_discriminator() -> None:
     for f in _negative_fixtures():
-        assert f.kind.startswith("negative-"), (
-            f"{f.case}: negative fixture has non-negative kind {f.kind!r}"
-        )
+        assert f.kind.startswith("negative-"), f"{f.case}: negative fixture has non-negative kind {f.kind!r}"
 
 
 # --- Positive fixtures: envelope-shape stability ------------------------
@@ -363,7 +349,9 @@ def test_positive_fixture_runs_to_expected_envelope(fixture: Fixture) -> None:
         _state, observations = _build_observation_stream(fixture)
         program = elaborate(fixture.program, registry=fixture.registry)
         _state, envelope = validate_observation_stream(
-            program, observations, registry=fixture.registry,
+            program,
+            observations,
+            registry=fixture.registry,
         )
 
     expected_status = fixture.expected["envelope_status"]
@@ -375,8 +363,7 @@ def test_positive_fixture_runs_to_expected_envelope(fixture: Fixture) -> None:
         expected_value = fixture.expected["completed_value"]
         assert isinstance(envelope.payload, CompletedResult)
         assert envelope.payload.value == expected_value, (
-            f"{fixture.case}: expected value {expected_value!r}, "
-            f"got {envelope.payload.value!r}"
+            f"{fixture.case}: expected value {expected_value!r}, got {envelope.payload.value!r}"
         )
     elif expected_status == "external-effect-request":
         expected_effect_kind = fixture.expected.get("open_request_effect_kind")
@@ -446,12 +433,10 @@ def test_negative_profile_admission_fixture_rejects(fixture: Fixture) -> None:
     rejection = exc.value.rejection
     assert rejection.kind == "profile-admission"
     assert rejection.construct == expected["construct"], (
-        f"{fixture.case}: expected construct {expected['construct']!r}, "
-        f"got {rejection.construct!r}"
+        f"{fixture.case}: expected construct {expected['construct']!r}, got {rejection.construct!r}"
     )
     assert expected["message_substring"] in rejection.diagnostic, (
-        f"{fixture.case}: expected substring {expected['message_substring']!r} "
-        f"in diagnostic {rejection.diagnostic!r}"
+        f"{fixture.case}: expected substring {expected['message_substring']!r} in diagnostic {rejection.diagnostic!r}"
     )
     if "source_location" in expected:
         assert rejection.source_location is not None
@@ -486,26 +471,23 @@ def test_negative_observation_admission_fixture_rejects(fixture: Fixture) -> Non
     _state, observations = _build_observation_stream(fixture)
     program = elaborate(fixture.program, registry=fixture.registry)
     _state, envelope = validate_observation_stream(
-        program, observations, registry=fixture.registry,
+        program,
+        observations,
+        registry=fixture.registry,
     )
 
-    assert envelope.status == "rejected", (
-        f"{fixture.case}: expected status='rejected', got {envelope.status!r}"
-    )
+    assert envelope.status == "rejected", f"{fixture.case}: expected status='rejected', got {envelope.status!r}"
     assert isinstance(envelope.payload, KernelRejection)
     rejection = envelope.payload
     assert rejection.kind == "observation-admission", (
         f"{fixture.case}: expected kind='observation-admission', got {rejection.kind!r}"
     )
     assert rejection.rejection_index == expected["rejection_index"], (
-        f"{fixture.case}: expected rejection_index={expected['rejection_index']}, "
-        f"got {rejection.rejection_index}"
+        f"{fixture.case}: expected rejection_index={expected['rejection_index']}, got {rejection.rejection_index}"
     )
     assert rejection.rejection_class == expected["rejection_class"], (
-        f"{fixture.case}: expected rejection_class={expected['rejection_class']!r}, "
-        f"got {rejection.rejection_class!r}"
+        f"{fixture.case}: expected rejection_class={expected['rejection_class']!r}, got {rejection.rejection_class!r}"
     )
     assert expected["message_substring"] in rejection.diagnostic, (
-        f"{fixture.case}: expected substring {expected['message_substring']!r} "
-        f"in diagnostic {rejection.diagnostic!r}"
+        f"{fixture.case}: expected substring {expected['message_substring']!r} in diagnostic {rejection.diagnostic!r}"
     )

@@ -71,9 +71,7 @@ def _build_workspace_tree(
 
     def build(prefix: tuple[str, ...]) -> pygit2.Oid:
         builder = repo.TreeBuilder()
-        child_prefixes = sorted(
-            {g for g in groups if len(g) > len(prefix) and g[: len(prefix)] == prefix}
-        )
+        child_prefixes = sorted({g for g in groups if len(g) > len(prefix) and g[: len(prefix)] == prefix})
         immediate: dict[str, tuple[str, ...]] = {}
         for child in child_prefixes:
             name = child[len(prefix)]
@@ -272,9 +270,7 @@ def test_plan_digest_excludes_git_tree_oid(tmp_path) -> None:
     store = SubstrateStore.open_or_init(tmp_path / "workspace.git", _identity())
     contents = {"README.md": (b"# project\n", 0o100644)}
     tree_oid = _build_workspace_tree(store, contents)
-    payload = workspace_state_revision_payload(
-        _manifest_entries(contents), byte_authority="tree-backed"
-    )
+    payload = workspace_state_revision_payload(_manifest_entries(contents), byte_authority="tree-backed")
     _transition, plan, _preparation, _descriptor = _build_records(
         store,
         operation_id="op-plan-digest",
@@ -320,9 +316,7 @@ def test_tree_backed_revision_embeds_workspace_tree(tmp_path) -> None:
         "scripts/run.sh": (b"#!/bin/sh\nexit 0\n", 0o100755),
     }
     tree_oid = _build_workspace_tree(store, contents)
-    payload = workspace_state_revision_payload(
-        _manifest_entries(contents), byte_authority="tree-backed"
-    )
+    payload = workspace_state_revision_payload(_manifest_entries(contents), byte_authority="tree-backed")
     evidence_record = _evidence_record("op-tb", store)
     evidence = _evidence_ref_for(evidence_record, operation_id="op-tb")
     transition, plan, preparation, descriptor = _build_records(
@@ -352,9 +346,7 @@ def test_tree_backed_revision_embeds_workspace_tree(tmp_path) -> None:
     assert metadata.byte_authority == "tree-backed"
     assert metadata.git_tree_oid == tree_oid
     # The deep validator should re-validate the tree-walk path on read.
-    provenance = store.validate_prepared_candidate(
-        candidate.head, evidence_resolver=lambda _ref: evidence_record
-    )
+    provenance = store.validate_prepared_candidate(candidate.head, evidence_resolver=lambda _ref: evidence_record)
     assert provenance.metadata.byte_authority == "tree-backed"
     assert provenance.plan.git_tree_oid == tree_oid
 
@@ -363,9 +355,7 @@ def test_digest_only_revision_round_trip_unchanged(tmp_path) -> None:
     """Existing digest-only revisions must keep working with no behavior change."""
     store = SubstrateStore.open_or_init(tmp_path / "workspace.git", _identity())
     contents = {"README.md": (b"# project\n", 0o100644)}
-    payload = workspace_state_revision_payload(
-        _manifest_entries(contents), byte_authority="digest-only"
-    )
+    payload = workspace_state_revision_payload(_manifest_entries(contents), byte_authority="digest-only")
     transition, plan, preparation, descriptor = _build_records(
         store,
         operation_id="op-do",
@@ -592,9 +582,7 @@ def test_tree_backed_rejects_manifest_byte_authority_disagreement(tmp_path) -> N
     store = SubstrateStore.open_or_init(tmp_path / "workspace.git", _identity())
     contents = {"README.md": (b"# project\n", 0o100644)}
     tree_oid = _build_workspace_tree(store, contents)
-    payload = workspace_state_revision_payload(
-        _manifest_entries(contents), byte_authority="digest-only"
-    )
+    payload = workspace_state_revision_payload(_manifest_entries(contents), byte_authority="digest-only")
     transition, plan, preparation, descriptor = _build_records(
         store,
         operation_id="op-tb-mismatch",
@@ -617,9 +605,7 @@ def test_tree_backed_rejects_unknown_tree_oid(tmp_path) -> None:
     """libgit2 enforces local visibility, but our pre-walk error gives a clearer message."""
     store = SubstrateStore.open_or_init(tmp_path / "workspace.git", _identity())
     contents = {"README.md": (b"# project\n", 0o100644)}
-    payload = workspace_state_revision_payload(
-        _manifest_entries(contents), byte_authority="tree-backed"
-    )
+    payload = workspace_state_revision_payload(_manifest_entries(contents), byte_authority="tree-backed")
     bogus_tree_oid = "deadbeef" * 5  # 40 hex chars, but unknown object.
     transition, plan, preparation, descriptor = _build_records(
         store,
@@ -670,9 +656,7 @@ def test_read_side_rejects_metadata_byte_authority_disagreement(tmp_path) -> Non
     store = SubstrateStore.open_or_init(tmp_path / "workspace.git", _identity())
     contents = {"README.md": (b"# project\n", 0o100644)}
     tree_oid = _build_workspace_tree(store, contents)
-    payload = workspace_state_revision_payload(
-        _manifest_entries(contents), byte_authority="tree-backed"
-    )
+    payload = workspace_state_revision_payload(_manifest_entries(contents), byte_authority="tree-backed")
     evidence_record = _evidence_record("op-tb-read", store)
     evidence = _evidence_ref_for(evidence_record, operation_id="op-tb-read")
     transition, plan, preparation, descriptor = _build_records(
@@ -727,9 +711,7 @@ def test_read_side_rejects_metadata_byte_authority_disagreement(tmp_path) -> Non
         pygit2.GIT_FILEMODE_BLOB,
     )
     new_tree_builder = store.repo.TreeBuilder(old_tree.id)
-    insert_tree_entry(
-        store.repo, new_tree_builder, "meta", new_meta_builder.write(), pygit2.GIT_FILEMODE_TREE
-    )
+    insert_tree_entry(store.repo, new_tree_builder, "meta", new_meta_builder.write(), pygit2.GIT_FILEMODE_TREE)
     signature = pygit2.Signature("rewriter", "test@example.invalid")
     rewritten = create_commit_with_recovery(
         store.repo,
@@ -745,9 +727,7 @@ def test_read_side_rejects_metadata_byte_authority_disagreement(tmp_path) -> Non
     # detectable on-disk disagreement is between the metadata blob and the plan
     # sidecar. The git_tree_oid check fires first.
     with pytest.raises(InvalidRepositoryStateError, match="git_tree_oid disagrees with sidecar"):
-        store.validate_prepared_candidate(
-            str(rewritten), evidence_resolver=lambda _ref: evidence_record
-        )
+        store.validate_prepared_candidate(str(rewritten), evidence_resolver=lambda _ref: evidence_record)
 
 
 # --- File-mode scope (pinning Tranche 1 boundary) ---
@@ -816,9 +796,7 @@ def test_tree_backed_rejects_gitlink_mode(tmp_path) -> None:
     # commit's content is irrelevant; only its mode-0o160000 reference matters.
     empty_tree_oid = store.repo.TreeBuilder().write()
     signature = pygit2.Signature("test", "test@example.invalid")
-    submodule_commit_oid = store.repo.create_commit(
-        None, signature, signature, "submodule head", empty_tree_oid, []
-    )
+    submodule_commit_oid = store.repo.create_commit(None, signature, signature, "submodule head", empty_tree_oid, [])
     builder = store.repo.TreeBuilder()
     builder.insert("vendor", submodule_commit_oid, 0o160000)
     tree_oid = str(builder.write())

@@ -54,8 +54,6 @@ class ClonefileCarrierBackend(CopyCarrierBackend):
         # APFS copy-on-write clone; fall back to the base class's plain recursive
         # copy off-APFS (reversibility is identical either way — only block-sharing
         # is lost).
-        result = subprocess.run(
-            ["cp", "-c", "-R", str(source), str(dest)], capture_output=True, text=True, check=False
-        )
+        result = subprocess.run(["cp", "-c", "-R", str(source), str(dest)], capture_output=True, text=True, check=False)
         if result.returncode != 0:
             super()._clone_tree(source, dest)

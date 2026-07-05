@@ -556,7 +556,9 @@ def _missing_binding_item(
         locator=authority_ref,
         source_kind="substrate_store",
         source_store=source_store,
-        health=(expected if is_expected else missing)(issue_codes=(WORLD_BINDING_MISSING,), authority_role="authoritative"),
+        health=(expected if is_expected else missing)(
+            issue_codes=(WORLD_BINDING_MISSING,), authority_role="authoritative"
+        ),
         role=("selected_state", "authority"),
         fields={
             "authority_ref": authority_ref,

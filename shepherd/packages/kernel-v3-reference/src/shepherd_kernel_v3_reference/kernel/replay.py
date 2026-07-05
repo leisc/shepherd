@@ -543,9 +543,7 @@ class ReplayableKernelTransition:
         for attr_name in ("context_ref_map", "continuation_ref_map", "continuation_control_ref_map"):
             mapping = getattr(self, attr_name)
             if not isinstance(mapping, Mapping):
-                raise ContinuationReplayError(
-                    f"ReplayableKernelTransition.{attr_name} must be a mapping"
-                )
+                raise ContinuationReplayError(f"ReplayableKernelTransition.{attr_name} must be a mapping")
             for key, value in mapping.items():
                 _require_str(key, f"ReplayableKernelTransition.{attr_name} key")
                 _require_str(value, f"ReplayableKernelTransition.{attr_name} value")
@@ -559,9 +557,7 @@ class ReplayableKernelTransition:
             self.payload,
             ExternalEffectRequest | ExternalEffectRequestRef,
         ):
-            raise ContinuationReplayError(
-                "external-effect-request replay transition requires external request payload"
-            )
+            raise ContinuationReplayError("external-effect-request replay transition requires external request payload")
         if status == "rejected" and not isinstance(self.payload, ReplayableRejected):
             raise ContinuationReplayError("rejected replay transition requires ReplayableRejected payload")
         trace_delta = tuple(self.trace_delta)
@@ -573,7 +569,8 @@ class ReplayableKernelTransition:
         if payload_program_ref is not None and program_ref != payload_program_ref:
             raise ContinuationReplayError("ReplayableKernelTransition program_ref disagrees with payload")
         parent_transition_refs = tuple(
-            _require_str(ref, "ReplayableKernelTransition.parent_transition_refs") for ref in self.parent_transition_refs
+            _require_str(ref, "ReplayableKernelTransition.parent_transition_refs")
+            for ref in self.parent_transition_refs
         )
         resume_observation_ref = _optional_str(
             self.resume_observation_ref,
@@ -640,7 +637,9 @@ class ContinuationReplayArtifactRecord:
                 f"unknown ContinuationReplayArtifactRecord.source_record_type: {self.source_record_type!r}"
             )
         if (self.source_ref is None) != (self.source_record_type is None):
-            raise ContinuationReplayError("ContinuationReplayArtifactRecord source_ref and source_record_type must pair")
+            raise ContinuationReplayError(
+                "ContinuationReplayArtifactRecord source_ref and source_record_type must pair"
+            )
 
 
 @dataclass(frozen=True)
@@ -813,9 +812,10 @@ class KernelReplayJournal:
                     raise ContinuationReplayError("KernelReplayJournal first transition must not have parents")
             elif transition.parent_transition_refs != (previous_ref,):
                 raise ContinuationReplayError("KernelReplayJournal transition parent must be the previous frontier")
-            if isinstance(transition.payload, ReplayableCompleted | ReplayableRejected) and index != len(
-                transitions
-            ) - 1:
+            if (
+                isinstance(transition.payload, ReplayableCompleted | ReplayableRejected)
+                and index != len(transitions) - 1
+            ):
                 raise ContinuationReplayError("KernelReplayJournal terminal or rejected transition must be last")
             if isinstance(transition.payload, ReplayableRejected) and (
                 previous_transition is None
@@ -1283,8 +1283,7 @@ def replayable_kernel_transition_to_json(transition: ReplayableKernelTransition)
 def _ref_map_from_json(data: JsonValue, context: str) -> dict[Ref, Ref]:
     mapping = _require_mapping(data, context)
     return {
-        _require_str(key, f"{context} key"): _require_str(value, f"{context} value")
-        for key, value in mapping.items()
+        _require_str(key, f"{context} key"): _require_str(value, f"{context} value") for key, value in mapping.items()
     }
 
 
@@ -1321,9 +1320,7 @@ def replayable_kernel_transition_from_json(data: Mapping[str, JsonValue]) -> Rep
                     for item in _require_sequence(data["trace_delta"], "ReplayableKernelTransition.trace_delta")
                 ]
             ),
-            context_ref_map=_ref_map_from_json(
-                data["context_ref_map"], "ReplayableKernelTransition.context_ref_map"
-            ),
+            context_ref_map=_ref_map_from_json(data["context_ref_map"], "ReplayableKernelTransition.context_ref_map"),
             continuation_ref_map=_ref_map_from_json(
                 data["continuation_ref_map"], "ReplayableKernelTransition.continuation_ref_map"
             ),
@@ -1367,6 +1364,7 @@ def kernel_replay_state_from_json(
             )
         profile_name = _require_str(data["profile"], "KernelReplayState.profile")
         from shepherd_kernel_v3_reference.profiles import lookup_profile
+
         try:
             profile = lookup_profile(profile_name)
         except KeyError as exc:
@@ -1651,9 +1649,7 @@ class KernelReplaySession:
         )
         outcome = evaluator.run(env)
         if isinstance(outcome, Delayed | Forked):
-            raise ContinuationReplayError(
-                f"replayable kernel run does not support {type(outcome).__name__} outcomes"
-            )
+            raise ContinuationReplayError(f"replayable kernel run does not support {type(outcome).__name__} outcomes")
         transition = _session_replayable_transition(
             evaluator=evaluator,
             outcome=outcome,
@@ -2237,7 +2233,9 @@ def _open_request_from_transition(transition: ReplayableKernelTransition) -> Ope
         program_ref=transition.program_ref,
         declaration_ref=request.declaration_ref,
         effect_kind=request.effect_kind,
-        root_ref=request.root_ref if isinstance(request, ExternalEffectRequestRef) else request.replay_artifact.root_ref,
+        root_ref=request.root_ref
+        if isinstance(request, ExternalEffectRequestRef)
+        else request.replay_artifact.root_ref,
         operation_result_schema_ref=request.operation_result_schema_ref,
         trace_prefix_ref=_trace_prefix_ref(request.trace_prefix),
     )
@@ -2354,8 +2352,12 @@ def _replayable_transition(
         resume_observation_ref=resume_observation_ref,
         parent_transition_refs=parent_transition_refs,
         context_ref_map=MappingProxyType(dict(context_ref_map)) if context_ref_map else MappingProxyType({}),
-        continuation_ref_map=MappingProxyType(dict(continuation_ref_map)) if continuation_ref_map else MappingProxyType({}),
-        continuation_control_ref_map=MappingProxyType(dict(continuation_control_ref_map)) if continuation_control_ref_map else MappingProxyType({}),
+        continuation_ref_map=MappingProxyType(dict(continuation_ref_map))
+        if continuation_ref_map
+        else MappingProxyType({}),
+        continuation_control_ref_map=MappingProxyType(dict(continuation_control_ref_map))
+        if continuation_control_ref_map
+        else MappingProxyType({}),
     )
 
 
@@ -2540,9 +2542,7 @@ def _journal_transition_from_json(
                     for item in _require_sequence(data["trace_delta"], "ReplayableKernelTransition.trace_delta")
                 ]
             ),
-            context_ref_map=_ref_map_from_json(
-                data["context_ref_map"], "ReplayableKernelTransition.context_ref_map"
-            ),
+            context_ref_map=_ref_map_from_json(data["context_ref_map"], "ReplayableKernelTransition.context_ref_map"),
             continuation_ref_map=_ref_map_from_json(
                 data["continuation_ref_map"], "ReplayableKernelTransition.continuation_ref_map"
             ),
@@ -2607,7 +2607,9 @@ def _journal_payload_from_json(
         record = artifacts.get(artifact_ref)
         if record is None:
             raise ContinuationReplayError(f"KernelReplayJournal missing artifact {artifact_ref!r}")
-        declaration = trace_record_from_json(_require_mapping(data["declaration"], "ExternalEffectRequestRef.declaration"))
+        declaration = trace_record_from_json(
+            _require_mapping(data["declaration"], "ExternalEffectRequestRef.declaration")
+        )
         if not isinstance(declaration, EffectDeclaration):
             raise TypeError("ExternalEffectRequestRef.declaration must decode to an EffectDeclaration")
         request = ExternalEffectRequestRef(

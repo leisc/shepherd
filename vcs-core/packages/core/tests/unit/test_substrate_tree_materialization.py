@@ -108,9 +108,7 @@ def test_read_substrate_workspace_file_returns_none_when_workspace_tree_unreacha
 
     # Now sever the alternates link and open a FRESH pygit2 handle on the
     # substrate so libgit2 does not retain a cached alternates view.
-    alternates_path = (
-        Path(substrate.repo.path) / "objects" / "info" / "alternates"
-    )
+    alternates_path = Path(substrate.repo.path) / "objects" / "info" / "alternates"
     assert alternates_path.exists()
     alternates_path.unlink()
     fresh_repo = pygit2.Repository(substrate.repo.path)
@@ -262,9 +260,7 @@ def test_filesystem_substrate_prefers_byte_source_over_scalar_ground(tmp_path) -
         # Replace the byte source so it returns substrate content for shared.txt.
         new_binding = replace(
             mg._runtime,
-            ground_workspace_byte_source=lambda path: (b"from-substrate\n", 0o100644)
-            if path == "shared.txt"
-            else None,
+            ground_workspace_byte_source=lambda path: (b"from-substrate\n", 0o100644) if path == "shared.txt" else None,
         )
         mg._runtime = new_binding
         for sub in mg.lifecycle_substrates:
@@ -308,9 +304,7 @@ def _substitute_runtime(mg, **overrides) -> None:
             sub.bind_runtime(new_binding)
 
 
-def test_materialization_warns_on_tree_backed_substrate_miss(
-    tmp_path, caplog, monkeypatch
-) -> None:
+def test_materialization_warns_on_tree_backed_substrate_miss(tmp_path, caplog, monkeypatch) -> None:
     """Tree-backed ground + byte-source returns None for a diff path -> WARN.
 
     Tranche 1's validator enforces manifest/tree correspondence at write time,
@@ -346,10 +340,9 @@ def test_materialization_warns_on_tree_backed_substrate_miss(
             mg.push()
 
         warnings = [r for r in caplog.records if r.levelno == logging.WARNING]
-        assert any(
-            "no substrate-tree entry for diff path 'missing.txt'" in r.getMessage()
-            for r in warnings
-        ), f"expected substrate-tree-miss warning for missing.txt, got: {[r.getMessage() for r in warnings]}"
+        assert any("no substrate-tree entry for diff path 'missing.txt'" in r.getMessage() for r in warnings), (
+            f"expected substrate-tree-miss warning for missing.txt, got: {[r.getMessage() for r in warnings]}"
+        )
         # The materialization still succeeds via scalar fallback.
         assert (workspace / "missing.txt").read_bytes() == b"scalar\n"
     finally:
@@ -380,8 +373,7 @@ def test_materialization_does_not_warn_for_digest_only_ground(tmp_path, caplog) 
         substrate_warnings = [
             r
             for r in caplog.records
-            if r.levelno == logging.WARNING
-            and "substrate-tree entry for diff path" in r.getMessage()
+            if r.levelno == logging.WARNING and "substrate-tree entry for diff path" in r.getMessage()
         ]
         assert not substrate_warnings, (
             f"digest-only/no-v2 fallback must not emit substrate-tree warnings, "
@@ -422,9 +414,7 @@ def test_strict_mode_helper_reads_env_var(monkeypatch) -> None:
 
     for truthy in ("1", "true", "TRUE", "True", "  true  "):
         monkeypatch.setenv(STRICT_TREE_BACKED_MATERIALIZATION_ENV, truthy)
-        assert _strict_tree_backed_materialization_enabled() is True, (
-            f"expected {truthy!r} to enable strict mode"
-        )
+        assert _strict_tree_backed_materialization_enabled() is True, f"expected {truthy!r} to enable strict mode"
 
     for falsey in ("0", "false", "no", "off", "", "yes", "anything"):
         monkeypatch.setenv(STRICT_TREE_BACKED_MATERIALIZATION_ENV, falsey)
@@ -486,9 +476,7 @@ def test_strict_mode_silent_when_byte_source_serves(tmp_path, monkeypatch, caplo
         # Byte source serves the path; strict mode should not trigger.
         _substitute_runtime(
             mg,
-            ground_workspace_byte_source=lambda path: (b"from-substrate\n", 0o100644)
-            if path == "served.txt"
-            else None,
+            ground_workspace_byte_source=lambda path: (b"from-substrate\n", 0o100644) if path == "served.txt" else None,
             ground_workspace_is_tree_backed=lambda: True,
         )
         with caplog.at_level(logging.WARNING, logger="vcs_core.substrates"):
@@ -496,8 +484,7 @@ def test_strict_mode_silent_when_byte_source_serves(tmp_path, monkeypatch, caplo
         warnings = [
             r
             for r in caplog.records
-            if r.levelno == logging.WARNING
-            and "substrate-tree entry for diff path" in r.getMessage()
+            if r.levelno == logging.WARNING and "substrate-tree entry for diff path" in r.getMessage()
         ]
         assert not warnings, f"strict mode + served byte source must not warn, got: {warnings}"
         assert (workspace / "served.txt").read_bytes() == b"from-substrate\n"
@@ -536,9 +523,7 @@ def test_strict_mode_does_not_raise_for_digest_only_ground(tmp_path, monkeypatch
 # short-circuits before the bump.
 
 
-def test_scalar_fallback_counter_does_not_increment_when_byte_source_serves(
-    tmp_path, monkeypatch
-) -> None:
+def test_scalar_fallback_counter_does_not_increment_when_byte_source_serves(tmp_path, monkeypatch) -> None:
     """When the substrate byte source serves the path, the counter stays at 0."""
     from vcs_core.substrates import (
         STRICT_TREE_BACKED_MATERIALIZATION_ENV,
@@ -558,15 +543,11 @@ def test_scalar_fallback_counter_does_not_increment_when_byte_source_serves(
         mg.exec("filesystem", "write", scope=mg.ground, path="served.txt", content=b"from-substrate\n")
         _substitute_runtime(
             mg,
-            ground_workspace_byte_source=lambda path: (b"from-substrate\n", 0o100644)
-            if path == "served.txt"
-            else None,
+            ground_workspace_byte_source=lambda path: (b"from-substrate\n", 0o100644) if path == "served.txt" else None,
             ground_workspace_is_tree_backed=lambda: True,
         )
         mg.push()
-        assert scalar_fallback_invocations() == 0, (
-            "byte source served every path; counter must stay at 0"
-        )
+        assert scalar_fallback_invocations() == 0, "byte source served every path; counter must stay at 0"
     finally:
         mg.deactivate()
 
@@ -586,9 +567,7 @@ def test_scalar_fallback_counter_does_not_increment_when_byte_source_serves(
 # ``test_scalar_fallback_counter_increments_on_tree_backed_drift`` below.
 
 
-def test_scalar_fallback_counter_increments_on_tree_backed_drift(
-    tmp_path, monkeypatch
-) -> None:
+def test_scalar_fallback_counter_increments_on_tree_backed_drift(tmp_path, monkeypatch) -> None:
     """Tree-backed ground + byte-source miss (non-strict) -> warning + scalar
     fallback + counter increment. This is the silent-drift case the counter is
     designed to catch when strict mode is off."""
@@ -614,16 +593,12 @@ def test_scalar_fallback_counter_increments_on_tree_backed_drift(
             ground_workspace_is_tree_backed=lambda: True,
         )
         mg.push()
-        assert scalar_fallback_invocations() >= 1, (
-            "tree-backed drift fell back to scalar but counter did not increment"
-        )
+        assert scalar_fallback_invocations() >= 1, "tree-backed drift fell back to scalar but counter did not increment"
     finally:
         mg.deactivate()
 
 
-def test_scalar_fallback_counter_does_not_increment_when_strict_mode_raises(
-    tmp_path, monkeypatch
-) -> None:
+def test_scalar_fallback_counter_does_not_increment_when_strict_mode_raises(tmp_path, monkeypatch) -> None:
     """Strict mode raises before the bump call, so the counter stays at 0
     even though the materializer reached the fallback branch."""
     from vcs_core._errors import InvalidRepositoryStateError
@@ -650,8 +625,6 @@ def test_scalar_fallback_counter_does_not_increment_when_strict_mode_raises(
         )
         with pytest.raises(InvalidRepositoryStateError):
             mg.push()
-        assert scalar_fallback_invocations() == 0, (
-            "strict mode raised but the counter was bumped anyway"
-        )
+        assert scalar_fallback_invocations() == 0, "strict mode raised but the counter was bumped anyway"
     finally:
         mg.deactivate()

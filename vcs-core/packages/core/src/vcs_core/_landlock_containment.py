@@ -40,18 +40,18 @@ _WRITE_ACCESS = (
 )
 
 _RUNNER_SENTINEL = "__landlock_confine_exec__"
-_CONFINE_FAILED_RC = 3 # runner exit code when confinement could not be established (touch never uses 3)
+_CONFINE_FAILED_RC = 3  # runner exit code when confinement could not be established (touch never uses 3)
 
 _LIBC = ctypes.CDLL(None, use_errno=True)
 _LIBC.syscall.restype = ctypes.c_long
 
 
 class _RulesetAttr(ctypes.Structure):
-    _fields_ = [("handled_access_fs", ctypes.c_uint64)] # ABI v1: single field
+    _fields_ = [("handled_access_fs", ctypes.c_uint64)]  # ABI v1: single field
 
 
 class _PathBeneathAttr(ctypes.Structure):
-    _pack_ = 1 # packed: u64 + s32 = 12 bytes (a classic Landlock gotcha)
+    _pack_ = 1  # packed: u64 + s32 = 12 bytes (a classic Landlock gotcha)
     _fields_ = [("allowed_access", ctypes.c_uint64), ("parent_fd", ctypes.c_int32)]
 
 
@@ -126,7 +126,7 @@ class LandlockContainmentBackend:
         filesystem-only, so ``allow_network`` is not enforced here (network confinement is
         the Seatbelt/egress-broker axis) — accepted for Protocol parity.
         """
-        del allow_network # Landlock governs filesystem writes only; network is a separate axis.
+        del allow_network  # Landlock governs filesystem writes only; network is a separate axis.
         return json.dumps([os.path.realpath(str(root)) for root in writable_roots])
 
     def launch(
@@ -205,11 +205,11 @@ def _run_confined() -> int:
     try:
         landlock_confine(writable_roots)
     except OSError:
-        return _CONFINE_FAILED_RC # fail-closed: never run the body if confinement failed
+        return _CONFINE_FAILED_RC  # fail-closed: never run the body if confinement failed
     if not command:
         return 0
-    os.execvp(command[0], command) # noqa: S606 intentional shell-free exec (the confined runner)
-    return 127 # unreachable unless exec fails
+    os.execvp(command[0], command)  # noqa: S606 intentional shell-free exec (the confined runner)
+    return 127  # unreachable unless exec fails
 
 
 if __name__ == "__main__":

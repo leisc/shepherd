@@ -64,9 +64,7 @@ def handle(*args, **kwargs) -> _HandleContext:
     if len(args) == 2:
         effect_or_kind, fn = args
         return _HandleContext(bindings=make_bindings(((effect_or_kind, fn),)))
-    raise HandlerSignatureError(
-        "handle(...) accepts (effect, fn) or (effect_kind, fn) or (dict)"
-    )
+    raise HandlerSignatureError("handle(...) accepts (effect, fn) or (effect_kind, fn) or (dict)")
 
 
 class _HandleContext:

@@ -28,7 +28,11 @@ def _advertised_examples() -> list[tuple[str, str]]:
     for fname in _SUBSTRATE_SOURCES:
         tree = ast.parse((_SRC / fname).read_text(encoding="utf-8"))
         for node in ast.walk(tree):
-            if isinstance(node, ast.keyword) and node.arg == "examples" and isinstance(node.value, (ast.Tuple, ast.List)):
+            if (
+                isinstance(node, ast.keyword)
+                and node.arg == "examples"
+                and isinstance(node.value, (ast.Tuple, ast.List))
+            ):
                 for elt in node.value.elts:
                     if isinstance(elt, ast.Constant) and isinstance(elt.value, str):
                         found.append((fname, elt.value))
@@ -42,9 +46,7 @@ def _assert_valid_exec_example(example: str) -> None:
     rest = tokens[4:]  # everything after `vcs-core exec <substrate> <command>`
     i = 0
     while i < len(rest):
-        assert rest[i] in ("-p", "--param"), (
-            f"{example!r}: exec takes `-p/--param key=value`, not {rest[i]!r}"
-        )
+        assert rest[i] in ("-p", "--param"), f"{example!r}: exec takes `-p/--param key=value`, not {rest[i]!r}"
         assert i + 1 < len(rest), f"{example!r}: {rest[i]} must be followed by a key=value pair"
         assert "=" in rest[i + 1], f"{example!r}: {rest[i]} must be followed by a key=value pair"
         i += 2

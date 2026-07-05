@@ -67,10 +67,13 @@ class KernelV3CanarySpec:
     program_factory: Callable[[Any], KernelProgramInput]
     env_factory: Callable[[Any], Env | None] | None = None
     output_adapter: Callable[[SourceOutcome, Any], Mapping[str, Any]] | None = None
-    host_observation_adapter: Callable[
-        [ExternalEffectRequestDescriptor, Any],
-        HostCompleted | Awaitable[HostCompleted],
-    ] | None = None
+    host_observation_adapter: (
+        Callable[
+            [ExternalEffectRequestDescriptor, Any],
+            HostCompleted | Awaitable[HostCompleted],
+        ]
+        | None
+    ) = None
     effect_registry: EffectRegistry | None = None
     cache_key: str | None = None
     shadow_safe: bool = False
@@ -436,9 +439,9 @@ def _prepare(target: Any, spec: KernelV3CanarySpec) -> tuple[PreparedKernelProgr
     # per 2026-05-23 SD "Profile-attachment migration"; strict -lite admission
     # is a separate code path that callers opt into.
     from shepherd_kernel_v3_reference.profiles import CORE_A
+
     prepared = (
-        program if isinstance(program, PreparedKernelProgram)
-        else prepare_kernel_program(program, profile=CORE_A)
+        program if isinstance(program, PreparedKernelProgram) else prepare_kernel_program(program, profile=CORE_A)
     )
     if spec.cache_key is not None:
         _PREPARED_CACHE[spec.cache_key] = _PreparedCacheEntry(

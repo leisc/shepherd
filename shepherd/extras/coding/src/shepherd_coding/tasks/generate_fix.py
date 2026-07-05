@@ -45,25 +45,17 @@ class FixResult:
 
 @task(guidance=_FIX_GUIDANCE)
 async def generate_fix(
-    issue_description: Annotated[
-        str, InputMarker(description="Description of the issue to fix")
-    ],
-    issue_file_path: Annotated[
-        str, InputMarker(description="File containing the issue")
-    ],
+    issue_description: Annotated[str, InputMarker(description="Description of the issue to fix")],
+    issue_file_path: Annotated[str, InputMarker(description="File containing the issue")],
     issue_category: Annotated[
         str,
         InputMarker(description="Issue category (type_error, doc_gap, etc.)"),
     ],
     code_context: Annotated[
         str,
-        InputMarker(
-            description="Code snippet or full file content for context"
-        ),
+        InputMarker(description="Code snippet or full file content for context"),
     ],
-    strategy: Annotated[
-        str, InputMarker(description="Fix strategy: minimal or broader")
-    ] = "minimal",
+    strategy: Annotated[str, InputMarker(description="Fix strategy: minimal or broader")] = "minimal",
     suggested_fix_approach: Annotated[
         str,
         InputMarker(description="Suggested approach from validation"),

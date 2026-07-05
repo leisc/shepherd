@@ -1,4 +1,5 @@
 """W2a re-pins — same-name port of meta/tests/unit/step/test_step_schema.py onto shepherd_dialect.steps."""
+
 """Tests for step metadata extraction, schema generation, and type utilities."""
 
 import warnings

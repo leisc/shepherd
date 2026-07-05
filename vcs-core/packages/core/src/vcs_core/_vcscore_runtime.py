@@ -137,7 +137,7 @@ def python_runtime_events_from_effects(
     *,
     command_operation_id: str,
     binding_name: str = "workspace",
-) -> tuple[dict[str, object],...]:
+) -> tuple[dict[str, object], ...]:
     """Translate ``EffectRecord.workspace_changes`` into python-runtime raw event dicts.
 
     The patch manager intercepts Python ``open()`` / ``os.remove()`` / etc.
@@ -249,7 +249,7 @@ def _nested_operations_enabled() -> bool:
     return os.environ.get("VCS_CORE_NESTED_OPERATIONS", "").strip().lower() in {"1", "true", "yes", "on"}
 
 
-def _ancestry_chain(owner: VcsCore, ancestor_ref: str, descendant: ScopeInfo) -> tuple[str,...] | None:
+def _ancestry_chain(owner: VcsCore, ancestor_ref: str, descendant: ScopeInfo) -> tuple[str, ...] | None:
     """The proof chain for nested-operation authorization.
 
     Scope refs from ``descendant``'s parent up to (and including)
@@ -284,7 +284,7 @@ def _scope_info_for_ref(owner: VcsCore, scope_ref: str) -> ScopeInfo | None:
     return None
 
 
-def _nested_admission_authorizations(owner: VcsCore | None, scope_ref: str) -> tuple[NestedParentAuthorization,...]:
+def _nested_admission_authorizations(owner: VcsCore | None, scope_ref: str) -> tuple[NestedParentAuthorization, ...]:
     if owner is None or not _nested_operations_enabled():
         return ()
     scope = _scope_info_for_ref(owner, scope_ref)
@@ -354,7 +354,7 @@ def _runtime_admission_context(
     *,
     scope_ref: str,
     record_class: str | None = None,
-    allowed_blocker_item_ids: tuple[str,...] = (),
+    allowed_blocker_item_ids: tuple[str, ...] = (),
 ) -> Any | None:
     if not _nested_operations_enabled() and record_class is None and not allowed_blocker_item_ids:
         return None
@@ -558,7 +558,7 @@ def runtime_activity(
     failure_policy: str = "abort_archive",
     operation_id: str | None = None,
     operation_metadata: dict[str, object] | None = None,
-    allowed_blocker_item_ids: tuple[str,...] = (),
+    allowed_blocker_item_ids: tuple[str, ...] = (),
 ) -> Iterator[OperationRefInfo | None]:
     boundary = None
     previous_context = None
@@ -723,7 +723,7 @@ def _driver_store_identity(owner: VcsCore, driver: Any, binding: BoundSubstrate)
     store_id = getattr(driver, "store_id", f"store_{binding.binding_name}")
     try:
         return owner._world_storage().store(store_id).identity
-    except KeyError: # no such store in the installation: nominal identity
+    except KeyError:  # no such store in the installation: nominal identity
         from vcs_core._world_types import SubstrateStoreIdentity
 
         return SubstrateStoreIdentity(
@@ -855,7 +855,7 @@ def _execute_spi_driver_in_operation(
                 CommandRequest(command=command, params=dict(params)),
                 capabilities=resolved.schema.capabilities,
             )
-            oids: tuple[str,...] = ()
+            oids: tuple[str, ...] = ()
             if result.effects:
                 oids = tuple(
                     record_runtime_effects(
@@ -906,7 +906,7 @@ def _execute_selectable_spi_driver(
     operation_id = new_operation_id()
 
     input_world = owner.world_oid(scope)
-    carried: tuple[SubstrateHead,...] = ()
+    carried: tuple[SubstrateHead, ...] = ()
     if input_world is not None:
         carried = tuple(manager.read_world(input_world).snapshot.heads)
     own_previous = next((head for head in carried if head.binding == binding.binding_name), None)
@@ -1083,7 +1083,7 @@ def _execute_execution_bound_driver(
             # the error that surfaces; discard problems are logged by lifecycle.
             try:
                 owner.discard(run_scope)
-            except Exception: # noqa: BLE001 — surfacing the body's error wins
+            except Exception:  # noqa: BLE001 — surfacing the body's error wins
                 logger.warning("Failed to discard run scope %r after a failed run", run_scope.name, exc_info=True)
         raise
     if not non_reversible:
@@ -1151,7 +1151,7 @@ def _discard_execution_run_scope_after_terminalization_failure(
 ) -> None:
     try:
         owner.discard(run_scope)
-    except Exception: # noqa: BLE001 — surfacing the terminalization error wins
+    except Exception:  # noqa: BLE001 — surfacing the terminalization error wins
         logger.warning(
             "Failed to discard run scope %r after %s terminalization failed",
             run_scope.name,

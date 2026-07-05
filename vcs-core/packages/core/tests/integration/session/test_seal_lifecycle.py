@@ -42,7 +42,11 @@ from ...support.overlays import MockOverlayBackend
 
 
 def _authority_effects(history: Any) -> list[dict[str, object]]:
-    return [commit.metadata for commit in history.commits if str(commit.metadata.get("type", "")).startswith(("Authority", "RetainedOutput", "Prepared"))]
+    return [
+        commit.metadata
+        for commit in history.commits
+        if str(commit.metadata.get("type", "")).startswith(("Authority", "RetainedOutput", "Prepared"))
+    ]
 
 
 _EFFECTIVE_MATCH_DIGEST = "test-effective-match-digest"
@@ -110,7 +114,7 @@ def _make_mg(
     *,
     activate: bool = True,
     recover_lifecycle: str | None = None,
-    extra_substrates: tuple[object,...] = (),
+    extra_substrates: tuple[object, ...] = (),
 ) -> VcsCore:
     root.mkdir(parents=True, exist_ok=True)
     store = Store(str(root / ".vcscore"))
@@ -229,7 +233,7 @@ def _write_forged_retained_output_settlement(
         resource_id=handoff.resource_id,
         candidate_id=handoff.candidate_id,
         candidate_head=handoff.candidate_head,
-        action=action, # type: ignore[arg-type]
+        action=action,  # type: ignore[arg-type]
         operation_id=operation_id,
         parent_world_before=parent_world_before,
         parent_world_after=parent_world_after,
@@ -271,7 +275,7 @@ def _sibling_group_record(store: Store, *, group_id: str, status: str = "admitte
         parent_ref=Store.GROUND_REF,
         parent_world_id="ground-world",
         admitted_parent_oid=_parent_oid(store),
-        status=status, # type: ignore[arg-type]
+        status=status,  # type: ignore[arg-type]
         siblings=siblings,
         leases=(
             CarrierLeaseRecord(
@@ -899,8 +903,7 @@ def test_retained_output_authority_denied_selection_records_evidence_without_con
         history = mg.resolve_operation_history("op_retained_select_denied", scope=parent)
         effects = _authority_effects(history)
         assert any(
-            effect["type"] == "RetainedOutputAuthorityDecision" and effect["outcome"] == "denied"
-            for effect in effects
+            effect["type"] == "RetainedOutputAuthorityDecision" and effect["outcome"] == "denied" for effect in effects
         )
         settlement_history = mg.resolve_operation_history("op_retained_select_denied_settlement", scope=parent)
         settlement = next(
@@ -1033,9 +1036,7 @@ def test_retained_output_authority_settlement_failure_leaves_recoverable_pending
 
         assert mg.recover_authority_settlements() == ("op_retained_settlement_recovery_settlement",)
         assert mg.list_authority_settlement_pending() == ()
-        settlement_history = mg.resolve_operation_history(
-            "op_retained_settlement_recovery_settlement", scope=parent
-        )
+        settlement_history = mg.resolve_operation_history("op_retained_settlement_recovery_settlement", scope=parent)
         settlement = next(
             effect
             for effect in _authority_effects(settlement_history)

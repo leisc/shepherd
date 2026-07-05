@@ -92,9 +92,7 @@ class LiteralSchema:
 
     def __post_init__(self) -> None:
         if isinstance(self.value, bool) or not isinstance(self.value, int):
-            raise TypeError(
-                f"LiteralSchema(value=...) requires int, got {type(self.value).__name__}"
-            )
+            raise TypeError(f"LiteralSchema(value=...) requires int, got {type(self.value).__name__}")
 
     def validate(self, value: Any) -> str | None:
         if isinstance(value, bool):

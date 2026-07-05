@@ -38,15 +38,29 @@ IMPL_FILES = frozenset(
 # Executor-spawning APIs. A run-path module must reach these only *through*
 # launch_confined.
 _BANNED: dict[str, frozenset[str]] = {
-    "subprocess": frozenset(
-        {"run", "call", "check_call", "check_output", "Popen", "getoutput", "getstatusoutput"}
-    ),
+    "subprocess": frozenset({"run", "call", "check_call", "check_output", "Popen", "getoutput", "getstatusoutput"}),
     "os": frozenset(
         {
-            "system", "popen",
-            "execl", "execle", "execlp", "execlpe", "execv", "execve", "execvp", "execvpe",
-            "posix_spawn", "posix_spawnp",
-            "spawnl", "spawnle", "spawnlp", "spawnlpe", "spawnv", "spawnve", "spawnvp", "spawnvpe",
+            "system",
+            "popen",
+            "execl",
+            "execle",
+            "execlp",
+            "execlpe",
+            "execv",
+            "execve",
+            "execvp",
+            "execvpe",
+            "posix_spawn",
+            "posix_spawnp",
+            "spawnl",
+            "spawnle",
+            "spawnlp",
+            "spawnlpe",
+            "spawnv",
+            "spawnve",
+            "spawnvp",
+            "spawnvpe",
         }
     ),
     "pty": frozenset({"spawn", "fork"}),
@@ -138,8 +152,7 @@ def test_run_path_invokes_no_executor_outside_launch_confined() -> None:
     assert RUN_PATH.is_dir(), f"run path missing: {RUN_PATH}"
     violations = scan_paths([RUN_PATH], impl_files=IMPL_FILES)
     assert violations == [], (
-        "Executor call(s) outside launch_confined in the dialect run path "
-        f"(real ⇒ jailed, layer b): {violations!r}"
+        f"Executor call(s) outside launch_confined in the dialect run path (real ⇒ jailed, layer b): {violations!r}"
     )
 
 

@@ -111,8 +111,7 @@ class CanonicalRefMap:
     def __post_init__(self) -> None:
         if self.map_schema_version != CANONICAL_REF_MAP_SCHEMA_VERSION:
             raise SemanticTransitionBatchValidationError(
-                "CanonicalRefMap.map_schema_version must be "
-                f"{CANONICAL_REF_MAP_SCHEMA_VERSION!r}"
+                f"CanonicalRefMap.map_schema_version must be {CANONICAL_REF_MAP_SCHEMA_VERSION!r}"
             )
         seen: set[str] = set()
         previous = ""
@@ -183,9 +182,7 @@ class ProfileRejected:
         if not self.program_ref:
             raise ValueError("ProfileRejected.program_ref must be non-empty")
         if not isinstance(self.ref_map, CanonicalRefMap):
-            raise SemanticTransitionBatchValidationError(
-                "ProfileRejected.ref_map must be a CanonicalRefMap"
-            )
+            raise SemanticTransitionBatchValidationError("ProfileRejected.ref_map must be a CanonicalRefMap")
         for idx, record in enumerate(self.partial_records):
             _require_json_compatible(record, context=f"ProfileRejected.partial_records[{idx}]")
 
@@ -333,9 +330,7 @@ class SemanticTransitionBatch:
         # dynamic construction (e.g. from JSON or via **kwargs) may still
         # supply the wrong type.
         if not isinstance(self.ref_map, CanonicalRefMap):
-            raise SemanticTransitionBatchValidationError(
-                "SemanticTransitionBatch.ref_map must be a CanonicalRefMap"
-            )
+            raise SemanticTransitionBatchValidationError("SemanticTransitionBatch.ref_map must be a CanonicalRefMap")
         if not self.transition_id:
             raise ValueError("SemanticTransitionBatch.transition_id must be non-empty")
         if not self.idempotency_key:

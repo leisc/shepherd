@@ -68,18 +68,14 @@ class WorkspaceAuthorityDecision:
     @property
     def repo_authority(self) -> WorkspaceRepoAuthority:
         """Return the temporary skeleton GitRepo authority."""
-        if self.gitrepo_grant_clamp is not None and not _gitrepo_grant_clamp_allows_mutation(
-            self.gitrepo_grant_clamp
-        ):
+        if self.gitrepo_grant_clamp is not None and not _gitrepo_grant_clamp_allows_mutation(self.gitrepo_grant_clamp):
             return "readonly"
         return self.effective.workspace_repo_authority
 
     @property
     def workspace_selection_can_mutate(self) -> bool:
         """Return whether retained-output selection may mutate workspace."""
-        if self.gitrepo_grant_clamp is not None and not _gitrepo_grant_clamp_allows_mutation(
-            self.gitrepo_grant_clamp
-        ):
+        if self.gitrepo_grant_clamp is not None and not _gitrepo_grant_clamp_allows_mutation(self.gitrepo_grant_clamp):
             return False
         return self.effective.workspace_selection_can_mutate
 
@@ -106,7 +102,7 @@ _MAY_PROFILES: dict[str, MayProfile] = {
 }
 
 
-def supported_may_profile_names() -> tuple[MayProfileName,...]:
+def supported_may_profile_names() -> tuple[MayProfileName, ...]:
     """Return the supported names in authority order."""
     return ("ReadOnly", "ReadWrite", "Permissive")
 

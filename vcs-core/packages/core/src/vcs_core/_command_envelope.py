@@ -113,12 +113,8 @@ def validate_command_execution_options(options: CommandExecutionOptions) -> None
         )
     if type(options.seal_output_binding) is not str or not options.seal_output_binding:
         raise CommandEnvelopeError("Command execution option 'seal_output_binding' must be a non-empty string.")
-    if options.authority_merge is not None and not isinstance(
-        options.authority_merge, AuthorityMergeControl
-    ):
-        raise CommandEnvelopeError(
-            "Command execution option 'authority_merge' must be AuthorityMergeControl or None."
-        )
+    if options.authority_merge is not None and not isinstance(options.authority_merge, AuthorityMergeControl):
+        raise CommandEnvelopeError("Command execution option 'authority_merge' must be AuthorityMergeControl or None.")
     if options.success_disposition == "authority_merge":
         if options.authority_merge is None:
             raise CommandEnvelopeError("Authority merge success disposition requires 'authority_merge' controls.")

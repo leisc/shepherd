@@ -63,10 +63,10 @@ def make_store(request: pytest.FixtureRequest, tmp_path: Path) -> StoreFactory:
     raise AssertionError(f"unknown backend {request.param!r}")
 
 
-def _draft(kind: str, *, caused_by: tuple[str,...] = (), mode: str = "capture", **payload: Any) -> FactDraft:
+def _draft(kind: str, *, caused_by: tuple[str, ...] = (), mode: str = "capture", **payload: Any) -> FactDraft:
     return FactDraft(
         kind_label=kind,
-        mode=mode, # type: ignore[arg-type]
+        mode=mode,  # type: ignore[arg-type]
         schema_ref=f"shepherd2.conformance.{kind}.v1",
         payload=payload,
         caused_by_fact_ids=tuple(caused_by),
@@ -90,7 +90,9 @@ def test_append_intent_idempotent_across_restart(make_store: StoreFactory) -> No
     with make_store() as store:
         first = _append(store, "intent:start", "exec:parent", _draft("execution_started", execution_id="exec:parent"))
     with make_store() as restarted:
-        second = _append(restarted, "intent:start", "exec:parent", _draft("execution_started", execution_id="exec:parent"))
+        second = _append(
+            restarted, "intent:start", "exec:parent", _draft("execution_started", execution_id="exec:parent")
+        )
         assert second == first
         assert restarted.read_owner_prefix(READER, "exec:parent", 99).fact_ids() == first.fact_ids
 
@@ -254,7 +256,9 @@ def _append_descriptor(
 def _publish_descriptor_frontier(store: Any, *, execution_id: str = "exec:run-1", through_fact_id: str) -> None:
     store.publish_frontier(
         TRUSTED,
-        OwnerCutoffSpec(frontier_id="frontier:run-1", target_trace_owner_id=execution_id, through_fact_id=through_fact_id),
+        OwnerCutoffSpec(
+            frontier_id="frontier:run-1", target_trace_owner_id=execution_id, through_fact_id=through_fact_id
+        ),
     )
 
 
@@ -276,7 +280,10 @@ def test_descriptor_resolution_rejects_fact_outside_frontier_or_owner_path(make_
         first = _append_descriptor(store)
         _publish_descriptor_frontier(store, through_fact_id=first)
         after_frontier = _append_descriptor(
-            store, output_name="backend", binding="backend", citation=_citation_payload(output_name="backend", binding="backend")
+            store,
+            output_name="backend",
+            binding="backend",
+            citation=_citation_payload(output_name="backend", binding="backend"),
         )
         other_owner = _append_descriptor(store, execution_id="exec:other")
         frontier_slice = store.resolve_frontier(READER, "frontier:run-1")
@@ -285,7 +292,10 @@ def test_descriptor_resolution_rejects_fact_outside_frontier_or_owner_path(make_
                 resolve_run_output_descriptor(
                     frontier_slice,
                     RunOutputDescriptorLocator(
-                        execution_id="exec:run-1", output_name=name, frontier_id="frontier:run-1", descriptor_fact_id=hidden_fact
+                        execution_id="exec:run-1",
+                        output_name=name,
+                        frontier_id="frontier:run-1",
+                        descriptor_fact_id=hidden_fact,
                     ),
                 )
 
@@ -314,7 +324,12 @@ def test_descriptor_resolution_rejects_malformed_citation(make_store: StoreFacto
                                 mode="capture",
                                 schema_ref=RUN_OUTPUT_DESCRIPTOR_SCHEMA,
                                 kind_label="run_output_descriptor",
-                                payload={"execution_id": "exec:run-1", "output_name": "workspace", "world_binding": "workspace", "citation": []},
+                                payload={
+                                    "execution_id": "exec:run-1",
+                                    "output_name": "workspace",
+                                    "world_binding": "workspace",
+                                    "citation": [],
+                                },
                             ),
                         ),
                     ),
@@ -327,7 +342,10 @@ def test_descriptor_resolution_rejects_malformed_citation(make_store: StoreFacto
             resolve_run_output_descriptor(
                 frontier_slice,
                 RunOutputDescriptorLocator(
-                    execution_id="exec:run-1", output_name="workspace", frontier_id="frontier:run-1", descriptor_fact_id=receipt.fact_ids[0]
+                    execution_id="exec:run-1",
+                    output_name="workspace",
+                    frontier_id="frontier:run-1",
+                    descriptor_fact_id=receipt.fact_ids[0],
                 ),
             )
 

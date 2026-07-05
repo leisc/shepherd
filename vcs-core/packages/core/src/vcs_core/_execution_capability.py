@@ -56,7 +56,7 @@ class UnsupportedConfinementSpecError(ValueError):
     """
 
 
-class ExecutionAuthorityRequired(RuntimeError): # noqa: N818 — refusal-state name, per JailNotEstablished
+class ExecutionAuthorityRequired(RuntimeError):  # noqa: N818 — refusal-state name, per JailNotEstablished
     """An execution command was dispatched without execution authority.
 
     The negotiation rule (PD4, ``decisions.md`` ``spi-additive-no-bump``): an
@@ -69,9 +69,9 @@ class ExecutionAuthorityRequired(RuntimeError): # noqa: N818 — refusal-state n
 
 
 class NetMode(enum.Enum):
-    DENY_ALL = "deny_all" # no egress
-    ALLOW_ALL = "allow_all" # unrestricted egress
-    BROKER = "broker" # host-filtered: jail pins egress to loopback; broker allowlists hosts
+    DENY_ALL = "deny_all"  # no egress
+    ALLOW_ALL = "allow_all"  # unrestricted egress
+    BROKER = "broker"  # host-filtered: jail pins egress to loopback; broker allowlists hosts
 
 
 @dataclass(frozen=True)
@@ -85,7 +85,7 @@ class NetworkPolicy:
     """
 
     mode: NetMode
-    allowed_hosts: tuple[str,...] = ()
+    allowed_hosts: tuple[str, ...] = ()
     broker_port: int | None = None
 
     @classmethod
@@ -97,7 +97,7 @@ class NetworkPolicy:
         return cls(NetMode.ALLOW_ALL)
 
     @classmethod
-    def via_broker(cls, hosts: tuple[str,...], *, port: int | None = None) -> NetworkPolicy:
+    def via_broker(cls, hosts: tuple[str, ...], *, port: int | None = None) -> NetworkPolicy:
         return cls(NetMode.BROKER, tuple(hosts), port)
 
 
@@ -117,7 +117,7 @@ class ConfinementSpec:
     Anything else refuses fail-closed (``UnsupportedConfinementSpecError``).
     """
 
-    writable_roots: tuple[str,...] = ()
+    writable_roots: tuple[str, ...] = ()
     network: NetworkPolicy = field(default_factory=NetworkPolicy.deny_all)
 
     @classmethod
@@ -129,7 +129,7 @@ class ConfinementSpec:
         return cls(writable_roots=(str(working_path),), network=NetworkPolicy.allow_all())
 
 
-def _resolve_spec(spec: ConfinementSpec) -> tuple[tuple[str,...], bool]:
+def _resolve_spec(spec: ConfinementSpec) -> tuple[tuple[str, ...], bool]:
     """Resolve a ConfinementSpec to the jail's inputs: canonical writable roots + a network flag.
 
     The writable-root set lowers directly (zero roots = ReadOnly; one root == WORKDIR =
@@ -188,7 +188,7 @@ class ExecutionCapability:
             )
         writable_roots, allow_network = _resolve_spec(spec)
         profile = self._containment.profile_for(writable_roots, allow_network=allow_network)
-        self._containment.probe(profile, self.working_path, writable_roots=writable_roots) # fail-closed first
+        self._containment.probe(profile, self.working_path, writable_roots=writable_roots)  # fail-closed first
         return self._containment.launch(profile, self.working_path, command)
 
 
@@ -211,14 +211,14 @@ class ExecutionBoundDriver(Protocol):
     """
 
     @property
-    def execution_commands(self) -> frozenset[str]:...
+    def execution_commands(self) -> frozenset[str]: ...
 
     def prepare_bound(
         self,
         context: DriverContext,
         request: IngressRequest,
         execution: ExecutionCapability,
-    ) -> DriverIngressResult:...
+    ) -> DriverIngressResult: ...
 
 
 def verify_execution_negotiation(driver: ExecutionBoundDriver) -> None:

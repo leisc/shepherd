@@ -213,9 +213,7 @@ def test_live_scope_unaffected_when_flag_off(store: Store) -> None:
     assert store.scope_registry_projection_mismatches() == ()
 
 
-def test_retained_ref_is_protected_from_orphan_archival(
-    mg: VcsCore, seal_and_select_on: None
-) -> None:
+def test_retained_ref_is_protected_from_orphan_archival(mg: VcsCore, seal_and_select_on: None) -> None:
     # Flag on: a retained scope's ref must be in the protected ref-owning set, so
     # `archive-orphaned-scopes` (which reclaims any ref NOT in that set) cannot destroy a
     # sealed best-of-N candidate. Mirrors the recovery-inventory orphan handling.
@@ -343,9 +341,7 @@ def _contains_live_literal(node: ast.AST) -> bool:
     return False
 
 
-def test_retained_scope_survives_archive_orphaned_scopes(
-    mg: VcsCore, seal_and_select_on: None
-) -> None:
+def test_retained_scope_survives_archive_orphaned_scopes(mg: VcsCore, seal_and_select_on: None) -> None:
     # End-to-end protection (recovery-inventory candidate generation + protected-ref
     # exclusion together, exactly as `_app.archive_orphaned_scopes` wires them):
     # archive-orphaned-scopes must NOT reclaim a sealed candidate's ref.
@@ -477,9 +473,7 @@ def test_valid_retained_readiness_has_no_orphaned_scope_blocker(
             if item.domain == "recovery" and item.kind == "orphaned_scope_ref" and item.locator == task.ref
         )
         orphaned_blockers = tuple(
-            blocker
-            for blocker in result.blockers
-            if blocker.item_id == f"recovery:orphaned_scope:{task.ref}"
+            blocker for blocker in result.blockers if blocker.item_id == f"recovery:orphaned_scope:{task.ref}"
         )
 
         assert orphaned_items == ()
@@ -583,9 +577,7 @@ def test_unreadable_scope_registry_still_fails_closed_as_recovery(mg: VcsCore) -
 
     inventory = recovery_inventory_snapshot_for_store(mg.store.repo_path, mg.store)
     orphaned_refs = {
-        item.locator
-        for item in inventory.items
-        if item.domain == "recovery" and item.kind == "orphaned_scope_ref"
+        item.locator for item in inventory.items if item.domain == "recovery" and item.kind == "orphaned_scope_ref"
     }
 
     assert task.ref in orphaned_refs
@@ -679,9 +671,7 @@ def test_legacy_three_status_snapshot_unchanged(store: Store) -> None:
     assert "retained_requires_seal_and_select" not in kinds
 
 
-def test_retained_scope_indexed_as_retained_not_terminal(
-    mg: VcsCore, seal_and_select_on: None
-) -> None:
+def test_retained_scope_indexed_as_retained_not_terminal(mg: VcsCore, seal_and_select_on: None) -> None:
     # Direct read-surface guard for `_build_scope_index` / ScopeIndex bucketing: a sealed
     # scope must surface via the new `.retained` bucket (active + adoptable) and has no live
     # runtime handle, so it is absent from `.entries`. Crucially it must NOT be lumped into

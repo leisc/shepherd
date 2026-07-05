@@ -130,8 +130,7 @@ def read_trace_store_session_view(
     try:
         with SQLiteTraceStore(path) as store:
             slices = [
-                store.read_owner_prefix(read_context, owner, _THROUGH_ALL, mode_filter=mode_filter)
-                for owner in owners
+                store.read_owner_prefix(read_context, owner, _THROUGH_ALL, mode_filter=mode_filter) for owner in owners
             ]
     except Exception as exc:
         if isinstance(exc, TraceStoreReadError):

@@ -384,7 +384,7 @@ class TaskResolutionRecord:
             requester_task_id=_optional_str(value, "requester_task_id"),
             requester_task_version=_optional_str(value, "requester_task_version"),
             declared_alias=_optional_str(value, "declared_alias"),
-            launch_surface=_required_member(value, "launch_surface", _LAUNCH_SURFACES, default="python"), # type: ignore[arg-type]
+            launch_surface=_required_member(value, "launch_surface", _LAUNCH_SURFACES, default="python"),  # type: ignore[arg-type]
             resolved_at=_optional_str(value, "resolved_at"),
             metadata=dict(_optional_mapping(value, "metadata")),
         )
@@ -488,7 +488,7 @@ class RunOutputCitationRef:
             binding=_required_str(value, "binding"),
             store_id=_required_str(value, "store_id"),
             resource_id=_required_str(value, "resource_id"),
-            materialization_kind=_required_member(value, "materialization_kind", {"tree", "external"}), # type: ignore[arg-type]
+            materialization_kind=_required_member(value, "materialization_kind", {"tree", "external"}),  # type: ignore[arg-type]
             custody_ref=_required_str(value, "custody_ref"),
             output_world_oid=_required_str(value, "output_world_oid"),
             parent_basis_world_oid=_required_str(value, "parent_basis_world_oid"),
@@ -513,7 +513,7 @@ class TaskDefinitionVersion:
     declared_dependencies: Mapping[str, DeclaredTaskDependency] = field(default_factory=dict)
     metadata: JsonObject = field(default_factory=dict)
     produced_by_run: str | None = None
-    derived_from: tuple[str,...] = ()
+    derived_from: tuple[str, ...] = ()
     created_at: str | None = None
 
     def __post_init__(self) -> None:
@@ -582,7 +582,7 @@ class TaskDefinitionVersion:
             signature_schema=dict(_optional_mapping(value, "signature_schema")),
             declared_dependencies=_declared_dependency_map(value.get("declared_dependencies")),
             may_default=_required_str(value, "may_default"),
-            status=_required_member(value, "status", _TASK_STATUSES), # type: ignore[arg-type]
+            status=_required_member(value, "status", _TASK_STATUSES),  # type: ignore[arg-type]
             metadata=dict(_optional_mapping(value, "metadata")),
             produced_by_run=_optional_str(value, "produced_by_run"),
             derived_from=_str_tuple(value.get("derived_from"), "derived_from"),
@@ -860,7 +860,7 @@ class RunLaunchContext:
             parent_run_ref=_optional_str(value, "parent_run_ref"),
             launched_by=_optional_str(value, "launched_by"),
             caused_by_event_ref=_optional_str(value, "caused_by_event_ref"),
-            launch_surface=_required_member(value, "launch_surface", _LAUNCH_SURFACES, default="operator"), # type: ignore[arg-type]
+            launch_surface=_required_member(value, "launch_surface", _LAUNCH_SURFACES, default="operator"),  # type: ignore[arg-type]
             authority_ref=_optional_str(value, "authority_ref"),
             may_profile=_optional_str(value, "may_profile"),
             inherited_may=_optional_str(value, "inherited_may"),
@@ -1060,19 +1060,19 @@ class RunExecutionEvidence:
                 "requested_placement",
                 _RUN_REQUESTED_PLACEMENTS,
                 default="advisory",
-            ), # type: ignore[arg-type]
+            ),  # type: ignore[arg-type]
             resolved_placement=_required_member(
                 value,
                 "resolved_placement",
                 _RUN_RESOLVED_PLACEMENTS,
                 default="advisory",
-            ), # type: ignore[arg-type]
+            ),  # type: ignore[arg-type]
             enforcement_basis=_required_member(
                 value,
                 "enforcement_basis",
                 _RUN_ENFORCEMENT_BASES,
                 default="legacy_advisory",
-            ), # type: ignore[arg-type]
+            ),  # type: ignore[arg-type]
             execution_descriptor=_optional_mapping_or_none(value, "execution_descriptor"),
         )
 
@@ -1276,9 +1276,9 @@ class RunTerminalization:
         if raw_custody is not None and not isinstance(raw_custody, Mapping):
             raise TypeError("run terminalization retained_custody must be an object or null")
         return cls(
-            body_status=_required_member(value, "body_status", _RUN_BODY_STATUSES), # type: ignore[arg-type]
-            world_disposition=_required_member(value, "world_disposition", _RUN_WORLD_DISPOSITIONS), # type: ignore[arg-type]
-            output_publication_status=_required_member( # type: ignore[arg-type]
+            body_status=_required_member(value, "body_status", _RUN_BODY_STATUSES),  # type: ignore[arg-type]
+            world_disposition=_required_member(value, "world_disposition", _RUN_WORLD_DISPOSITIONS),  # type: ignore[arg-type]
+            output_publication_status=_required_member(  # type: ignore[arg-type]
                 value,
                 "output_publication_status",
                 _RUN_OUTPUT_PUBLICATION_STATUSES,
@@ -1358,11 +1358,11 @@ class TaskExecutionRecord:
         return cls(
             execution_id=_required_str(value, "execution_id"),
             run_ref=_required_str(value, "run_ref"),
-            executor_kind=_required_member(value, "executor_kind", _TASK_EXECUTOR_KINDS), # type: ignore[arg-type]
+            executor_kind=_required_member(value, "executor_kind", _TASK_EXECUTOR_KINDS),  # type: ignore[arg-type]
             executor_id=_required_str(value, "executor_id"),
             executor_policy=_required_str(value, "executor_policy"),
-            call_kind=_required_member(value, "call_kind", _TASK_EXECUTION_CALL_KINDS), # type: ignore[arg-type]
-            status=_required_member(value, "status", _TASK_EXECUTION_STATUSES), # type: ignore[arg-type]
+            call_kind=_required_member(value, "call_kind", _TASK_EXECUTION_CALL_KINDS),  # type: ignore[arg-type]
+            status=_required_member(value, "status", _TASK_EXECUTION_STATUSES),  # type: ignore[arg-type]
             task_lock=TaskArtifactLock.from_json(_required_mapping(value, "task_lock")),
             started_at=_optional_str(value, "started_at"),
             finished_at=_optional_str(value, "finished_at"),
@@ -1415,7 +1415,7 @@ class PendingEffectRef:
             effect_type=_required_str(value, "effect_type"),
             trace_ref=None if raw_trace is None else TraceRef.from_json(raw_trace),
             handler_env_ref=_optional_str(value, "handler_env_ref"),
-            state=_required_member(value, "state", _PENDING_EFFECT_STATES, default="recorded"), # type: ignore[arg-type]
+            state=_required_member(value, "state", _PENDING_EFFECT_STATES, default="recorded"),  # type: ignore[arg-type]
         )
 
 
@@ -1453,9 +1453,9 @@ class RunRecord:
     launch_context_ref: str | None = None
     handler_env_ref: str | None = None
     resolved_task_graph: ResolvedTaskGraph | None = None
-    task_executions: tuple[TaskExecutionRecord,...] = ()
-    task_resolutions: tuple[TaskResolutionRecord,...] = ()
-    pending_effects: tuple[PendingEffectRef,...] = ()
+    task_executions: tuple[TaskExecutionRecord, ...] = ()
+    task_resolutions: tuple[TaskResolutionRecord, ...] = ()
+    pending_effects: tuple[PendingEffectRef, ...] = ()
     error: JsonObject | None = None
 
     def __post_init__(self) -> None:
@@ -1660,10 +1660,10 @@ class RunRecord:
             may_profile=_required_str(value, "may_profile"),
             authority_context=_optional_run_authority_context(value, "authority_context"),
             provider=_required_str(value, "provider"),
-            enforcement=_required_member(value, "enforcement", _RUN_ENFORCEMENTS, default="advisory"), # type: ignore[arg-type]
+            enforcement=_required_member(value, "enforcement", _RUN_ENFORCEMENTS, default="advisory"),  # type: ignore[arg-type]
             execution_evidence=RunExecutionEvidence.from_json(_optional_mapping_or_none(value, "execution_evidence")),
             proof=_optional_proof_envelope(value, "proof"),
-            status=_required_member(value, "status", _RUN_STATUSES), # type: ignore[arg-type]
+            status=_required_member(value, "status", _RUN_STATUSES),  # type: ignore[arg-type]
             trace_ref=None if raw_trace is None else TraceRef.from_json(raw_trace),
             operation_refs=RunOperationRefs.from_json(_optional_mapping_or_none(value, "operation_refs")),
             input_workspace_world_oid=_optional_str(value, "input_workspace_world_oid"),
@@ -2027,7 +2027,7 @@ def _required_member(
     return raw
 
 
-def _str_tuple(value: object, field_name: str) -> tuple[str,...]:
+def _str_tuple(value: object, field_name: str) -> tuple[str, ...]:
     if value is None:
         return ()
     if not isinstance(value, list | tuple):
@@ -2040,7 +2040,7 @@ def _str_tuple(value: object, field_name: str) -> tuple[str,...]:
     return tuple(out)
 
 
-def _require_str_tuple(value: tuple[str,...], field_name: str) -> None:
+def _require_str_tuple(value: tuple[str, ...], field_name: str) -> None:
     if not isinstance(value, tuple):
         raise TypeError(f"{field_name} must be a tuple")
     for item in value:
@@ -2065,7 +2065,7 @@ def _output_map(value: object) -> dict[str, RunOutputCitationRef]:
     return out
 
 
-def _pending_effect_tuple(value: object) -> tuple[PendingEffectRef,...]:
+def _pending_effect_tuple(value: object) -> tuple[PendingEffectRef, ...]:
     if value is None:
         return ()
     if not isinstance(value, list | tuple):
@@ -2078,7 +2078,7 @@ def _pending_effect_tuple(value: object) -> tuple[PendingEffectRef,...]:
     return tuple(out)
 
 
-def _task_execution_tuple(value: object) -> tuple[TaskExecutionRecord,...]:
+def _task_execution_tuple(value: object) -> tuple[TaskExecutionRecord, ...]:
     if value is None:
         return ()
     if not isinstance(value, list | tuple):
@@ -2091,7 +2091,7 @@ def _task_execution_tuple(value: object) -> tuple[TaskExecutionRecord,...]:
     return tuple(out)
 
 
-def _task_resolution_tuple(value: object) -> tuple[TaskResolutionRecord,...]:
+def _task_resolution_tuple(value: object) -> tuple[TaskResolutionRecord, ...]:
     if value is None:
         return ()
     if not isinstance(value, list | tuple):

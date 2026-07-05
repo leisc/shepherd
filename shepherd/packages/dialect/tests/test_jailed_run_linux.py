@@ -52,16 +52,18 @@ def mg(tmp_path: Path) -> VcsCore:
 def test_jailed_permissive_run_captures_the_artifact(mg: VcsCore) -> None:
     """Happy path on the Linux pairing: jailed write captured at merge."""
     outcome = mg.execute_recorded(
-        "runtime", "run", scope=mg.ground,
-        task_id=f"{__name__}:noop_body", may="Permissive",
+        "runtime",
+        "run",
+        scope=mg.ground,
+        task_id=f"{__name__}:noop_body",
+        may="Permissive",
         provider=DeterministicFakeProvider(),
     )
     payload = outcome.value.transitions[0].payload
     assert payload["portable_core"]["outcome"]["status"] == "ok"
     effects = list(mg.log(max_count=30))
     assert any(
-        e.metadata.get("type") == "FileCreate" and e.metadata.get("path") == "fake-artifact.txt"
-        for e in effects
+        e.metadata.get("type") == "FileCreate" and e.metadata.get("path") == "fake-artifact.txt" for e in effects
     )
 
 
@@ -69,8 +71,11 @@ def test_jailed_readonly_refused_at_the_syscall_workspace_pristine(mg: VcsCore, 
     """may=ReadOnly: Landlock refuses the write; ground stays pristine."""
     with pytest.raises(RuntimeError, match="confined body refused"):
         mg.execute_recorded(
-            "runtime", "run", scope=mg.ground,
-            task_id=f"{__name__}:noop_body", may="ReadOnly",
+            "runtime",
+            "run",
+            scope=mg.ground,
+            task_id=f"{__name__}:noop_body",
+            may="ReadOnly",
             provider=DeterministicFakeProvider(),
         )
     ground_root = (tmp_path / "ws").resolve()

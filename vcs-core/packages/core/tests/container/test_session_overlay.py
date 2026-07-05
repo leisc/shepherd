@@ -391,10 +391,15 @@ class TestOverlaySession:
             result = CliRunner().invoke(
                 main,
                 [
-                    "session", "exec",
-                    "--scope", "agent-task",
-                    "--create", "--capture",
-                    "--", "/bin/bash", "-lc",
+                    "session",
+                    "exec",
+                    "--scope",
+                    "agent-task",
+                    "--create",
+                    "--capture",
+                    "--",
+                    "/bin/bash",
+                    "-lc",
                     "mkdir -p src && printf 'edited by agent' > src/agent.txt",
                 ],
             )
@@ -404,9 +409,7 @@ class TestOverlaySession:
             # fs_capture_reduction reducer (the WorkspaceSubstrateDriver path).
             mg = VcsCore.from_config(str(session_workspace))
             archived = [
-                summary
-                for summary in mg.archived_operations(max_count=20)
-                if summary.kind == "vcs_core.session_exec"
+                summary for summary in mg.archived_operations(max_count=20) if summary.kind == "vcs_core.session_exec"
             ]
             assert len(archived) == 1
             reducer_history = mg.resolve_operation_history(f"red_{archived[0].operation_id}")
@@ -435,9 +438,7 @@ class TestOverlaySession:
             "LD_PRELOAD-shim capture is not landing tree-backed truth"
         )
         content, _mode = v2_read
-        assert content == b"edited by agent", (
-            f"v2 served wrong bytes for the session-capture flow: {content!r}"
-        )
+        assert content == b"edited by agent", f"v2 served wrong bytes for the session-capture flow: {content!r}"
 
         # (b) Strict-mode materialization completes without scalar fallback,
         # proving the materializer reads the v2 tree for every diff path on
@@ -481,10 +482,15 @@ class TestOverlaySession:
             result = CliRunner().invoke(
                 main,
                 [
-                    "session", "exec",
-                    "--scope", "agent-throwaway",
-                    "--create", "--capture",
-                    "--", "/bin/bash", "-lc",
+                    "session",
+                    "exec",
+                    "--scope",
+                    "agent-throwaway",
+                    "--create",
+                    "--capture",
+                    "--",
+                    "/bin/bash",
+                    "-lc",
                     "printf 'should not survive' > scratch.txt",
                 ],
             )
@@ -493,9 +499,7 @@ class TestOverlaySession:
             # The capture happened (so discard is reverting real captured work).
             mg = VcsCore.from_config(str(session_workspace))
             archived = [
-                summary
-                for summary in mg.archived_operations(max_count=20)
-                if summary.kind == "vcs_core.session_exec"
+                summary for summary in mg.archived_operations(max_count=20) if summary.kind == "vcs_core.session_exec"
             ]
             assert len(archived) == 1
 

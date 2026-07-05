@@ -39,7 +39,7 @@ def test_parent_owned_relation_projects_child_from_retained_frontier() -> None:
             execution_id=parent_id,
             task_ref="Parent",
             inputs={"x": 10},
-        )
+        ),
     )
     relation = store.append(
         TRUSTED,
@@ -51,7 +51,7 @@ def test_parent_owned_relation_projects_child_from_retained_frontier() -> None:
             child_execution_id=child_id,
             child_frontier_id="frontier:child-terminal",
             caused_by=(parent_create.fact_ids[-1],),
-        )
+        ),
     )
     child_create = store.append(
         TRUSTED,
@@ -62,7 +62,7 @@ def test_parent_owned_relation_projects_child_from_retained_frontier() -> None:
             inputs={"x": 10},
             parent_execution_id=parent_id,
             caused_by=relation.fact_ids,
-        )
+        ),
     )
     child_terminal = store.append(
         TRUSTED,
@@ -71,7 +71,7 @@ def test_parent_owned_relation_projects_child_from_retained_frontier() -> None:
             execution_id=child_id,
             outputs={"y": 11},
             caused_by=(child_create.fact_ids[-1],),
-        )
+        ),
     )
     child_cutoff = publish_execution_frontier(
         store,
@@ -89,7 +89,7 @@ def test_parent_owned_relation_projects_child_from_retained_frontier() -> None:
             execution_id=parent_id,
             outputs={"done": True},
             caused_by=(child_cutoff.created_by_fact_id or child_terminal.fact_ids[-1],),
-        )
+        ),
     )
     parent_cutoff = publish_execution_frontier(
         store,
@@ -128,7 +128,7 @@ def test_abandoned_relation_stays_retained_but_drops_effective_child() -> None:
             execution_id=parent_id,
             task_ref="Parent",
             inputs={},
-        )
+        ),
     )
     spawned = store.append(
         TRUSTED,
@@ -140,7 +140,7 @@ def test_abandoned_relation_stays_retained_but_drops_effective_child() -> None:
             child_execution_id=child_id,
             child_frontier_id="frontier:child-terminal",
             caused_by=(parent_create.fact_ids[-1],),
-        )
+        ),
     )
     abandoned = store.append(
         TRUSTED,
@@ -152,7 +152,7 @@ def test_abandoned_relation_stays_retained_but_drops_effective_child() -> None:
             child_execution_id=child_id,
             child_frontier_id="frontier:child-terminal",
             caused_by=spawned.fact_ids,
-        )
+        ),
     )
     parent_terminal = store.append(
         TRUSTED,
@@ -161,7 +161,7 @@ def test_abandoned_relation_stays_retained_but_drops_effective_child() -> None:
             execution_id=parent_id,
             outputs={},
             caused_by=abandoned.fact_ids,
-        )
+        ),
     )
     parent_cutoff = publish_execution_frontier(
         store,
@@ -187,7 +187,7 @@ def test_project_effective_history_includes_parent_published_facts() -> None:
             execution_id=parent_id,
             task_ref="Parent",
             inputs={},
-        )
+        ),
     )
     store.append(
         TRUSTED,
@@ -207,7 +207,7 @@ def test_project_effective_history_includes_parent_published_facts() -> None:
                     ),
                 ),
             ),
-        )
+        ),
     )
     parent_terminal = store.append(
         TRUSTED,
@@ -215,7 +215,7 @@ def test_project_effective_history_includes_parent_published_facts() -> None:
             append_intent_id="intent:parent:complete",
             execution_id=parent_id,
             outputs={},
-        )
+        ),
     )
     parent_cutoff = publish_execution_frontier(
         store,

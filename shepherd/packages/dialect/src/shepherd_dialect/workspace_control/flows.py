@@ -62,7 +62,7 @@ class FlowControlClient:
             metadata=dict(_optional_mapping(record, "metadata")),
         )
 
-    def list(self) -> tuple[Flow,...]:
+    def list(self) -> tuple[Flow, ...]:
         """Return all durable workflow facades visible in the selected run ledger."""
         raw_flows = RunLedgerStore(self._workspace.mg).list_flows()
         flows = []
@@ -123,7 +123,7 @@ class Flow:
         )
         return run.refresh()
 
-    def runs(self) -> tuple[WorkspaceRun,...]:
+    def runs(self) -> tuple[WorkspaceRun, ...]:
         """Return the current run wrappers attached to this flow."""
         from shepherd_dialect.workspace_control.run_handles import WorkspaceRun
 
@@ -299,7 +299,7 @@ def _flow_record(workspace: ShepherdWorkspace, flow_id: str) -> Mapping[str, obj
     return raw
 
 
-def _flow_run_records(workspace: ShepherdWorkspace, flow_id: str) -> tuple[Mapping[str, object],...]:
+def _flow_run_records(workspace: ShepherdWorkspace, flow_id: str) -> tuple[Mapping[str, object], ...]:
     records = []
     for raw in RunLedgerStore(workspace.mg).list_flow_runs(flow_id=flow_id):
         if not isinstance(raw, Mapping):
@@ -468,7 +468,7 @@ def _optional_mapping(value: Mapping[str, object], field_name: str) -> Mapping[s
     return raw
 
 
-def _optional_sequence(value: Mapping[str, object], field_name: str) -> tuple[str,...]:
+def _optional_sequence(value: Mapping[str, object], field_name: str) -> tuple[str, ...]:
     raw = value.get(field_name, ())
     if not isinstance(raw, Sequence) or isinstance(raw, str | bytes | bytearray):
         raise WorkspaceControlError(f"{field_name} must be a list")

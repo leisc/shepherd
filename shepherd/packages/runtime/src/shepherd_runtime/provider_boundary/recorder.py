@@ -73,22 +73,16 @@ class InterpositionRecorder(Protocol):
     def start_model_call(self, request: ModelRequest) -> Ref:
         """Mint ``EffectDeclaration("model.call")``; return its ref."""
 
-    def select_provider_handler(
-        self, declaration_ref: Ref, handler_id: str
-    ) -> Ref:
+    def select_provider_handler(self, declaration_ref: Ref, handler_id: str) -> Ref:
         """Mint ``HandlerSelection`` for the model.call; return its ref."""
 
-    def open_tool_call(
-        self, parent_decl_ref: Ref, tool_name: str, payload: dict
-    ) -> Ref:
+    def open_tool_call(self, parent_decl_ref: Ref, tool_name: str, payload: dict) -> Ref:
         """Mint nested ``EffectDeclaration("tool.<name>")``; return its ref."""
 
     def select_tool_handler(self, decl_ref: Ref, handler_id: str) -> Ref:
         """Mint ``HandlerSelection`` for a tool effect; return its ref."""
 
-    def mint_resumption(
-        self, decl_ref: Ref, selection_ref: Ref
-    ) -> Ref:
+    def mint_resumption(self, decl_ref: Ref, selection_ref: Ref) -> Ref:
         """Mint ``ResumptionHandle``; return its ref."""
 
     def resume(self, handle_ref: Ref, value: object) -> Ref:
@@ -143,26 +137,18 @@ class StubRecorder:
         self.calls.append(("start_model_call", request, ref))
         return ref
 
-    def select_provider_handler(
-        self, declaration_ref: Ref, handler_id: str
-    ) -> Ref:
+    def select_provider_handler(self, declaration_ref: Ref, handler_id: str) -> Ref:
         self._require_declaration(declaration_ref)
         ref = self._next_ref("sel")
         self._selections[ref] = declaration_ref
-        self.calls.append(
-            ("select_provider_handler", declaration_ref, handler_id, ref)
-        )
+        self.calls.append(("select_provider_handler", declaration_ref, handler_id, ref))
         return ref
 
-    def open_tool_call(
-        self, parent_decl_ref: Ref, tool_name: str, payload: dict
-    ) -> Ref:
+    def open_tool_call(self, parent_decl_ref: Ref, tool_name: str, payload: dict) -> Ref:
         self._require_declaration(parent_decl_ref)
         ref = self._next_ref("decl")
         self._declarations.add(ref)
-        self.calls.append(
-            ("open_tool_call", parent_decl_ref, tool_name, payload, ref)
-        )
+        self.calls.append(("open_tool_call", parent_decl_ref, tool_name, payload, ref))
         return ref
 
     def select_tool_handler(self, decl_ref: Ref, handler_id: str) -> Ref:
@@ -172,14 +158,10 @@ class StubRecorder:
         self.calls.append(("select_tool_handler", decl_ref, handler_id, ref))
         return ref
 
-    def mint_resumption(
-        self, decl_ref: Ref, selection_ref: Ref
-    ) -> Ref:
+    def mint_resumption(self, decl_ref: Ref, selection_ref: Ref) -> Ref:
         self._require_selection(selection_ref)
         if self._selections[selection_ref] != decl_ref:
-            raise RecorderLifecycleError(
-                f"selection {selection_ref!r} does not belong to declaration {decl_ref!r}"
-            )
+            raise RecorderLifecycleError(f"selection {selection_ref!r} does not belong to declaration {decl_ref!r}")
         ref = self._next_ref("handle")
         self._handles[ref] = selection_ref
         self.calls.append(("mint_resumption", decl_ref, selection_ref, ref))
@@ -217,14 +199,10 @@ class StubRecorder:
                 for resume, handle in self._resumes.items()
                 if handle in selection_handles
             ):
-                raise RecorderLifecycleError(
-                    f"selection {selection_ref!r} cannot capture return before resume_return"
-                )
+                raise RecorderLifecycleError(f"selection {selection_ref!r} cannot capture return before resume_return")
         ref = self._next_ref("cap")
         self._captured.add(selection_ref)
-        self.calls.append(
-            ("capture", selection_ref, action_kind, payload, ref)
-        )
+        self.calls.append(("capture", selection_ref, action_kind, payload, ref))
         return ref
 
     def selection_closed(self, selection_ref: Ref, reason: str) -> Ref:

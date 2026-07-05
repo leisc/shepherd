@@ -14,8 +14,6 @@ Then render a directory of ``<id>/index.html`` exports, or a single file:
     uv run --with playwright python examples/notebooks/visual_artifact/render.py /tmp/out
 """
 
-# ruff: noqa: D103
-
 from __future__ import annotations
 
 import argparse
@@ -31,7 +29,9 @@ def available() -> bool:
     return True
 
 
-def render_file(html_path: Path, png_path: Path | None = None, *, width: int = 1280, height: int = 720, scale: int = 2) -> Path:
+def render_file(
+    html_path: Path, png_path: Path | None = None, *, width: int = 1280, height: int = 720, scale: int = 2
+) -> Path:
     """Screenshot one HTML file. Defaults to a sibling ``preview.png``."""
     from playwright.sync_api import sync_playwright
 
@@ -66,8 +66,7 @@ def main(argv: list[str] | None = None) -> int:
 
     if not available():
         print(
-            "playwright not installed. Run:\n"
-            "  uv run --with playwright python -m playwright install chromium",
+            "playwright not installed. Run:\n  uv run --with playwright python -m playwright install chromium",
             file=sys.stderr,
         )
         return 2

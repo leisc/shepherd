@@ -158,8 +158,7 @@ def test_best_of_n_is_plain_user_code_over_run_outputs(
         assert release.settlement.action == "released"
         assert discard.settlement.action == "discarded"
         assert (
-            workspace.runs.outputs(run_ref=losers[0].owner.run_id, state="released")[0].output_id
-            == losers[0].output_id
+            workspace.runs.outputs(run_ref=losers[0].owner.run_id, state="released")[0].output_id == losers[0].output_id
         )
         assert (
             workspace.runs.outputs(run_ref=losers[1].owner.run_id, state="discarded")[0].output_id

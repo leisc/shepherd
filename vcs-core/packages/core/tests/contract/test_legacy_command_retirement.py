@@ -11,12 +11,7 @@ THIS_FILE = Path(__file__).resolve()
 
 def _python_files() -> tuple[Path, ...]:
     roots = (SRC_ROOT, TEST_ROOT)
-    return tuple(
-        path
-        for root in roots
-        for path in root.rglob("*.py")
-        if path.resolve() != THIS_FILE
-    )
+    return tuple(path for root in roots for path in root.rglob("*.py") if path.resolve() != THIS_FILE)
 
 
 def test_retired_scalar_command_capture_symbols_are_absent_from_live_python() -> None:
@@ -83,9 +78,7 @@ def test_performed_is_not_a_command_dispatch_option_in_runtime_modules() -> None
 
 def test_prelaunch_compatibility_shims_are_absent_from_live_source() -> None:
     checked_paths = tuple(SRC_ROOT.rglob("*.py"))
-    retired_exact_needles = (
-        "pending_path_candidates",
-    )
+    retired_exact_needles = ("pending_path_candidates",)
     retired_patterns = (
         (
             re.compile(r"\b(?:from\s+vcs_core\._overlay\s+import|import\s+vcs_core\._overlay(?:\s|$))"),

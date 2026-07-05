@@ -100,7 +100,7 @@ _LAZY: frozenset[str] = frozenset(
 )
 
 
-def open( # noqa: A001
+def open(  # noqa: A001
     cwd: str | Path = ".",
     *,
     activate: bool = True,
@@ -133,7 +133,7 @@ def __getattr__(name: str) -> Any:
     import importlib
 
     value = getattr(importlib.import_module(_LAZY_MODULE), name)
-    globals()[name] = value # cache so subsequent access skips __getattr__
+    globals()[name] = value  # cache so subsequent access skips __getattr__
     return value
 
 
@@ -142,7 +142,7 @@ def __dir__() -> list[str]:
 
 
 # Ordered by the teaching flow, not alphabetically.
-__all__ = [ # noqa: RUF022
+__all__ = [  # noqa: RUF022
     "__version__",
     # offline syntax nucleus
     "workspace",

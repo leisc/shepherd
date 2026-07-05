@@ -1,7 +1,5 @@
 """Visual-artifact notebook helpers backed by Shepherd workspace-control APIs."""
 
-# ruff: noqa: D103
-
 from __future__ import annotations
 
 import importlib.util
@@ -85,11 +83,11 @@ class StudioSelection:
     """Selection result read from a retained reviewer output."""
 
     reviewer: WorkspaceRun
-    candidates: tuple[Mapping[str, object],...]
+    candidates: tuple[Mapping[str, object], ...]
     selected: str
 
     @property
-    def failed(self) -> tuple[str,...]:
+    def failed(self) -> tuple[str, ...]:
         return tuple(str(item["id"]) for item in self.candidates if item.get("verdict") == "fail")
 
 
@@ -360,7 +358,7 @@ def artifact_ref(run: WorkspaceRun, path: str = ARTIFACT_PATH, *, label: str | N
     return run.output().artifact(path).to_input(label=label)
 
 
-def changed_paths(run: WorkspaceRun) -> tuple[str,...]:
+def changed_paths(run: WorkspaceRun) -> tuple[str, ...]:
     return run.output().changed_paths
 
 
@@ -512,7 +510,9 @@ def _require_python() -> None:
 
 
 def _require_example_root(example_root: str | Path | None) -> Path:
-    root = Path(example_root).expanduser().resolve() if example_root is not None else Path(__file__).resolve().parents[2]
+    root = (
+        Path(example_root).expanduser().resolve() if example_root is not None else Path(__file__).resolve().parents[2]
+    )
     expected = root / "shepherd_usecases" / "visual_artifact" / "launch.py"
     actual = Path(__file__).resolve()
     if not expected.exists():

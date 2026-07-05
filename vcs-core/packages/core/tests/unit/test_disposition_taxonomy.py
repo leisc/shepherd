@@ -33,7 +33,9 @@ def _mutating_blockers(items: tuple[InventoryItem, ...]):
 def _operation_journal_fact(disposition: str | None) -> InventoryItem:
     # A present-INVALID operation_journal fact: without a disposition it would block via the generic
     # validity fallback; the disposition is what classifies it (blocking vs diagnostic).
-    issue = InventoryIssue(id="i", code="open_operation_journal_index_corrupt", message="m", subject_id="x", locator="r")
+    issue = InventoryIssue(
+        id="i", code="open_operation_journal_index_corrupt", message="m", subject_id="x", locator="r"
+    )
     return InventoryItem(
         id="x",
         domain="operation_journal",
@@ -78,7 +80,9 @@ def test_open_journal_declares_blocking_terminal_declares_none(mg: VcsCore) -> N
     assert open_item.disposition == "blocking"  # the canonical blocking admission fact
 
     sig = pygit2.Signature("t", "t@e.invalid")
-    closed = manager.world_store.repo.create_commit(None, sig, sig, "x", manager.world_store.repo.TreeBuilder().write(), [])
+    closed = manager.world_store.repo.create_commit(
+        None, sig, sig, "x", manager.world_store.repo.TreeBuilder().write(), []
+    )
     manager.world_store.repo.references.create(operation_journal_ref("closed", "op-term"), closed)
     closed_item = probe_operation_journal_ref(
         manager.world_store.repo, operation_journal_ref("closed", "op-term"), expected_family="closed"

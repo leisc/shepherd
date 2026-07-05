@@ -65,9 +65,7 @@ Do NOT attempt to discover or populate them:
 
 @task(guidance=PR_REVIEW_GUIDANCE)
 async def configure_pr_review(
-    hints: Annotated[
-        str, InputMarker(description="Optional user hints for configuration")
-    ] = "",
+    hints: Annotated[str, InputMarker(description="Optional user hints for configuration")] = "",
 ) -> PRReviewConfig:
     """Analyze a codebase to infer PR review configuration.
 

@@ -40,14 +40,16 @@ if TYPE_CHECKING:
 
 FIXTURE_SCHEMA_VERSION = "shepherd_kernel_v3_reference.v0_lite_fixture.v1"
 
-VALID_KINDS = frozenset({
-    "positive",
-    "negative-profile-admission",
-    "negative-kernel-admission",
-    "negative-runtime-rejection",
-    "negative-observation-admission",
-    "negative-ref-map",
-})
+VALID_KINDS = frozenset(
+    {
+        "positive",
+        "negative-profile-admission",
+        "negative-kernel-admission",
+        "negative-runtime-rejection",
+        "negative-observation-admission",
+        "negative-ref-map",
+    }
+)
 
 
 @dataclass(frozen=True)
@@ -83,14 +85,11 @@ def load_fixture(path: Path) -> Fixture:
     schema_version = data.get("fixture_schema_version")
     if schema_version != FIXTURE_SCHEMA_VERSION:
         raise ValueError(
-            f"{path.name}: fixture_schema_version must be {FIXTURE_SCHEMA_VERSION!r}, "
-            f"got {schema_version!r}"
+            f"{path.name}: fixture_schema_version must be {FIXTURE_SCHEMA_VERSION!r}, got {schema_version!r}"
         )
     kind = data["kind"]
     if kind not in VALID_KINDS:
-        raise ValueError(
-            f"{path.name}: kind must be one of {sorted(VALID_KINDS)!r}, got {kind!r}"
-        )
+        raise ValueError(f"{path.name}: kind must be one of {sorted(VALID_KINDS)!r}, got {kind!r}")
     program_json = data["input"]["program"]
     program = _load_computation(program_json)
     observations = tuple(data["input"].get("observations", ()))
@@ -118,11 +117,13 @@ def _load_registry(data: Any) -> EffectRegistry:
         raise ValueError(f"expected registry list, got {type(data).__name__}: {data!r}")
     registry = EffectRegistry()
     for sig in data:
-        registry.register(EffectSignature(
-            effect_kind=sig["effect_kind"],
-            payload_schema=_load_schema(sig["payload_schema"]),
-            operation_result_schema=_load_schema(sig["operation_result_schema"]),
-        ))
+        registry.register(
+            EffectSignature(
+                effect_kind=sig["effect_kind"],
+                payload_schema=_load_schema(sig["payload_schema"]),
+                operation_result_schema=_load_schema(sig["operation_result_schema"]),
+            )
+        )
     return registry
 
 
@@ -130,11 +131,7 @@ def iter_fixtures(root: Path, subdir: str = "") -> list[Fixture]:
     """Yield fixtures under root[/subdir], sorted by filename."""
 
     base = root / subdir if subdir else root
-    return [
-        load_fixture(p)
-        for p in sorted(base.rglob("*.json"))
-        if not p.name.startswith("_")
-    ]
+    return [load_fixture(p) for p in sorted(base.rglob("*.json")) if not p.name.startswith("_")]
 
 
 # ---------------------------------------------------------------------------
@@ -188,15 +185,16 @@ def _load_computation(data: Any) -> Computation:
     # rejection paths, per README §"input.program — source-AST DSL").
     if node == "Forward":
         from shepherd_kernel_v3_reference.source.experimental import Forward
+
         return Forward()  # type: ignore[return-value]
     if node == "TerminalDelay":
         from shepherd_kernel_v3_reference.source.experimental import TerminalDelay
+
         return TerminalDelay(reason=_load_expr(data["reason"]))  # type: ignore[return-value]
     if node == "TerminalFork":
         from shepherd_kernel_v3_reference.source.experimental import TerminalFork
-        branches = tuple(
-            (b["name"], _load_expr(b["value"])) for b in data["branches"]
-        )
+
+        branches = tuple((b["name"], _load_expr(b["value"])) for b in data["branches"])
         return TerminalFork(branches=branches)  # type: ignore[return-value]
     raise ValueError(f"unknown computation node: {node!r}")
 
@@ -208,23 +206,27 @@ def _load_handler_env(data: Any) -> HandlerEnv:
     for b in data["bindings"]:
         node = b.get("node")
         if node == "StaticHandlerInstall":
-            bindings.append(StaticHandlerInstall(
-                effect_kind=b["effect_kind"],
-                handler_id=b["handler_id"],
-                handled_result_schema=_load_schema(b["handled_result_schema"]),
-                payload_name=b["payload_name"],
-                body=_load_computation(b["body"]),
-            ))
+            bindings.append(
+                StaticHandlerInstall(
+                    effect_kind=b["effect_kind"],
+                    handler_id=b["handler_id"],
+                    handled_result_schema=_load_schema(b["handled_result_schema"]),
+                    payload_name=b["payload_name"],
+                    body=_load_computation(b["body"]),
+                )
+            )
         elif node == "DynamicHandlerInstall":
             # Used by negative fixtures only; body is constructed as a
             # placeholder Python callable since DynamicHandlerInstall
             # carries a Python closure that has no JSON representation.
-            bindings.append(DynamicHandlerInstall(
-                effect_kind=b["effect_kind"],
-                handler_id=b["handler_id"],
-                handled_result_schema=_load_schema(b["handled_result_schema"]),
-                body=lambda _payload: Return(Lit(None)),
-            ))
+            bindings.append(
+                DynamicHandlerInstall(
+                    effect_kind=b["effect_kind"],
+                    handler_id=b["handler_id"],
+                    handled_result_schema=_load_schema(b["handled_result_schema"]),
+                    body=lambda _payload: Return(Lit(None)),
+                )
+            )
         else:
             raise ValueError(f"unknown handler install node: {node!r}")
     return HandlerEnv(bindings=tuple(bindings))
@@ -243,9 +245,11 @@ def _load_schema(data: Any) -> Any:
     # Negative-fixture schemas (used only to exercise profile-admission rejection)
     if node == "AnySchema":
         from shepherd_kernel_v3_reference.schemas import AnySchema
+
         return AnySchema()
     if node == "TypeSchema":
         from shepherd_kernel_v3_reference.schemas import TypeSchema
+
         # Lookup the named type from a small whitelist
         type_name = data["type"]
         if type_name == "int":
@@ -255,6 +259,7 @@ def _load_schema(data: Any) -> Any:
         raise ValueError(f"unsupported TypeSchema type: {type_name!r}")
     if node == "TaggedRecordSchema":
         from shepherd_kernel_v3_reference.schemas import TaggedRecordSchema
+
         return TaggedRecordSchema(tag=data["tag"])
     raise ValueError(f"unknown schema node: {node!r}")
 

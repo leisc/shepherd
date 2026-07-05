@@ -666,10 +666,14 @@ def selected_run_ledger_manifest_with_head(
             return _run_ledger_manifest(record_count=0, latest_run_ref=None), None, None
         if selected.payload.get("storage_shape") == RUN_LEDGER_STORAGE_SHAPE:
             return _run_ledger_manifest_from_payload(selected.payload), selected.head, None
-        return _run_ledger_manifest(
-            record_count=len(run_ledger_payload(selected.payload)["runs"]),
-            latest_run_ref=_latest_run_ref_from_payload(run_ledger_payload(selected.payload)),
-        ), selected.head, selected.payload
+        return (
+            _run_ledger_manifest(
+                record_count=len(run_ledger_payload(selected.payload)["runs"]),
+                latest_run_ref=_latest_run_ref_from_payload(run_ledger_payload(selected.payload)),
+            ),
+            selected.head,
+            selected.payload,
+        )
     payload = mg.read_selected_binding_revision(RUN_LEDGER_BINDING, scope=target_scope)
     head = None
     if payload is None:
@@ -677,10 +681,14 @@ def selected_run_ledger_manifest_with_head(
     if payload.get("storage_shape") == RUN_LEDGER_STORAGE_SHAPE:
         return _run_ledger_manifest_from_payload(payload), head, None
     normalized = run_ledger_payload(payload)
-    return _run_ledger_manifest(
-        record_count=len(normalized["runs"]),
-        latest_run_ref=_latest_run_ref_from_payload(normalized),
-    ), head, payload
+    return (
+        _run_ledger_manifest(
+            record_count=len(normalized["runs"]),
+            latest_run_ref=_latest_run_ref_from_payload(normalized),
+        ),
+        head,
+        payload,
+    )
 
 
 def run_ledger_payload(payload: Mapping[str, object] | None) -> JsonObject:

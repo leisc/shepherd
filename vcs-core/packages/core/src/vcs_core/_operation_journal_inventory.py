@@ -66,7 +66,9 @@ def probe_operation_journals(repo: pygit2.Repository, *, family: str | None = No
         prefix = operation_journal_family_prefix(current_family)
         # Apply the same v2-shape boundary as the family=None branch above, so a family filter
         # cannot make a malformed deeper ref (under the same encoded family prefix) newly visible.
-        for ref in sorted(name for name in repo.references if name.startswith(prefix) and _is_v2_journal_ref_shape(name)):
+        for ref in sorted(
+            name for name in repo.references if name.startswith(prefix) and _is_v2_journal_ref_shape(name)
+        ):
             items.append(probe_operation_journal_ref(repo, ref, expected_family=current_family))
     return tuple(items)
 

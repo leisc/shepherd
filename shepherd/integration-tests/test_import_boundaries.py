@@ -582,7 +582,8 @@ def test_downstream_packages_avoid_private_or_moved_shepherd_core_imports(packag
 
     assert not violations, (
         f"{package_name} imports private or migrated shepherd_core modules.\n"
-        "Use owner paths such as shepherd_export, shepherd_tests, or shepherd_runtime.* instead.\n" + "\n".join(violations)
+        "Use owner paths such as shepherd_export, shepherd_tests, or shepherd_runtime.* instead.\n"
+        + "\n".join(violations)
     )
 
 

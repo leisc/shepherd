@@ -603,9 +603,7 @@ class SubstrateStore:
         for entry in commit_tree:
             if entry.name == "workspace":
                 if entry.filemode != pygit2.GIT_FILEMODE_TREE:
-                    raise InvalidRepositoryStateError(
-                        "prepared revision workspace entry is not a tree"
-                    )
+                    raise InvalidRepositoryStateError("prepared revision workspace entry is not a tree")
                 if plan.git_tree_oid is None:
                     raise InvalidRepositoryStateError(
                         "digest-only prepared revision must not contain a workspace tree entry"
@@ -617,9 +615,7 @@ class SubstrateStore:
                 has_workspace_entry = True
                 break
         if plan.git_tree_oid is not None and not has_workspace_entry:
-            raise InvalidRepositoryStateError(
-                "tree-backed prepared revision is missing a workspace tree entry"
-            )
+            raise InvalidRepositoryStateError("tree-backed prepared revision is missing a workspace tree entry")
         parent_heads = tuple(str(parent) for parent in commit.parent_ids)
         return PreparedCandidateProvenance(
             head=head,
@@ -1099,14 +1095,10 @@ class SubstrateStore:
         """
         state_manifest = payload.get("state_manifest")
         if not isinstance(state_manifest, dict):
-            raise InvalidRepositoryStateError(
-                "tree-backed substrate revision payload requires a state_manifest"
-            )
+            raise InvalidRepositoryStateError("tree-backed substrate revision payload requires a state_manifest")
         raw_entries = state_manifest.get("entries")
         if not isinstance(raw_entries, list):
-            raise InvalidRepositoryStateError(
-                "tree-backed substrate revision manifest entries must be a list"
-            )
+            raise InvalidRepositoryStateError("tree-backed substrate revision manifest entries must be a list")
         manifest_byte_authority = state_manifest.get("byte_authority")
         if manifest_byte_authority != "tree-backed":
             raise InvalidRepositoryStateError(
@@ -1125,9 +1117,7 @@ class SubstrateStore:
                 mode = entry.get("mode")
                 content_digest = entry.get("content_digest")
                 if not isinstance(mode, int) or isinstance(mode, bool):
-                    raise InvalidRepositoryStateError(
-                        f"workspace manifest entry mode must be an integer at {path!r}"
-                    )
+                    raise InvalidRepositoryStateError(f"workspace manifest entry mode must be an integer at {path!r}")
                 if not isinstance(content_digest, str):
                     raise InvalidRepositoryStateError(
                         f"workspace manifest entry content_digest must be a string at {path!r}"
@@ -1182,9 +1172,7 @@ class SubstrateStore:
                     f"manifest=0o{expected_mode:o}, tree=0o{observed_mode:o}"
                 )
             if observed_digest != expected_digest:
-                raise InvalidRepositoryStateError(
-                    f"tree-backed substrate revision content_digest mismatch at {path!r}"
-                )
+                raise InvalidRepositoryStateError(f"tree-backed substrate revision content_digest mismatch at {path!r}")
 
     def _walk_workspace_tree(
         self,
@@ -1203,16 +1191,12 @@ class SubstrateStore:
             if entry.filemode == pygit2.GIT_FILEMODE_TREE:
                 sub = self._repo[entry.id]
                 if not isinstance(sub, pygit2.Tree):
-                    raise InvalidRepositoryStateError(
-                        f"tree-backed substrate revision has non-tree object at {path!r}"
-                    )
+                    raise InvalidRepositoryStateError(f"tree-backed substrate revision has non-tree object at {path!r}")
                 self._walk_workspace_tree(sub, prefix=path, observed=observed)
             elif entry.filemode in (pygit2.GIT_FILEMODE_BLOB, pygit2.GIT_FILEMODE_BLOB_EXECUTABLE):
                 blob = self._repo[entry.id]
                 if not isinstance(blob, pygit2.Blob):
-                    raise InvalidRepositoryStateError(
-                        f"tree-backed substrate revision has non-blob object at {path!r}"
-                    )
+                    raise InvalidRepositoryStateError(f"tree-backed substrate revision has non-blob object at {path!r}")
                 digest = f"sha256:{hashlib.sha256(bytes(blob.data)).hexdigest()}"
                 observed[path] = (entry.filemode, digest)
             else:
@@ -1221,9 +1205,7 @@ class SubstrateStore:
                 )
 
 
-def _ensure_alternates(
-    repo: pygit2.Repository, repo_path: Path, source_repo_path: Path
-) -> pygit2.Repository:
+def _ensure_alternates(repo: pygit2.Repository, repo_path: Path, source_repo_path: Path) -> pygit2.Repository:
     """Configure ``objects/info/alternates`` so ``repo`` can read source ODB.
 
     libgit2 caches the alternates list at first object access, so this function
@@ -1244,9 +1226,7 @@ def _ensure_alternates(
     existing_lines: list[str] = []
     if alternates_path.exists():
         existing_lines = [
-            line.strip()
-            for line in alternates_path.read_text(encoding="utf-8").splitlines()
-            if line.strip()
+            line.strip() for line in alternates_path.read_text(encoding="utf-8").splitlines() if line.strip()
         ]
         if desired_line in existing_lines:
             return repo

@@ -560,14 +560,14 @@ def _model_call_cancelled_diagnostics(
 ) -> _FailureDiagnostics:
     error_type = "CancelledError"
     reason = "task_cancelled" if externally_cancelled else "handler_cancelled"
-    cancelled_actor = "the surrounding task was cancelled" if externally_cancelled else (
-        f"model.call handler {handler.handler_id!r} was cancelled"
+    cancelled_actor = (
+        "the surrounding task was cancelled"
+        if externally_cancelled
+        else (f"model.call handler {handler.handler_id!r} was cancelled")
     )
     return _FailureDiagnostics(
         error_type=error_type,
-        message=(
-            f"{_delivery_context(context, result_type)} stopped because {cancelled_actor}."
-        ),
+        message=(f"{_delivery_context(context, result_type)} stopped because {cancelled_actor}."),
         reason=reason,
         detail_summary={
             **_model_call_detail_base(

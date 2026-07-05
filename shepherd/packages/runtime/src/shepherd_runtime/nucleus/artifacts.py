@@ -65,9 +65,7 @@ def emit_artifact(
     context = active_task_run()
     if context is None:
         raise NoActiveTaskRun("emit_artifact() requires an active task run")
-    coroutine = _emit_artifact_async(
-        content=content, kind=kind, name=name, metadata=metadata
-    )
+    coroutine = _emit_artifact_async(content=content, kind=kind, name=name, metadata=metadata)
     if context.is_async:
         return coroutine  # type: ignore[return-value]
     return run_sync(coroutine)

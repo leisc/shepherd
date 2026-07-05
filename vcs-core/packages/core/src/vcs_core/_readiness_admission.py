@@ -38,7 +38,7 @@ def require_readiness_allowed(
     *,
     command: str,
     attempted: str,
-    authorized_operations: tuple[ReadinessOperationAuthority,...] = (),
+    authorized_operations: tuple[ReadinessOperationAuthority, ...] = (),
     scope_selector: str | None = None,
     runtime_admission_context: RuntimeAdmissionContext | None = None,
 ) -> ReadinessResult:
@@ -87,7 +87,7 @@ def require_recovery_targets_allowed(
     owner: VcsCore,
     *,
     attempted: str,
-    targets: tuple[ReadinessTarget,...],
+    targets: tuple[ReadinessTarget, ...],
     allowed_blocker_item_ids: Collection[str] = (),
 ) -> ReadinessResult | None:
     """Require targeted recovery readiness for concrete current recovery facts."""
@@ -122,7 +122,7 @@ def workspace_authority_recovery_targets(
     *,
     scope_refs: set[str] | None = None,
     operation_ids: set[str] | None = None,
-) -> tuple[ReadinessTarget,...]:
+) -> tuple[ReadinessTarget, ...]:
     """Workspace-authority recovery targets for present pending items.
 
     When ``scope_refs`` is provided, restrict to items whose ``scope_ref`` is in
@@ -142,7 +142,7 @@ def workspace_authority_recovery_targets(
     )
 
 
-def authority_settlement_recovery_targets(owner: VcsCore) -> tuple[ReadinessTarget,...]:
+def authority_settlement_recovery_targets(owner: VcsCore) -> tuple[ReadinessTarget, ...]:
     return tuple(
         _authority_settlement_target_for_item(item)
         for item in probe_authority_settlement_pending(owner._repo_path)
@@ -150,11 +150,11 @@ def authority_settlement_recovery_targets(owner: VcsCore) -> tuple[ReadinessTarg
     )
 
 
-def workspace_authority_related_recovery_targets(owner: VcsCore) -> tuple[ReadinessTarget,...]:
+def workspace_authority_related_recovery_targets(owner: VcsCore) -> tuple[ReadinessTarget, ...]:
     scope_refs = {
         scope_ref
         for item in probe_workspace_authority_pending(owner._repo_path)
-        if item.health.presence == "present" and isinstance((scope_ref:= item.fields.get("scope_ref")), str)
+        if item.health.presence == "present" and isinstance((scope_ref := item.fields.get("scope_ref")), str)
     }
     return tuple(
         _recovery_target_for_item(item)
@@ -168,7 +168,7 @@ def workspace_authority_related_recovery_targets(owner: VcsCore) -> tuple[Readin
     )
 
 
-def workspace_authority_operation_journal_recovery_targets(owner: VcsCore) -> tuple[ReadinessTarget,...]:
+def workspace_authority_operation_journal_recovery_targets(owner: VcsCore) -> tuple[ReadinessTarget, ...]:
     from vcs_core._operation_journal_inventory import admission_operation_journal_items
     from vcs_core._world_storage_installation import default_world_storage_exists, open_existing_default_world_storage
 
@@ -176,14 +176,14 @@ def workspace_authority_operation_journal_recovery_targets(owner: VcsCore) -> tu
         operation_id
         for item in probe_workspace_authority_pending(owner._repo_path)
         if item.health.presence == "present"
-        and isinstance((operation_id:= item.fields.get("operation_id")), str)
+        and isinstance((operation_id := item.fields.get("operation_id")), str)
         and operation_id
     }
     if not operation_ids or not default_world_storage_exists(owner._repo_path):
         return ()
     try:
         manager = open_existing_default_world_storage(owner._repo_path)
-    except Exception: # noqa: BLE001
+    except Exception:  # noqa: BLE001
         return ()
     return tuple(
         _operation_journal_target_for_item(item)
@@ -200,7 +200,7 @@ def workspace_authority_operation_journal_recovery_targets(owner: VcsCore) -> tu
     )
 
 
-def recovery_targets_for_kinds(owner: VcsCore, *kinds: str) -> tuple[ReadinessTarget,...]:
+def recovery_targets_for_kinds(owner: VcsCore, *kinds: str) -> tuple[ReadinessTarget, ...]:
     selected_kinds = set(kinds)
     return tuple(
         _recovery_target_for_item(item)
@@ -209,7 +209,7 @@ def recovery_targets_for_kinds(owner: VcsCore, *kinds: str) -> tuple[ReadinessTa
     )
 
 
-def recovery_targets_for_scope_refs(owner: VcsCore, refs: set[str]) -> tuple[ReadinessTarget,...]:
+def recovery_targets_for_scope_refs(owner: VcsCore, refs: set[str]) -> tuple[ReadinessTarget, ...]:
     return tuple(
         _recovery_target_for_item(item)
         for item in owner.recovery_inventory().items
@@ -220,7 +220,7 @@ def recovery_targets_for_scope_refs(owner: VcsCore, refs: set[str]) -> tuple[Rea
     )
 
 
-def recovery_operation_targets_for_scope_refs(owner: VcsCore, refs: set[str]) -> tuple[ReadinessTarget,...]:
+def recovery_operation_targets_for_scope_refs(owner: VcsCore, refs: set[str]) -> tuple[ReadinessTarget, ...]:
     return tuple(
         _recovery_target_for_item(item)
         for item in owner.recovery_inventory().items
@@ -408,16 +408,16 @@ def _exception_from_readiness(result: ReadinessResult, *, attempted: str) -> Exc
 
 
 def _with_readiness_result(exc: Exception, result: ReadinessResult) -> Exception:
-    exc._vcscore_readiness_result = result # type: ignore[attr-defined]
-    exc._vcscore_readiness_issue_ids = tuple( # type: ignore[attr-defined]
+    exc._vcscore_readiness_result = result  # type: ignore[attr-defined]
+    exc._vcscore_readiness_issue_ids = tuple(  # type: ignore[attr-defined]
         blocker.issue_id for blocker in result.blockers if blocker.issue_id
     )
     return exc
 
 
-def _blocked_items(result: ReadinessResult) -> tuple[InventoryItem,...]:
+def _blocked_items(result: ReadinessResult) -> tuple[InventoryItem, ...]:
     items_by_id = {item.id: item for item in result.snapshot.items}
-    return tuple(item for blocker in result.blockers if (item:= items_by_id.get(blocker.item_id)) is not None)
+    return tuple(item for blocker in result.blockers if (item := items_by_id.get(blocker.item_id)) is not None)
 
 
 def _blocked_item_label(item: InventoryItem) -> str:

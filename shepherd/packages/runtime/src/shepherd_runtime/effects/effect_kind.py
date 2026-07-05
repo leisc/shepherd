@@ -61,18 +61,12 @@ def split_effect_kind(kind: str) -> tuple[str, str]:
             name does not match ``[a-z][a-z0-9_]*``.
     """
     if kind.count(".") != 1:
-        raise ValueError(
-            f"effect_kind must be 'namespace.name'; got {kind!r}"
-        )
+        raise ValueError(f"effect_kind must be 'namespace.name'; got {kind!r}")
     namespace, name = kind.split(".", 1)
     if not _NAME_RE.match(namespace):
-        raise ValueError(
-            f"effect_kind namespace {namespace!r} must match [a-z][a-z0-9_]*"
-        )
+        raise ValueError(f"effect_kind namespace {namespace!r} must match [a-z][a-z0-9_]*")
     if not _NAME_RE.match(name):
-        raise ValueError(
-            f"effect_kind name {name!r} must match [a-z][a-z0-9_]*"
-        )
+        raise ValueError(f"effect_kind name {name!r} must match [a-z][a-z0-9_]*")
     return namespace, name
 
 
@@ -88,9 +82,7 @@ def validate_public_effect_kind(kind: str) -> str:
     parts = kind.split(".")
     for part in parts:
         if not _NAME_RE.match(part):
-            raise ValueError(
-                f"effect kind segment {part!r} must match [a-z][a-z0-9_]* in {kind!r}"
-            )
+            raise ValueError(f"effect kind segment {part!r} must match [a-z][a-z0-9_]* in {kind!r}")
     if parts[0] == "local":
         raise ValueError("explicit effect kinds cannot use the reserved 'local' root")
     return kind
@@ -174,13 +166,9 @@ def model_kind(verb: str) -> str:
     reserved verbs without updating D9.
     """
     if verb in _RESERVED_MODEL_VERBS:
-        raise ValueError(
-            f"model verb {verb!r} is reserved; not allocated in v1"
-        )
+        raise ValueError(f"model verb {verb!r} is reserved; not allocated in v1")
     if not _NAME_RE.match(verb):
-        raise ValueError(
-            f"model verb {verb!r} must match [a-z][a-z0-9_]*"
-        )
+        raise ValueError(f"model verb {verb!r} must match [a-z][a-z0-9_]*")
     return f"model.{verb}"
 
 
@@ -188,9 +176,7 @@ def _claim_explicit_kind(cls: type, key: str) -> None:
     owner = (cls.__module__, cls.__qualname__, key)
     existing = _EXPLICIT_KIND_OWNERS.get(key)
     if existing is not None and existing != owner:
-        raise ConflictingKind(
-            f"{cls.__qualname__}: kind {key!r} is already claimed by {existing[0]}.{existing[1]}"
-        )
+        raise ConflictingKind(f"{cls.__qualname__}: kind {key!r} is already claimed by {existing[0]}.{existing[1]}")
     _EXPLICIT_KIND_OWNERS[key] = owner
 
 
@@ -202,8 +188,7 @@ def _validate_public_parent_hierarchy(cls: type, key: str) -> None:
     if not _single_kind_branch(parent_keys):
         parent_list = ", ".join(repr(parent_key) for parent_key in parent_keys)
         raise ConflictingKind(
-            f"{cls.__qualname__}: multiple public kind-bearing parents are ambiguous in this cut: "
-            f"{parent_list}"
+            f"{cls.__qualname__}: multiple public kind-bearing parents are ambiguous in this cut: {parent_list}"
         )
     for parent in parents:
         if not _strict_kind_descendant(key, parent.key):

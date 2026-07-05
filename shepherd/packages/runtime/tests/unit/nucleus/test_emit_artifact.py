@@ -216,9 +216,7 @@ def test_emit_artifact_trace_omits_content_and_metadata_values(tmp_path) -> None
 
 
 def test_artifact_is_frozen_dataclass() -> None:
-    artifact = Artifact(
-        kind="report", name="x.txt", content="hi", metadata={"k": "v"}
-    )
+    artifact = Artifact(kind="report", name="x.txt", content="hi", metadata={"k": "v"})
     with pytest.raises(Exception):
         artifact.kind = "other"  # type: ignore[misc]
 

@@ -462,7 +462,7 @@ def test_public_settlement_rejects_bare_forged_and_stale_outputs(
         output = run.output()
 
         with pytest.raises(WorkspaceControlError, match="RunOutput from this workspace"):
-            workspace.release(output.ref) # type: ignore[arg-type]
+            workspace.release(output.ref)  # type: ignore[arg-type]
 
         foreign_workspace = _make_workspace(tmp_path / "foreign-ws")
         try:

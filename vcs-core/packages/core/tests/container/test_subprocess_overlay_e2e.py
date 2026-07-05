@@ -115,9 +115,7 @@ def _run_agent(cwd: Path, script: str) -> None:
     assert result.returncode == 0, f"agent subprocess failed: {result.stderr or result.stdout}"
 
 
-def test_real_subprocess_write_is_captured_and_merged(
-    overlay_mg: VcsCore, runtime_workspace: Path
-) -> None:
+def test_real_subprocess_write_is_captured_and_merged(overlay_mg: VcsCore, runtime_workspace: Path) -> None:
     """A real child process's write into the overlay is captured at merge."""
     task = overlay_mg.fork(overlay_mg.ground, "subproc-write", hints={"isolated": True})
     mount = _backend(overlay_mg).working_path(task.name)
@@ -132,15 +130,10 @@ def test_real_subprocess_write_is_captured_and_merged(
     effects = overlay_mg.store.filter_effects(effect_type="FileCreate", max_count=20)
     paths = {e.metadata.get("path") for e in effects}
     assert "src/agent_out.txt" in paths
-    assert (
-        overlay_mg.store.read_workspace_file(Store.GROUND_REF, "src/agent_out.txt")
-        == b"written by subprocess agent"
-    )
+    assert overlay_mg.store.read_workspace_file(Store.GROUND_REF, "src/agent_out.txt") == b"written by subprocess agent"
 
 
-def test_real_subprocess_write_is_reverted_by_discard(
-    overlay_mg: VcsCore, runtime_workspace: Path
-) -> None:
+def test_real_subprocess_write_is_reverted_by_discard(overlay_mg: VcsCore, runtime_workspace: Path) -> None:
     """Discarding a scope reverts a real subprocess's edits with no trace.
 
     v2-truth gate (assertion (a) only): the v2 substrate tree's view of
@@ -269,9 +262,7 @@ def test_v2_substrate_tree_is_sole_authority_for_real_subprocess_write(
     # under strict mode and instrumented.
     task = overlay_mg.fork(overlay_mg.ground, "subproc-v2-sole-authority", hints={"isolated": True})
     mount = _backend(overlay_mg).working_path(task.name)
-    _run_agent(
-        mount, "mkdir -p src && printf '%s' 'v2 truth' > src/agent_out.txt"
-    )
+    _run_agent(mount, "mkdir -p src && printf '%s' 'v2 truth' > src/agent_out.txt")
     overlay_mg.merge(task, overlay_mg.ground)
 
     # (a) v2 substrate tree serves the bytes, independent of materialization.
@@ -374,9 +365,7 @@ def test_v2_gate_under_4a_nested(monkeypatch, tmp_path_factory) -> None:
     try:
         _ensure_overlay_available()
         store = Store(str(workspace / ".vcscore"))
-        context = build_builtin_substrate_context(
-            store, workspace=workspace, config={"state_root": str(state_root)}
-        )
+        context = build_builtin_substrate_context(store, workspace=workspace, config={"state_root": str(state_root)})
         marker = MarkerSubstrate(context)
         filesystem = FilesystemSubstrate(context)
         mg = VcsCore(str(workspace), substrates=[marker, filesystem], store=store)
@@ -396,7 +385,9 @@ def test_v2_gate_under_4a_nested(monkeypatch, tmp_path_factory) -> None:
             # shared.txt — the §4a precondition.
             subprocess.run(
                 ["sh", "-c", f"printf '%s' 'parent version' > {parent_mount}/shared.txt"],
-                check=True, capture_output=True, text=True,
+                check=True,
+                capture_output=True,
+                text=True,
             )
 
             # Step 3. Fork a NESTED isolated child. Its lowerdir stack includes
@@ -407,7 +398,9 @@ def test_v2_gate_under_4a_nested(monkeypatch, tmp_path_factory) -> None:
             # Step 4. Nested overwrites shared.txt.
             subprocess.run(
                 ["sh", "-c", f"printf '%s' 'nested version' > {nested_mount}/shared.txt"],
-                check=True, capture_output=True, text=True,
+                check=True,
+                capture_output=True,
+                text=True,
             )
 
             # Step 5. Merge nested → parent (where §4a triggers misclassification
@@ -420,13 +413,11 @@ def test_v2_gate_under_4a_nested(monkeypatch, tmp_path_factory) -> None:
             # (a) v2 substrate tree carries the nested child's bytes.
             v2_read = mg._read_v2_workspace_file_for_materialization("shared.txt")
             assert v2_read is not None, (
-                "v2 substrate tree must carry shared.txt after nested merge; "
-                "§4a may affect v2 content too"
+                "v2 substrate tree must carry shared.txt after nested merge; §4a may affect v2 content too"
             )
             content, _mode = v2_read
             assert content == b"nested version", (
-                f"v2 served wrong bytes for nested-isolation flow: {content!r}; "
-                f"§4a's content-correct claim is violated"
+                f"v2 served wrong bytes for nested-isolation flow: {content!r}; §4a's content-correct claim is violated"
             )
 
             # (b) Materialization under strict mode without scalar fallback.

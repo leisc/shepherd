@@ -49,6 +49,14 @@ make typecheck    # static type checks
 
 ## Open a pull request
 
+This repository is Shepherd's public release surface. Public PRs are welcome,
+especially for fixes, documentation, examples, and tightly scoped improvements.
+Larger feature work and changes that affect architecture, package boundaries, or
+release automation may be staged through the maintainer development workspace
+before being exported here. Maintainers may ask you to start with an issue or
+design sketch for those changes so the exported PR can stay reviewable and pass
+the public gate suite cleanly.
+
 - Keep PR titles in [Conventional Commits](https://www.conventionalcommits.org/)
   form (`feat:`, `fix:`, `docs:`, `refactor:`, …).
 - Describe the motivation, and list what you ran to verify the change.

@@ -93,7 +93,7 @@ def test_extend_query_members(repo):
     idx.extend({"a": 1})
     idx.extend({"b": 2})
     assert _members(idx) == {"a", "b"}
-    assert _query(idx,"a") == 1
+    assert _query(idx, "a") == 1
 
 
 def test_idempotent_extend_does_not_churn_generation(repo):
@@ -143,7 +143,7 @@ def test_read_never_scans_authority(repo):
         repo, _REF, schema=_SCHEMA, meta_name=_META, message_prefix="t", rebuild_source=exploding_authority
     )
     assert _members(idx) == {"a"}
-    assert _query(idx,"a") == 1
+    assert _query(idx, "a") == 1
     assert idx.read() is not None
 
 
@@ -507,7 +507,9 @@ def test_atomic_co_write_idempotent_noop_still_commits_authority(repo):
     auth_move, auth_oid = _new_authority_create_move(repo)
 
     segment = atomic_co_write(
-        repo, authority_moves=[auth_move], prepare=lambda: idx.prepare_extend({"a": 1})  # no-op (a present)
+        repo,
+        authority_moves=[auth_move],
+        prepare=lambda: idx.prepare_extend({"a": 1}),  # no-op (a present)
     )
 
     assert segment.members() == {"a"}

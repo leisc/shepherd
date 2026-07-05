@@ -101,8 +101,13 @@ def test_match_field_predicates_match_and_support_basic_subset() -> None:
     assert not high.matches(Audit(message="low", severity=1))
     assert exact.subset_of(selected) is Subset.Yes
     assert Match.field("message", "contains", "risk").subset_of(Match.all()) is Subset.Yes
-    assert Match.field("message", "contains", "risk").subset_of(Match.field("message", "contains", "risk")) is Subset.Yes
-    assert Match.field("message", "contains", "risk").subset_of(Match.field("message", "contains", "other")) is Subset.Unknown
+    assert (
+        Match.field("message", "contains", "risk").subset_of(Match.field("message", "contains", "risk")) is Subset.Yes
+    )
+    assert (
+        Match.field("message", "contains", "risk").subset_of(Match.field("message", "contains", "other"))
+        is Subset.Unknown
+    )
     assert Audit.where(severity__gte=5) == high
     assert Audit.where_not(severity=1) == Match.subtree(Audit).where_not(severity=1)
 

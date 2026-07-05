@@ -106,8 +106,16 @@ def test_payload_reads_back_field_complete(env) -> None:
     payload = _hybrid_payload("frontier:complete")
     outcome = mg.exec("trace", "append", scope=mg.ground, payload=payload)
     stored = mg._world_storage().store("store_trace").read_revision_payload(outcome.oids[0])
-    for field in ("trace_runtime", "trace_owner_id", "frontier_id", "run_ref",
-                  "identity_domain", "events", "causal_edges", "owner_paths"):
+    for field in (
+        "trace_runtime",
+        "trace_owner_id",
+        "frontier_id",
+        "run_ref",
+        "identity_domain",
+        "events",
+        "causal_edges",
+        "owner_paths",
+    ):
         assert stored[field] == payload[field], field
 
 
@@ -208,7 +216,11 @@ def test_uninstalled_selectable_driver_still_refuses(tmp_path: Path) -> None:
     root.mkdir()
     store = Store(str(root / ".vcscore"))
     ctx = build_builtin_substrate_context(store, workspace=root, config={})
-    mg = VcsCore(str(root), substrates=[MarkerSubstrate(ctx), FilesystemSubstrate(ctx), _UninstalledSelectableDriver()], store=store)
+    mg = VcsCore(
+        str(root),
+        substrates=[MarkerSubstrate(ctx), FilesystemSubstrate(ctx), _UninstalledSelectableDriver()],
+        store=store,
+    )
     mg.activate()
     try:
         with pytest.raises(ValueError, match="store 'store_nowhere' is not in the world installation"):

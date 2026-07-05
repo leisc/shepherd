@@ -130,9 +130,7 @@ class KernelRejection:
 
         if self.kind == "profile-admission":
             if self.construct is None:
-                raise ValueError(
-                    "KernelRejection(kind='profile-admission') requires `construct`"
-                )
+                raise ValueError("KernelRejection(kind='profile-admission') requires `construct`")
             if self.program_ref is not None:
                 raise ValueError(
                     "KernelRejection(kind='profile-admission') must not carry "
@@ -140,9 +138,7 @@ class KernelRejection:
                 )
         else:
             if self.program_ref is None:
-                raise ValueError(
-                    f"KernelRejection(kind={self.kind!r}) requires `program_ref`"
-                )
+                raise ValueError(f"KernelRejection(kind={self.kind!r}) requires `program_ref`")
             if self.construct is not None or self.source_location is not None:
                 raise ValueError(
                     f"KernelRejection(kind={self.kind!r}) must not carry `construct` "
@@ -164,8 +160,7 @@ class KernelRejection:
 
         if self.kind != "execution-failure" and self.partial_records:
             raise ValueError(
-                f"KernelRejection(kind={self.kind!r}) must not carry `partial_records` "
-                "(that is execution-failure-only)"
+                f"KernelRejection(kind={self.kind!r}) must not carry `partial_records` (that is execution-failure-only)"
             )
 
 
@@ -200,29 +195,20 @@ class KernelResultEnvelope:
                     "admission failures)"
                 )
         elif self.transition is None:
-            raise ValueError(
-                f"KernelResultEnvelope(status={self.status!r}) requires a transition"
-            )
+            raise ValueError(f"KernelResultEnvelope(status={self.status!r}) requires a transition")
 
         # Payload <-> status agreement
         if self.status == "completed":
             if not isinstance(self.payload, CompletedResult):
-                raise TypeError(
-                    "KernelResultEnvelope(status='completed') payload must be a "
-                    "CompletedResult"
-                )
+                raise TypeError("KernelResultEnvelope(status='completed') payload must be a CompletedResult")
         elif self.status == "external-effect-request":
             if not isinstance(self.payload, ExternalEffectRequest):
                 raise TypeError(
-                    "KernelResultEnvelope(status='external-effect-request') payload "
-                    "must be an ExternalEffectRequest"
+                    "KernelResultEnvelope(status='external-effect-request') payload must be an ExternalEffectRequest"
                 )
         elif self.status == "rejected":
             if not isinstance(self.payload, KernelRejection):
-                raise TypeError(
-                    "KernelResultEnvelope(status='rejected') payload must be a "
-                    "KernelRejection"
-                )
+                raise TypeError("KernelResultEnvelope(status='rejected') payload must be a KernelRejection")
             if self.payload.kind == "profile-admission":
                 raise ValueError(
                     "KernelResultEnvelope(status='rejected') payload kind must not "
@@ -230,14 +216,10 @@ class KernelResultEnvelope:
                 )
         elif self.status == "profile-rejected":
             if not isinstance(self.payload, KernelRejection):
-                raise TypeError(
-                    "KernelResultEnvelope(status='profile-rejected') payload must be "
-                    "a KernelRejection"
-                )
+                raise TypeError("KernelResultEnvelope(status='profile-rejected') payload must be a KernelRejection")
             if self.payload.kind != "profile-admission":
                 raise ValueError(
-                    "KernelResultEnvelope(status='profile-rejected') payload kind "
-                    "must be 'profile-admission'"
+                    "KernelResultEnvelope(status='profile-rejected') payload kind must be 'profile-admission'"
                 )
 
 

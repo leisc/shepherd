@@ -131,8 +131,8 @@ def test_clonefile_commit_into_missing_destination_materializes_full_tree(tmp_pa
     backend.write_file("run", "new.txt", b"NEW")
     backend.commit_layer("run", into_scope_id="ground")
     ground = backend.working_path("ground")
-    assert (ground / "new.txt").read_bytes() == b"NEW"      # the delta
-    assert (ground / "a.txt").read_bytes() == b"A"          # ... and the full base tree
+    assert (ground / "new.txt").read_bytes() == b"NEW"  # the delta
+    assert (ground / "a.txt").read_bytes() == b"A"  # ... and the full base tree
     # A subsequent fork composes on the merged state.
     backend.create_layer("run2", parent_scope_id="ground")
     wp2 = backend.working_path("run2")

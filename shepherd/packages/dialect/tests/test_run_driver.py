@@ -144,8 +144,12 @@ def test_run_through_the_verbs_returns_identity_in_portable_core(mg: VcsCore, tm
     """Also graduates dialect-jailed-run check A1: a reversible run's
     working_path is verified distinct from ground (Phase D acceptance)."""
     outcome = mg.execute_recorded(
-        "runtime", "run", scope=mg.ground,
-        task_id=DEMO_TASK_ID, args={"marker": "pd5"}, may="ReadOnly",
+        "runtime",
+        "run",
+        scope=mg.ground,
+        task_id=DEMO_TASK_ID,
+        args={"marker": "pd5"},
+        may="ReadOnly",
     )
     payload = outcome.value.transitions[0].payload
     assert payload["schema"] == "shepherd/run/v0"
@@ -283,9 +287,7 @@ def test_run_driver_schema_marks_python_only_params_nonprojectable() -> None:
 
 
 def test_body_is_pointed_at_the_run_scopes_working_path(mg: VcsCore) -> None:
-    outcome = mg.execute_recorded(
-        "runtime", "run", scope=mg.ground, task_id=f"{__name__}:path_aware_task"
-    )
+    outcome = mg.execute_recorded("runtime", "run", scope=mg.ground, task_id=f"{__name__}:path_aware_task")
     payload = outcome.value.transitions[0].payload
     saw = payload["portable_core"]["outcome"]["result"]["saw_working_path"]
     assert saw == payload["device_projection"]["working_path"]
@@ -350,9 +352,7 @@ def test_run_specifier_validation_and_unknown_params(mg: VcsCore) -> None:
     with pytest.raises(ValueError, match="requires exactly one of: task_body, task_id"):
         mg.execute_recorded("runtime", "run", scope=mg.ground)
     with pytest.raises(ValueError, match="accepts only one of: task_body, task_id"):
-        mg.execute_recorded(
-            "runtime", "run", scope=mg.ground, task_body=demo_task, task_id=DEMO_TASK_ID
-        )
+        mg.execute_recorded("runtime", "run", scope=mg.ground, task_body=demo_task, task_id=DEMO_TASK_ID)
     with pytest.raises(ValueError, match="unknown parameter"):
         mg.execute_recorded("runtime", "run", scope=mg.ground, task_id=DEMO_TASK_ID, tsak_id="typo")
     with pytest.raises(ValueError, match=r"unknown parameter.*envelope"):
@@ -396,9 +396,7 @@ def test_run_driver_keeps_one_enforced_may_resolution_site() -> None:
     resolve_may_calls = [
         node
         for node in ast.walk(tree)
-        if isinstance(node, ast.Call)
-        and isinstance(node.func, ast.Name)
-        and node.func.id == "resolve_may"
+        if isinstance(node, ast.Call) and isinstance(node.func, ast.Name) and node.func.id == "resolve_may"
     ]
 
     assert len(resolve_may_calls) == 1
@@ -438,7 +436,9 @@ def test_cli_route_mg_exec_dispatches_the_run(mg: VcsCore) -> None:
     payload = outcome.value.transitions[0].payload
     assert payload["schema"] == "shepherd/run/v0"
     assert payload["portable_core"]["may"] == {
-        "declared": "Permissive", "resolved": "Permissive", "source": "declared",
+        "declared": "Permissive",
+        "resolved": "Permissive",
+        "source": "declared",
     }
 
 
@@ -455,9 +455,7 @@ def test_literal_canonical_cli_runtime_run_and_operation_show(
     monkeypatch.chdir(root)
     monkeypatch.syspath_prepend(str(root))
     (root / "row6_task.py").write_text(
-        "def run(stack, marker='ok'):\n"
-        "    del stack\n"
-        "    return {'marker': marker}\n",
+        "def run(stack, marker='ok'):\n    del stack\n    return {'marker': marker}\n",
         encoding="utf-8",
     )
 
@@ -465,11 +463,11 @@ def test_literal_canonical_cli_runtime_run_and_operation_show(
     init = runner.invoke(main, ["init", "."])
     assert init.exit_code == 0, init.output
     (root / "vcscore.toml").write_text(
-        '[bindings.filesystem]\n'
+        "[bindings.filesystem]\n"
         'type = "filesystem"\n'
         'backend = "clonefile"\n'
-        '\n'
-        '[bindings.runtime]\n'
+        "\n"
+        "[bindings.runtime]\n"
         'type = "shepherd.run_driver"\n',
         encoding="utf-8",
     )
@@ -507,7 +505,11 @@ def test_undeclared_may_runs_permissive_and_is_recorded_as_defaulted(mg: VcsCore
     provenance — the defaulted population is countable, never silent.
     """
     outcome = mg.execute_recorded(
-        "runtime", "run", scope=mg.ground, task_id=DEMO_TASK_ID, args={"marker": "loud"},
+        "runtime",
+        "run",
+        scope=mg.ground,
+        task_id=DEMO_TASK_ID,
+        args={"marker": "loud"},
     )
     core = outcome.value.transitions[0].payload["portable_core"]
     assert core["may"] == {"declared": None, "resolved": "Permissive", "source": "defaulted"}

@@ -140,7 +140,9 @@ def test_substrate_store_allows_multiple_candidate_ids_for_one_operation_binding
 
 
 def test_substrate_store_archives_unselected_candidate_idempotently(tmp_path) -> None:
-    store = SubstrateStore.open_or_init(tmp_path / "trace.git", _identity(store_id="store_trace", kind="shepherd.trace"))
+    store = SubstrateStore.open_or_init(
+        tmp_path / "trace.git", _identity(store_id="store_trace", kind="shepherd.trace")
+    )
     candidate = store.create_unsafe_unprepared_candidate(
         operation_id="op trace",
         binding="trace",
@@ -404,9 +406,10 @@ def test_keyed_json_tree_content_digest_names_resulting_state(tmp_path) -> None:
         ),
     )
 
-    assert store.read_revision_metadata(incremental_head).content_digest == store.read_revision_metadata(
-        one_shot_head
-    ).content_digest
+    assert (
+        store.read_revision_metadata(incremental_head).content_digest
+        == store.read_revision_metadata(one_shot_head).content_digest
+    )
     assert {entry["path"] for entry in incremental_plan.entries} == {
         "revision.json",
         "meta/structured-content.json",
@@ -756,9 +759,7 @@ def test_substrate_store_accepts_cross_operation_evidence_citation(tmp_path) -> 
         evidence_resolver=lambda _ref: evidence_record,
     )
     # Read-side validation must also accept cross-operation evidence.
-    provenance = store.validate_prepared_candidate(
-        candidate.head, evidence_resolver=lambda _ref: evidence_record
-    )
+    provenance = store.validate_prepared_candidate(candidate.head, evidence_resolver=lambda _ref: evidence_record)
     assert provenance.preparation.operation_id == "op-b"
     assert provenance.preparation.evidence_refs[0].evidence_digest == evidence.evidence_digest
 

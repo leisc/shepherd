@@ -21,6 +21,7 @@ class SchemaGenerationError(Exception):
         self.field_name = field_name
         super().__init__(message)
 
+
 # =============================================================================
 # Constants
 # =============================================================================

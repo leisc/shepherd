@@ -81,7 +81,7 @@ def test_workspace_task_handle_delegates_definition_json_and_run() -> None:
     definition = _DefinitionStub({"task_id": "sample_tasks.fix_bug", "version": "v1"})
     run_result = object()
     workspace = _WorkspaceStub(tasks=_TasksStub(definition), run_result=run_result)
-    task = WorkspaceTask(workspace, "sample_tasks.fix_bug") # type: ignore[arg-type]
+    task = WorkspaceTask(workspace, "sample_tasks.fix_bug")  # type: ignore[arg-type]
     repo = object()
 
     assert task.task_ref == "sample_tasks.fix_bug"
@@ -107,7 +107,7 @@ def test_workspace_task_handle_delegates_definition_json_and_run() -> None:
 
 def test_workspace_task_missing_definition_json_is_component_coverage() -> None:
     workspace = _WorkspaceStub(tasks=_TasksStub(None), run_result=object())
-    task = WorkspaceTask(workspace, "sample_tasks.missing") # type: ignore[arg-type]
+    task = WorkspaceTask(workspace, "sample_tasks.missing")  # type: ignore[arg-type]
 
     assert task.definition is None
     assert task.to_json() == {"task_ref": "sample_tasks.missing", "definition": None}

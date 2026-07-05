@@ -186,7 +186,7 @@ def test_run_output_ref_is_immutable_query_value() -> None:
     assert ref.descriptor == descriptor
     assert ref.changed_paths == ("candidate.txt",)
     with pytest.raises(FrozenInstanceError):
-        ref.state = "selected" # type: ignore[misc]
+        ref.state = "selected"  # type: ignore[misc]
 
 
 def test_run_output_citation_is_trace_value_without_custody_state() -> None:
@@ -220,7 +220,7 @@ def test_run_output_citation_is_trace_value_without_custody_state() -> None:
     assert not hasattr(citation, "state")
     assert not hasattr(citation, "settlement_ref")
     with pytest.raises(FrozenInstanceError):
-        citation.candidate_ref = "refs/vcscore/candidates/2" # type: ignore[misc]
+        citation.candidate_ref = "refs/vcscore/candidates/2"  # type: ignore[misc]
 
 
 def test_retained_query_owner_shape_is_distinct_from_run_owner() -> None:
@@ -240,7 +240,7 @@ def test_run_output_owner_rejects_incomplete_or_mixed_identity() -> None:
         RunOutputOwner(kind="retained-query", run_id="run-1")
 
     with pytest.raises(ValueError, match="owner kind"):
-        RunOutputOwner(kind="workspace") # type: ignore[arg-type]
+        RunOutputOwner(kind="workspace")  # type: ignore[arg-type]
 
 
 def test_run_output_descriptor_rejects_invalid_materialization_kind() -> None:
@@ -250,7 +250,7 @@ def test_run_output_descriptor_rejects_invalid_materialization_kind() -> None:
             world_binding="workspace",
             store_id="store",
             resource_id="resource",
-            materialization_kind="blob", # type: ignore[arg-type]
+            materialization_kind="blob",  # type: ignore[arg-type]
         )
 
 
@@ -287,7 +287,7 @@ def test_run_output_ref_rejects_invalid_state_and_reason_usage() -> None:
             identity=identity,
             owner=owner,
             descriptor=descriptor,
-            state="pending", # type: ignore[arg-type]
+            state="pending",  # type: ignore[arg-type]
             parent_basis_world_oid="world-parent",
             candidate_ref="refs/vcscore/candidates/1",
             store_id="store",
@@ -329,7 +329,7 @@ def test_run_output_ref_rejects_invalid_state_and_reason_usage() -> None:
             candidate_ref="refs/vcscore/candidates/1",
             store_id="store",
             resource_id="resource",
-            changed_paths=["candidate.txt"], # type: ignore[arg-type]
+            changed_paths=["candidate.txt"],  # type: ignore[arg-type]
         )
 
 
@@ -591,11 +591,13 @@ def test_run_output_descriptor_fact_projects_by_output_name() -> None:
     frontier_slice = store.resolve_frontier(READER, cutoff.frontier_id)
     frontier_records = project_run_output_descriptors(frontier_slice, "exec:run-1")
     assert frontier_records["workspace"].locator.frontier_id == "frontier:run-1"
-    assert resolve_run_output_descriptor(frontier_slice, frontier_records["workspace"].locator) == frontier_records[
-        "workspace"
-    ]
-    assert resolve_run_output_descriptor_from_store(store, READER, frontier_records["workspace"].locator) == (
-        frontier_records["workspace"]
+    assert (
+        resolve_run_output_descriptor(frontier_slice, frontier_records["workspace"].locator)
+        == frontier_records["workspace"]
+    )
+    assert (
+        resolve_run_output_descriptor_from_store(store, READER, frontier_records["workspace"].locator)
+        == (frontier_records["workspace"])
     )
     with pytest.raises(ValueError, match="frontier_id disagrees"):
         project_run_output_descriptors(frontier_slice, "exec:run-1", frontier_id="frontier:other")

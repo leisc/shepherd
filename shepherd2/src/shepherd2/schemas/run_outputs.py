@@ -198,7 +198,7 @@ class RunOutputCitation:
     candidate_ref: str
     store_id: str
     resource_id: str
-    changed_paths: tuple[str,...] = ()
+    changed_paths: tuple[str, ...] = ()
     descriptor_locator: RunOutputDescriptorLocator | None = None
 
     def __post_init__(self) -> None:
@@ -232,7 +232,7 @@ class RunOutputRef:
     candidate_ref: str
     store_id: str
     resource_id: str
-    changed_paths: tuple[str,...] = ()
+    changed_paths: tuple[str, ...] = ()
     settlement_ref: str | None = None
     invalid_reason: str | None = None
     descriptor_locator: RunOutputDescriptorLocator | None = None

@@ -126,8 +126,7 @@ class ConfinedRootTaskProvider:
                 error = confined_task_error(proc.stderr)
                 raise ConfinedTaskExecutionError.body(
                     refusal_type=error["type"],
-                    detail="confined workspace task refused "
-                    f"({error['type']}): {error['message']}",
+                    detail=f"confined workspace task refused ({error['type']}): {error['message']}",
                 )
             try:
                 payload = json.loads(proc.stdout)

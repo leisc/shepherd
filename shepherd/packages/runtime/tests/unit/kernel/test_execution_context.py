@@ -54,11 +54,7 @@ def test_execution_context_equal_triples_are_equal() -> None:
     """Structural equality on the triple, per CONTRACTS E0."""
     from shepherd_runtime.kernel import ExecutionContext
 
-    a = ExecutionContext(
-        binding_env_ref="env:a", region_ref="region:a", authority_ref="auth:a"
-    )
-    b = ExecutionContext(
-        binding_env_ref="env:a", region_ref="region:a", authority_ref="auth:a"
-    )
+    a = ExecutionContext(binding_env_ref="env:a", region_ref="region:a", authority_ref="auth:a")
+    b = ExecutionContext(binding_env_ref="env:a", region_ref="region:a", authority_ref="auth:a")
     assert a == b
     assert hash(a) == hash(b)

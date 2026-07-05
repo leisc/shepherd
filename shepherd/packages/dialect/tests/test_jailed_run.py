@@ -58,8 +58,11 @@ def test_jailed_permissive_run_captures_the_artifact(mg: VcsCore) -> None:
     """The happy path: jailed write lands in the carrier, captured at merge."""
     try:
         outcome = mg.execute_recorded(
-            "runtime", "run", scope=mg.ground,
-            task_id=f"{__name__}:noop_body", may="Permissive",
+            "runtime",
+            "run",
+            scope=mg.ground,
+            task_id=f"{__name__}:noop_body",
+            may="Permissive",
             provider=DeterministicFakeProvider(),
         )
     except JailNotEstablished as exc:
@@ -69,15 +72,16 @@ def test_jailed_permissive_run_captures_the_artifact(mg: VcsCore) -> None:
     payload = outcome.value.transitions[0].payload
     assert payload["portable_core"]["outcome"]["status"] == "ok"
     assert payload["portable_core"]["may"] == {
-        "declared": "Permissive", "resolved": "Permissive", "source": "declared",
+        "declared": "Permissive",
+        "resolved": "Permissive",
+        "source": "declared",
     }
     assert payload["device_projection"]["provider"] == "deterministic-fake"
     # Capture-lane traced: the jailed subprocess's write surfaces as a
     # recorded effect on merged history (implicit capture at merge).
     effects = list(mg.log(max_count=30))
     assert any(
-        e.metadata.get("type") == "FileCreate" and e.metadata.get("path") == "fake-artifact.txt"
-        for e in effects
+        e.metadata.get("type") == "FileCreate" and e.metadata.get("path") == "fake-artifact.txt" for e in effects
     ), "the jailed body's write must be captured into the merged history"
 
 
@@ -85,8 +89,11 @@ def test_jailed_readonly_refused_at_the_syscall_workspace_pristine(mg: VcsCore, 
     """may=ReadOnly: the jail refuses the write; discard leaves ground pristine."""
     with pytest.raises(RuntimeError, match="confined body refused"):
         mg.execute_recorded(
-            "runtime", "run", scope=mg.ground,
-            task_id=f"{__name__}:noop_body", may="ReadOnly",
+            "runtime",
+            "run",
+            scope=mg.ground,
+            task_id=f"{__name__}:noop_body",
+            may="ReadOnly",
             provider=DeterministicFakeProvider(),
         )
     ground_root = (tmp_path / "ws").resolve()
@@ -99,7 +106,10 @@ def test_unknown_may_profile_refuses_fail_closed(mg: VcsCore) -> None:
     """A profile with no lowering refuses rather than running weaker."""
     with pytest.raises(UnsupportedMayProfileError, match="no v0 lowering"):
         mg.execute_recorded(
-            "runtime", "run", scope=mg.ground,
-            task_id=f"{__name__}:noop_body", may="Standard",
+            "runtime",
+            "run",
+            scope=mg.ground,
+            task_id=f"{__name__}:noop_body",
+            may="Standard",
             provider=DeterministicFakeProvider(),
         )

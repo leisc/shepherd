@@ -61,7 +61,9 @@ def project_trace_slice_to_view(trace_slice: TraceSlice, *, selection: TraceSlic
     all_nodes, lanes, edges = _compact_execution_created_nodes(all_nodes, lanes, edges)
     run = _run(trace_slice, all_nodes, edges, selection)
     source = _source(trace_slice, selection)
-    return TraceView(source=source, run=run, lanes=lanes, nodes=all_nodes, edges=edges, resources=tuple(resources.values()))
+    return TraceView(
+        source=source, run=run, lanes=lanes, nodes=all_nodes, edges=edges, resources=tuple(resources.values())
+    )
 
 
 def _compact_execution_created_nodes(
@@ -89,7 +91,9 @@ def _compact_execution_created_nodes(
         for index, node_id in enumerate(lane.node_ids):
             if node_id not in hidden:
                 continue
-            replacement[node_id] = next((candidate for candidate in lane.node_ids[index + 1 :] if candidate not in hidden), "")
+            replacement[node_id] = next(
+                (candidate for candidate in lane.node_ids[index + 1 :] if candidate not in hidden), ""
+            )
 
     compacted_nodes = tuple(node for node in nodes if node.id not in hidden)
     visible_ids = {node.id for node in compacted_nodes}
@@ -296,8 +300,7 @@ def _lanes(occurrences: tuple[Any, ...]) -> tuple[TraceLane, ...]:
     for occurrence in occurrences:
         node_ids_by_lane[occurrence.trace_owner_id].append(_occurrence_id(occurrence))
     return tuple(
-        TraceLane(id=lane_id, label=lane_id, node_ids=tuple(node_ids))
-        for lane_id, node_ids in node_ids_by_lane.items()
+        TraceLane(id=lane_id, label=lane_id, node_ids=tuple(node_ids)) for lane_id, node_ids in node_ids_by_lane.items()
     )
 
 

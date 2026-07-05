@@ -23,9 +23,7 @@ class SchemaVersionError(ValueError):
 
     def __init__(self, found: str) -> None:
         self.found = found
-        super().__init__(
-            f"unknown trace-view schema_version {found!r}; this viewer understands {SCHEMA_VERSION!r}"
-        )
+        super().__init__(f"unknown trace-view schema_version {found!r}; this viewer understands {SCHEMA_VERSION!r}")
 
 
 def to_json(tv: TraceView) -> dict[str, Any]:

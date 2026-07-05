@@ -124,7 +124,9 @@ def test_app_blocker_projection_skips_non_app_visible_inventory() -> None:
         domain="workspace_authority",
         kind="workspace_authority_pending",
         locator="/repo/.vcscore/workspace-authority/missing.json",
-        health=missing(issue_codes=("workspace_authority_missing_file",), lifecycle="recoverable", authority_role="authoritative"),
+        health=missing(
+            issue_codes=("workspace_authority_missing_file",), lifecycle="recoverable", authority_role="authoritative"
+        ),
         fields={},
         issue_code="workspace_authority_missing_file",
     )

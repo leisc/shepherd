@@ -77,7 +77,9 @@ def materialize(
     substrate = registry.get(substrate_ref)
 
     unsupported = tuple(
-        target.envelope.schema_ref for target in targets if target.envelope.schema_ref not in substrate.declaration_schemas
+        target.envelope.schema_ref
+        for target in targets
+        if target.envelope.schema_ref not in substrate.declaration_schemas
     )
     if unsupported:
         raise TraceStoreError(f"substrate {substrate_ref!r} does not accept schemas: {', '.join(unsupported)}")
@@ -89,7 +91,9 @@ def materialize(
         if draft.mode != "capture":
             raise TraceStoreError("materialize substrates may only emit capture drafts")
         if draft.schema_ref not in substrate.capture_schemas:
-            raise TraceStoreError(f"substrate {substrate_ref!r} emitted unsupported capture schema {draft.schema_ref!r}")
+            raise TraceStoreError(
+                f"substrate {substrate_ref!r} emitted unsupported capture schema {draft.schema_ref!r}"
+            )
 
     produced_record_ids: tuple[FactId, ...] = ()
     if result.capture_drafts:

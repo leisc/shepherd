@@ -421,7 +421,7 @@ def test_retained_output_authority_refuses_preclassified_request_errors() -> Non
 )
 def test_readwrite_retained_output_authority_refuses_malformed_view_before_matching(
     overrides: dict[str, object],
-    missing_fields: tuple[str,...],
+    missing_fields: tuple[str, ...],
 ) -> None:
     provider = retained_output_authority_provider_for_profile(normalize_may_profile("ReadWrite"))
     mapping = _retained_output_request(mutates=True).match_view.as_mapping()

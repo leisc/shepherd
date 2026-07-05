@@ -159,9 +159,7 @@ class ProviderEvent:
             raise ProviderEventError("payload must be a mapping")
         reserved = sorted(_RESERVED_PAYLOAD_KEYS & set(self.payload))
         if reserved:
-            raise ProviderEventError(
-                "provider event payload uses projection-owned fields: " + ", ".join(reserved)
-            )
+            raise ProviderEventError("provider event payload uses projection-owned fields: " + ", ".join(reserved))
 
     def stable_payload(self) -> dict[str, object]:
         """Return the stable event payload used by projections."""

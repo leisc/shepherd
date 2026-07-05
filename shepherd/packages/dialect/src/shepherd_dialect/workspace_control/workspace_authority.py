@@ -107,9 +107,7 @@ def workspace_retained_output_authority_policy_for_grant(
         allow_reason_code="gitrepo_grant_retained_output_selection_match",
         outside_match_reason_code="gitrepo_grant_retained_output_selection_outside_effective_grant",
         denied_when_mutates_outside_match=True,
-        mutating_outside_match_reason_code=(
-            "gitrepo_grant_retained_output_selection_mutates_outside_effective_grant"
-        ),
+        mutating_outside_match_reason_code=("gitrepo_grant_retained_output_selection_mutates_outside_effective_grant"),
         invalid_view_reason_code_prefix="retained_output_match_view_invalid",
         match_evaluation_failed_reason_code_prefix="retained_output_match_evaluation_failed",
         unclassifiable_reason_code="unclassifiable_retained_output",

@@ -56,20 +56,14 @@ def compose_effect_registry() -> EffectTypeRegistry:
 
     for effect_type in sorted(discovered):
         if effect_type in KERNEL_EFFECT_REGISTRY:
-            raise EffectContributorConflictError(
-                effect_type, "kernel", contributor_by_type[effect_type]
-            )
+            raise EffectContributorConflictError(effect_type, "kernel", contributor_by_type[effect_type])
         if effect_type in runtime_effect_types:
-            raise EffectContributorConflictError(
-                effect_type, "runtime", contributor_by_type[effect_type]
-            )
+            raise EffectContributorConflictError(effect_type, "runtime", contributor_by_type[effect_type])
 
     return KERNEL_EFFECT_REGISTRY.extend(runtime_effect_types).extend(discovered)
 
 
-def decode_effect(
-    data: dict[str, Any], *, registry: EffectTypeRegistry | None = None
-) -> Effect:
+def decode_effect(data: dict[str, Any], *, registry: EffectTypeRegistry | None = None) -> Effect:
     """Decode an effect using an explicit or composed runtime registry."""
     decode_registry = registry or compose_effect_registry()
     return effect_from_dict(data, registry=decode_registry)

@@ -156,7 +156,7 @@ def run_args_ref(*, run_ref: str, args_digest: str) -> str:
     return f"{run_ref}:args:{digest_tail[:16]}"
 
 
-def iter_run_artifact_input_refs(value: object) -> tuple[RunArtifactInputRef,...]:
+def iter_run_artifact_input_refs(value: object) -> tuple[RunArtifactInputRef, ...]:
     """Return all artifact input refs embedded in a JSON-shaped argument value."""
     refs: list[RunArtifactInputRef] = []
     _collect_run_artifact_input_refs(value, refs)

@@ -326,7 +326,9 @@ def test_world_operation_journal_round_trips_closed_chain_after_reopen(tmp_path)
     selected = {"workspace": candidate.head}
     outcomes = (_candidate_outcome(manager, candidate_commit, final_operation_id="op-loop"),)
     p1_snapshot = _snapshot(
-        manager.substrate_head("store_workspace", binding="workspace", head=candidate.head, role="shepherd.WorkspaceRef")
+        manager.substrate_head(
+            "store_workspace", binding="workspace", head=candidate.head, role="shepherd.WorkspaceRef"
+        )
     )
     p1 = manager.create_unsafe_world(
         snapshot=p1_snapshot,
@@ -367,7 +369,9 @@ def test_world_operation_journal_world_committed_derives_final_evidence_from_wor
     operation_id = "op-derive-final"
     candidate, candidate_commit = _prepared_workspace_candidate(manager, operation_id, workspace)
     snapshot = _snapshot(
-        manager.substrate_head("store_workspace", binding="workspace", head=candidate.head, role="shepherd.WorkspaceRef")
+        manager.substrate_head(
+            "store_workspace", binding="workspace", head=candidate.head, role="shepherd.WorkspaceRef"
+        )
     )
     outcome = candidate_outcome_for_commit(
         manager.store("store_workspace"),
@@ -647,7 +651,10 @@ def test_world_operation_journal_open_surfaces_authority_conflict_without_retry(
     monkeypatch.setattr(co_write_mod, "run_update_ref_stdin", injected)
     with pytest.raises(InvalidRepositoryStateError, match="authority ref precondition"):
         manager.open_operation_journal(
-            operation_id="op-conflict", operation_kind="shepherd.task", target_ref=DEFAULT_GROUND_REF, input_world_oid=p0
+            operation_id="op-conflict",
+            operation_kind="shepherd.task",
+            target_ref=DEFAULT_GROUND_REF,
+            input_world_oid=p0,
         )
 
     assert state["n"] == 1  # surfaced immediately, NOT retried
@@ -842,7 +849,9 @@ def test_world_operation_journal_fsck_reports_missing_candidate_ref(tmp_path) ->
         world_store=manager.world_store,
     )
     snapshot = _snapshot(
-        manager.substrate_head("store_workspace", binding="workspace", head=candidate.head, role="shepherd.WorkspaceRef")
+        manager.substrate_head(
+            "store_workspace", binding="workspace", head=candidate.head, role="shepherd.WorkspaceRef"
+        )
     )
     world_oid = manager.create_unsafe_world(
         snapshot=snapshot,
@@ -1074,7 +1083,9 @@ def test_world_operation_journal_fsck_rejects_candidate_outcome_drift_from_world
     operation_id = "op-outcome-drift"
     candidate, candidate_commit = _prepared_workspace_candidate(manager, operation_id, workspace)
     snapshot = _snapshot(
-        manager.substrate_head("store_workspace", binding="workspace", head=candidate.head, role="shepherd.WorkspaceRef")
+        manager.substrate_head(
+            "store_workspace", binding="workspace", head=candidate.head, role="shepherd.WorkspaceRef"
+        )
     )
     outcome = {"binding": "workspace", "candidate": candidate.head, "outcome": "selected"}
     world_oid = manager.create_unsafe_world(
@@ -1213,7 +1224,9 @@ def test_world_operation_journal_fsck_rejects_candidate_ref_drift_after_finaliza
     operation_id = "op-mutated-candidate-refs"
     candidate, candidate_commit = _prepared_workspace_candidate(manager, operation_id, workspace)
     snapshot = _snapshot(
-        manager.substrate_head("store_workspace", binding="workspace", head=candidate.head, role="shepherd.WorkspaceRef")
+        manager.substrate_head(
+            "store_workspace", binding="workspace", head=candidate.head, role="shepherd.WorkspaceRef"
+        )
     )
     world_oid = manager.create_unsafe_world(
         snapshot=snapshot,

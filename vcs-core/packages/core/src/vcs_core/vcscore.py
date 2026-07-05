@@ -238,7 +238,7 @@ class VcsCore:
         allow_activate_init: bool = True,
     ) -> None:
         self._workspace = workspace
-        self._repo_path = os.path.join(workspace, ".vcscore") # noqa: PTH118
+        self._repo_path = os.path.join(workspace, ".vcscore")  # noqa: PTH118
         self._store = store or Store(self._repo_path)
         self._allow_activate_init = allow_activate_init
         self._pipeline = RecordingPipeline(self._store)
@@ -284,7 +284,7 @@ class VcsCore:
                 sub.bind_runtime(self._runtime)
         self._lock = threading.RLock()
         self._session_id = uuid.uuid4().hex[:12]
-        self._active_surface_stack: ContextVar[tuple[ActiveSurface,...]] = ContextVar(
+        self._active_surface_stack: ContextVar[tuple[ActiveSurface, ...]] = ContextVar(
             f"vcs_core_active_surface_stack_{self._session_id}",
             default=(),
         )
@@ -335,7 +335,7 @@ class VcsCore:
         return self._store
 
     @property
-    def lifecycle_substrates(self) -> tuple[object,...]:
+    def lifecycle_substrates(self) -> tuple[object, ...]:
         """Substrates that participate in activate/branch/merge/discard hooks."""
         return tuple(self._lifecycle_substrates)
 
@@ -374,7 +374,7 @@ class VcsCore:
             self._pipeline.restore_execution_context(prev)
 
     @property
-    def bindings(self) -> tuple[BoundSubstrate,...]:
+    def bindings(self) -> tuple[BoundSubstrate, ...]:
         """Registered substrate bindings (read-only)."""
         return tuple(self._bindings)
 
@@ -441,9 +441,9 @@ class VcsCore:
         self,
         *,
         phase: str | None = None,
-        prepared_effect_counts: tuple[tuple[str, int],...] | None = None,
-        prepared_substrates: tuple[str,...] | None = None,
-        completed_substrates: tuple[str,...] | None = None,
+        prepared_effect_counts: tuple[tuple[str, int], ...] | None = None,
+        prepared_substrates: tuple[str, ...] | None = None,
+        completed_substrates: tuple[str, ...] | None = None,
     ) -> LifecycleRun:
         return _vcscore_lifecycle._update_lifecycle_run(
             self,
@@ -506,7 +506,7 @@ class VcsCore:
             raise StaleScopeError(msg)
         return tracked
 
-    def _active_ancestor_states(self, scope: ScopeInfo) -> tuple[LifecycleScopeState,...]:
+    def _active_ancestor_states(self, scope: ScopeInfo) -> tuple[LifecycleScopeState, ...]:
         ancestors: list[LifecycleScopeState] = []
         current = scope
         while current.name != self.ground.name:
@@ -756,10 +756,10 @@ class VcsCore:
     def archive_orphaned_operations(self) -> list[str]:
         return _vcscore_lifecycle.archive_orphaned_operations(self)
 
-    def list_orphaned_scope_refs(self) -> tuple[str,...]:
+    def list_orphaned_scope_refs(self) -> tuple[str, ...]:
         return _vcscore_lifecycle.list_orphaned_scope_refs(self)
 
-    def list_orphaned_operations(self) -> tuple[OperationSummary,...]:
+    def list_orphaned_operations(self) -> tuple[OperationSummary, ...]:
         return _vcscore_queries.orphaned_operations(self)
 
     # --- Lifecycle notifications ---
@@ -917,7 +917,7 @@ class VcsCore:
         failure_policy: str = "abort_archive",
         operation_id: str | None = None,
         operation_metadata: dict[str, object] | None = None,
-        allowed_blocker_item_ids: tuple[str,...] = (),
+        allowed_blocker_item_ids: tuple[str, ...] = (),
     ) -> Iterator[OperationRefInfo | None]:
         with _vcscore_runtime.runtime_activity(
             self,
@@ -1295,7 +1295,7 @@ class VcsCore:
                     covered_paths=covered_paths,
                     failed_command_origin=failed_origin,
                 )
-            except Exception: # noqa: BLE001
+            except Exception:  # noqa: BLE001
                 logger.warning(
                     "Failed to shadow capture reduction %s through workspace driver.",
                     reducer_id,
@@ -1687,7 +1687,7 @@ class VcsCore:
         safe_binding = workspace_output_binding.replace("-", "_")
         return f"wv_{safe_command}_{safe_binding}_{operation_id}_{source_suffix}"
 
-    def recover_workspace_authority(self, mode: str = "resume") -> tuple[str,...]:
+    def recover_workspace_authority(self, mode: str = "resume") -> tuple[str, ...]:
         if mode != "resume":
             raise ValueError(f"Unknown workspace authority recovery mode: {mode!r}")
         from vcs_core._readiness_admission import (
@@ -1819,7 +1819,7 @@ class VcsCore:
             self.store.advance_materialized()
         clear_pending_workspace_authority(self._repo_path, pending.operation_id)
 
-    def recover_authority_settlements(self) -> tuple[str,...]:
+    def recover_authority_settlements(self) -> tuple[str, ...]:
         return _vcscore_lifecycle.recover_authority_settlements(self)
 
     def _python_runtime_capture_candidate(
@@ -1831,7 +1831,7 @@ class VcsCore:
         operation_id: str,
         source_operation_id: str,
         state: Any,
-        candidate_parents: tuple[str,...],
+        candidate_parents: tuple[str, ...],
         effects: Sequence[EffectRecord],
         message: str | None,
     ) -> Any:
@@ -2026,11 +2026,11 @@ class VcsCore:
         return str(manager.world_store.repo.references[ref].target)
 
     @staticmethod
-    def _current_v2_workspace_heads(manager: WorldStorageManager, ref: str) -> tuple[str,...]:
+    def _current_v2_workspace_heads(manager: WorldStorageManager, ref: str) -> tuple[str, ...]:
         return VcsCore._current_v2_binding_heads(manager, ref, "workspace")
 
     @staticmethod
-    def _current_v2_binding_heads(manager: WorldStorageManager, ref: str, binding: str) -> tuple[str,...]:
+    def _current_v2_binding_heads(manager: WorldStorageManager, ref: str, binding: str) -> tuple[str, ...]:
         world_oid = VcsCore._current_v2_world_oid(manager, ref)
         if world_oid is None:
             return ()
@@ -2411,7 +2411,7 @@ class VcsCore:
         prefix: str,
         *,
         scope: ScopeInfo | None = None,
-    ) -> tuple[tuple[str, dict[str, object]],...]:
+    ) -> tuple[tuple[str, dict[str, object]], ...]:
         """Read JSON-object blobs under a prefix from the selected revision for a binding."""
         if not binding_name:
             raise ValueError("binding_name is required")
@@ -2499,7 +2499,7 @@ class VcsCore:
         parent: ScopeInfo | str | None = None,
         binding: str | None = None,
         state: RetainedOutputState | None = None,
-    ) -> tuple[RetainedOutputQueryResult,...]:
+    ) -> tuple[RetainedOutputQueryResult, ...]:
         """Classify retained outputs from lower-layer custody and settlement facts."""
         from vcs_core._retained_output_queries import list_retained_outputs
 
@@ -2704,7 +2704,7 @@ class VcsCore:
                 runtime_admission_context=runtime_admission_context,
             )
 
-    def _orphaned_operation_summaries(self) -> tuple[OperationSummary,...]:
+    def _orphaned_operation_summaries(self) -> tuple[OperationSummary, ...]:
         return _vcscore_lifecycle._orphaned_operation_summaries(self)
 
     def _orphaned_operation_world_id(self, operation: OperationRefInfo) -> str:
@@ -2809,7 +2809,7 @@ class VcsCore:
         self,
         attempted: str,
         *,
-        authorized_operations: tuple[ReadinessOperationAuthority,...] = (),
+        authorized_operations: tuple[ReadinessOperationAuthority, ...] = (),
         scope_selector: str | None = None,
         runtime_admission_context: RuntimeAdmissionContext | None = None,
     ) -> None:
@@ -2858,19 +2858,17 @@ class VcsCore:
 
         ensure_session_capture_admitted(self._active_surface(), operation=operation)
 
-    def list_sibling_group_blockers(self) -> tuple[str,...]:
+    def list_sibling_group_blockers(self) -> tuple[str, ...]:
         return _vcscore_lifecycle.list_sibling_group_blockers(self)
 
-    def list_workspace_authority_pending(self) -> tuple[str,...]:
+    def list_workspace_authority_pending(self) -> tuple[str, ...]:
         return workspace_authority_operation_labels(self._repo_path)
 
-    def list_authority_settlement_pending(self) -> tuple[str,...]:
+    def list_authority_settlement_pending(self) -> tuple[str, ...]:
         return authority_settlement_pending_labels(self._repo_path)
 
-    def authority_settlement_pending_records(self) -> tuple[dict[str, object],...]:
-        return tuple(
-            record.to_dict() for record in read_valid_authority_settlement_pending_records(self._repo_path)
-        )
+    def authority_settlement_pending_records(self) -> tuple[dict[str, object], ...]:
+        return tuple(record.to_dict() for record in read_valid_authority_settlement_pending_records(self._repo_path))
 
     def _archive_orphaned_operations_locked(
         self,
@@ -3010,7 +3008,7 @@ class VcsCore:
             if callable(handler):
                 try:
                     handler(scope_name, parent_scope_name)
-                except Exception: # noqa: BLE001
+                except Exception:  # noqa: BLE001
                     logger.warning(
                         "Substrate %s raised during post-merge notification for scope %r; lifecycle state is already committed.",
                         getattr(substrate, "name", substrate),
@@ -3024,7 +3022,7 @@ class VcsCore:
             if callable(handler):
                 try:
                     handler(scope_name)
-                except Exception: # noqa: BLE001
+                except Exception:  # noqa: BLE001
                     logger.warning(
                         "Substrate %s raised during post-discard notification for scope %r; lifecycle state is already committed.",
                         getattr(substrate, "name", substrate),
@@ -3063,7 +3061,7 @@ class VcsCore:
         from vcs_core.config import load_config
         from vcs_core.discovery import resolve_bindings
 
-        repo_path = os.path.join(workspace, ".vcscore") # noqa: PTH118
+        repo_path = os.path.join(workspace, ".vcscore")  # noqa: PTH118
         store = Store.open_existing(repo_path)
 
         config = load_config(workspace)

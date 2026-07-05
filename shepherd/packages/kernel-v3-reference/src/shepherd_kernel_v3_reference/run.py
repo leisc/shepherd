@@ -161,8 +161,7 @@ def validate_observation_stream(
         if state.terminal:
             rejection = KernelRejection(
                 kind="observation-admission",
-                diagnostic="stream has more observations than program needs "
-                           "(state is terminal)",
+                diagnostic="stream has more observations than program needs (state is terminal)",
                 program_ref=state.program_ref,
                 rejection_index=i,
                 rejection_class="state-level",

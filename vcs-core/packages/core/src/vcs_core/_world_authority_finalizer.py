@@ -67,8 +67,7 @@ class WorldAuthorityFinalizer:
                 # journal raises rather than returning None.
                 if outcome is None:
                     raise InvalidRepositoryStateError(
-                        f"complete_existing returned None for {result.operation_id!r} "
-                        "despite missing_ok=False"
+                        f"complete_existing returned None for {result.operation_id!r} despite missing_ok=False"
                     )
                 return outcome
         detail = f": {result.error}" if result.error else f": {result.status}"

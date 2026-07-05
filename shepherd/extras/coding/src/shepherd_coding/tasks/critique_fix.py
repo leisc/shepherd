@@ -45,18 +45,10 @@ class CritiqueResult:
 
 @task(guidance=_CRITIQUE_GUIDANCE)
 async def critique_fix(
-    issue_description: Annotated[
-        str, InputMarker(description="The issue being fixed")
-    ],
-    original_code: Annotated[
-        str, InputMarker(description="Original file content before the fix")
-    ],
-    proposed_fix: Annotated[
-        str, InputMarker(description="Proposed fixed file content")
-    ],
-    fix_description: Annotated[
-        str, InputMarker(description="What the fix claims to do")
-    ] = "",
+    issue_description: Annotated[str, InputMarker(description="The issue being fixed")],
+    original_code: Annotated[str, InputMarker(description="Original file content before the fix")],
+    proposed_fix: Annotated[str, InputMarker(description="Proposed fixed file content")],
+    fix_description: Annotated[str, InputMarker(description="What the fix claims to do")] = "",
 ) -> CritiqueResult:
     """Critique a proposed code fix for correctness and quality.
 

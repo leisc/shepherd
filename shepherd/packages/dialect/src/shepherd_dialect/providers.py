@@ -151,9 +151,7 @@ def _codex_runner_source() -> str:
 def _claude_agent_sdk_worker_source() -> str:
     """Return the jailed Claude Agent SDK worker source copied into run scratch."""
     return (
-        resources.files("shepherd_dialect.workers")
-        .joinpath("claude_agent_sdk_worker.py")
-        .read_text(encoding="utf-8")
+        resources.files("shepherd_dialect.workers").joinpath("claude_agent_sdk_worker.py").read_text(encoding="utf-8")
     )
 
 
@@ -259,7 +257,9 @@ class CodexAgentProvider:
             model=self.model,
             payload={
                 "prompt_digest": digest_jsonable({"prompt": prompt}),
-                "sdk_module": self.sdk_module if not Path(self.sdk_module).is_absolute() else Path(self.sdk_module).name,
+                "sdk_module": self.sdk_module
+                if not Path(self.sdk_module).is_absolute()
+                else Path(self.sdk_module).name,
                 "sandbox_mode": self.sandbox_mode,
                 "approval_policy": self.approval_policy,
                 "reasoning_effort": self.model_reasoning_effort,
@@ -451,10 +451,7 @@ class DeterministicFakeProvider:
             )
         invocation_id = _invocation_id(self.provider_id, execution)
         sequence = count()
-        script = (
-            "import pathlib\n"
-            f"pathlib.Path({self.artifact!r}).write_text({self.content!r})\n"
-        )
+        script = f"import pathlib\npathlib.Path({self.artifact!r}).write_text({self.content!r})\n"
         command = [sys.executable, "-c", script]
         started = ProviderEvent(
             kind=PROVIDER_INVOCATION_STARTED,
@@ -470,8 +467,7 @@ class DeterministicFakeProvider:
         proc = execution.launch_confined(command, confinement)
         if proc.returncode != 0:
             message = (
-                f"confined body refused (rc={proc.returncode}): "
-                f"{(proc.stderr or proc.stdout or '').strip()[-300:]}"
+                f"confined body refused (rc={proc.returncode}): {(proc.stderr or proc.stdout or '').strip()[-300:]}"
             )
             failed = ProviderEvent(
                 kind=PROVIDER_INVOCATION_FAILED,
@@ -1155,7 +1151,9 @@ def _parse_json_events(stdout: str) -> list[dict[str, Any]]:
         if not events:
             raise ClaudeProviderOutputError(f"claude CLI returned non-JSON stdout: {text[:500]}") from None
         if non_json_lines and len(events) > 1:
-            raise ClaudeProviderOutputError(f"claude CLI returned non-JSON stream line: {non_json_lines[0][:500]}") from None
+            raise ClaudeProviderOutputError(
+                f"claude CLI returned non-JSON stream line: {non_json_lines[0][:500]}"
+            ) from None
         return events
     if not isinstance(parsed, dict):
         raise ClaudeProviderOutputError("claude CLI returned a non-object JSON payload")

@@ -72,30 +72,34 @@ def _pure_let_deep():
 def _single_resume(handler_value=42):
     return Handle(
         Let("y", Perform("ask", Lit(None)), Return(Var("y"))),
-        HandlerEnv((
-            StaticHandlerInstall(
-                effect_kind="ask",
-                handler_id="ask.v1",
-                handled_result_schema=AnySchema(),
-                payload_name="_payload",
-                body=Let("r", Resume(Lit(handler_value)), Return(Var("r"))),
-            ),
-        )),
+        HandlerEnv(
+            (
+                StaticHandlerInstall(
+                    effect_kind="ask",
+                    handler_id="ask.v1",
+                    handled_result_schema=AnySchema(),
+                    payload_name="_payload",
+                    body=Let("r", Resume(Lit(handler_value)), Return(Var("r"))),
+                ),
+            )
+        ),
     )
 
 
 def _single_abort(abort_value=0):
     return Handle(
         Perform("ask", Lit(None)),
-        HandlerEnv((
-            StaticHandlerInstall(
-                effect_kind="ask",
-                handler_id="ask.v1",
-                handled_result_schema=AnySchema(),
-                payload_name="_payload",
-                body=Abort(Lit(abort_value)),
-            ),
-        )),
+        HandlerEnv(
+            (
+                StaticHandlerInstall(
+                    effect_kind="ask",
+                    handler_id="ask.v1",
+                    handled_result_schema=AnySchema(),
+                    payload_name="_payload",
+                    body=Abort(Lit(abort_value)),
+                ),
+            )
+        ),
     )
 
 
@@ -116,8 +120,7 @@ def _nested_inner_resumes_outer_resumes():
     )
     return Handle(
         Handle(
-            Let("a", Perform("inner", Lit(None)),
-                Let("b", Perform("outer", Lit(None)), Return(Var("a")))),
+            Let("a", Perform("inner", Lit(None)), Let("b", Perform("outer", Lit(None)), Return(Var("a")))),
             HandlerEnv((inner,)),
         ),
         HandlerEnv((outer,)),
@@ -143,8 +146,7 @@ def _nested_outer_aborts_inner_resumes():
     )
     return Handle(
         Handle(
-            Let("a", Perform("inner", Lit(None)),
-                Let("b", Perform("outer", Lit(None)), Return(Var("a")))),
+            Let("a", Perform("inner", Lit(None)), Let("b", Perform("outer", Lit(None)), Return(Var("a")))),
             HandlerEnv((inner,)),
         ),
         HandlerEnv((outer,)),
@@ -160,15 +162,17 @@ def _sequential_handled_effects(n=3):
         body = Let(f"y{i}", Perform("ask", Lit(None)), body)
     return Handle(
         body,
-        HandlerEnv((
-            StaticHandlerInstall(
-                effect_kind="ask",
-                handler_id="ask.v1",
-                handled_result_schema=AnySchema(),
-                payload_name="_payload",
-                body=Let("r", Resume(Lit(0)), Return(Var("r"))),
-            ),
-        )),
+        HandlerEnv(
+            (
+                StaticHandlerInstall(
+                    effect_kind="ask",
+                    handler_id="ask.v1",
+                    handled_result_schema=AnySchema(),
+                    payload_name="_payload",
+                    body=Let("r", Resume(Lit(0)), Return(Var("r"))),
+                ),
+            )
+        ),
     )
 
 
@@ -211,9 +215,7 @@ def test_projection_determinism_on_corpus(name: str) -> None:
     assert batch_a.ref_map.entries == batch_b.ref_map.entries, (
         f"projection non-deterministic for {name!r}: ref_map differs"
     )
-    assert batch_a.records == batch_b.records, (
-        f"projection non-deterministic for {name!r}: records differ"
-    )
+    assert batch_a.records == batch_b.records, f"projection non-deterministic for {name!r}: records differ"
 
 
 @pytest.mark.parametrize("name", sorted(_CORPUS))

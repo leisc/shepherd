@@ -72,9 +72,7 @@ class BypassInterposition:
     consumer adapters can test against it.
     """
 
-    def __init__(
-        self, fn: ResponderFn, *, handler_id: str = "bypass.v1"
-    ) -> None:
+    def __init__(self, fn: ResponderFn, *, handler_id: str = "bypass.v1") -> None:
         self._fn = fn
         self.handler_id = handler_id
 
@@ -94,8 +92,5 @@ class BypassInterposition:
         if inspect.isawaitable(result):
             result = await result
         if not isinstance(result, ModelResponse):
-            raise TypeError(
-                f"BypassInterposition responder must return a "
-                f"ModelResponse; got {type(result).__name__}"
-            )
+            raise TypeError(f"BypassInterposition responder must return a ModelResponse; got {type(result).__name__}")
         return result

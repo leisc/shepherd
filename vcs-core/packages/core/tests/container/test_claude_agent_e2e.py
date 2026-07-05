@@ -13,6 +13,7 @@ combined `vcs-core-agent` image with the key passed in). It SKIPS in the normal
 nondeterministic in content — the assertions check the *deterministic* outcome
 (the named file is captured into ground / reverted), not the agent's prose.
 """
+
 from __future__ import annotations
 
 import contextlib
@@ -87,18 +88,21 @@ def _run_agent_under_capture(scope: str) -> None:
     result = CliRunner().invoke(
         main,
         [
-            "session", "exec",
-            "--scope", scope,
-            "--create", "--capture",
-            "--", "/usr/bin/python3", str(_AGENT_SCRIPT),
+            "session",
+            "exec",
+            "--scope",
+            scope,
+            "--create",
+            "--capture",
+            "--",
+            "/usr/bin/python3",
+            str(_AGENT_SCRIPT),
         ],
     )
     assert result.exit_code == 0, f"agent exec failed: {result.output}"
 
 
-def test_claude_agent_edit_is_captured_and_merged(
-    agent_workspace: Path, monkeypatch: pytest.MonkeyPatch
-) -> None:
+def test_claude_agent_edit_is_captured_and_merged(agent_workspace: Path, monkeypatch: pytest.MonkeyPatch) -> None:
     """The Claude agent's file edit is captured and merges into ground."""
     from vcs_core.store import Store
 
@@ -114,9 +118,7 @@ def test_claude_agent_edit_is_captured_and_merged(
     assert b"claude agent" in note, f"unexpected AGENT_NOTE.md content: {note!r}"
 
 
-def test_claude_agent_edit_discard_reverts(
-    agent_workspace: Path, monkeypatch: pytest.MonkeyPatch
-) -> None:
+def test_claude_agent_edit_discard_reverts(agent_workspace: Path, monkeypatch: pytest.MonkeyPatch) -> None:
     """The Claude agent's file edit is reverted when the scope is discarded."""
     from vcs_core.store import Store
 

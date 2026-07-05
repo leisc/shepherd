@@ -44,12 +44,8 @@ class TransferResult:
 @task(guidance=_GUIDANCE)
 async def transfer_funds(
     to_account: Annotated[str, InputMarker(description="Destination account ID")],
-    amount: Annotated[
-        float, InputMarker(description="Amount to transfer"), Gt(0)
-    ],
-    reference: Annotated[
-        str, InputMarker(description="Transfer reference/memo")
-    ] = "",
+    amount: Annotated[float, InputMarker(description="Amount to transfer"), Gt(0)],
+    reference: Annotated[str, InputMarker(description="Transfer reference/memo")] = "",
 ) -> TransferResult:
     """Transfer funds between accounts.
 
@@ -65,11 +61,13 @@ async def transfer_funds(
 
         ws = workspace(model=...)
         with ws.scope:
-            ws.scope.bind(BankingContext(
-                account_id="ACC-001",
-                allow_transfers=True,
-                transfer_limit=10_000.0,
-            ))
+            ws.scope.bind(
+                BankingContext(
+                    account_id="ACC-001",
+                    allow_transfers=True,
+                    transfer_limit=10_000.0,
+                )
+            )
             result = await transfer_funds(
                 to_account="ACC-002",
                 amount=500.0,
@@ -80,10 +78,7 @@ async def transfer_funds(
     banking = current_binding(BankingContext)
     return await deliver(
         TransferResult,
-        goal=(
-            "Initiate the transfer described in evidence and return "
-            "its outcome."
-        ),
+        goal=("Initiate the transfer described in evidence and return its outcome."),
         evidence=[
             f"source_account={banking.account_id}",
             f"to_account={to_account}",

@@ -190,11 +190,7 @@ def scope_ref_recovery_classification(
         if ref in seen_refs:
             continue
         registry_entry = snapshot.entries_by_ref.get(ref)
-        if (
-            registry_entry is not None
-            and scope_status_owns_ref(registry_entry.status)
-            and ref not in mismatched_refs
-        ):
+        if registry_entry is not None and scope_status_owns_ref(registry_entry.status) and ref not in mismatched_refs:
             protected_ref_owning_refs.add(ref)
             continue
         append_orphaned_ref(ref)

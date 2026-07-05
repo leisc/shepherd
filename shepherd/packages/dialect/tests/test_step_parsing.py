@@ -1,4 +1,5 @@
 """W2a re-pins — same-name port of meta/tests/unit/step/test_step_parsing.py onto shepherd_dialect.steps."""
+
 """Tests for step output parsing and value coercion."""
 
 from enum import StrEnum

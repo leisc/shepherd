@@ -54,9 +54,7 @@ def lookup_profile(name: str) -> SemanticProfile:
     try:
         return _REGISTRY[name]
     except KeyError:
-        raise KeyError(
-            f"unknown profile name {name!r}; known: {sorted(_REGISTRY)!r}"
-        ) from None
+        raise KeyError(f"unknown profile name {name!r}; known: {sorted(_REGISTRY)!r}") from None
 
 
 __all__ = [

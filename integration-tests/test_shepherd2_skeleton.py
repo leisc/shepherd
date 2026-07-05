@@ -513,7 +513,7 @@ def test_skeleton_trace_create_failure_discards_child(tmp_path: Path) -> None:
     try:
         mg.exec("filesystem", "write", scope=mg.ground, path="base.txt", content=b"base\n")
         parent = mg.fork(mg.ground, "trace-failure-parent")
-        session = skeleton.Session(mg, trace_store=trace_store) # type: ignore[arg-type]
+        session = skeleton.Session(mg, trace_store=trace_store)  # type: ignore[arg-type]
         repo = session.workspace_repo(parent)
 
         with pytest.raises(RuntimeError, match="simulated trace append failure"):
@@ -539,7 +539,7 @@ def test_skeleton_post_seal_trace_failure_leaves_auditable_retained_orphan(tmp_p
     try:
         mg.exec("filesystem", "write", scope=mg.ground, path="base.txt", content=b"base\n")
         parent = mg.fork(mg.ground, "post-seal-trace-parent")
-        session = skeleton.Session(mg, trace_store=trace_store) # type: ignore[arg-type]
+        session = skeleton.Session(mg, trace_store=trace_store)  # type: ignore[arg-type]
         repo = session.workspace_repo(parent)
 
         with pytest.raises(RuntimeError, match="simulated trace append failure"):
@@ -1146,7 +1146,9 @@ def test_skeleton_trace_descriptor_must_match_execution_output_mirror(tmp_path: 
         forged_payload["candidate_ref"] = "refs/vcscore/candidates/forged"
         forged_execution = replace(run.execution, outputs={"workspace": forged_payload})
 
-        with pytest.raises(skeleton.SkeletonUnavailableError, match="descriptor disagrees with execution output mirror"):
+        with pytest.raises(
+            skeleton.SkeletonUnavailableError, match="descriptor disagrees with execution output mirror"
+        ):
             session._completed_run_from_execution(
                 run.run_id,
                 run.trace_ref,

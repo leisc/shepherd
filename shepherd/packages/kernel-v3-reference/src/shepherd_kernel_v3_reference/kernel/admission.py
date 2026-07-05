@@ -83,9 +83,7 @@ class AdmittedObservation:
         if not isinstance(self.source, ContinuationSource):
             raise TypeError("AdmittedObservation.source must be a ContinuationSource")
         if not isinstance(self.restart_artifact, ContinuationReplayArtifact):
-            raise TypeError(
-                "AdmittedObservation.restart_artifact must be a ContinuationReplayArtifact"
-            )
+            raise TypeError("AdmittedObservation.restart_artifact must be a ContinuationReplayArtifact")
         if not isinstance(self.admission_basis, AdmissionBasis):
             raise TypeError("AdmittedObservation.admission_basis must be an AdmissionBasis")
         if not isinstance(self.observation, HostCompleted):
@@ -176,14 +174,12 @@ def validate_admitted_observation(
     # 4. source ↔ admission_basis coherence
     if basis.source_ref != src.source_ref:
         raise AdmittedObservationError(
-            f"AdmissionBasis.source_ref {basis.source_ref!r} != source.source_ref "
-            f"{src.source_ref!r}",
+            f"AdmissionBasis.source_ref {basis.source_ref!r} != source.source_ref {src.source_ref!r}",
             rejection_class="source-basis-coherence",
         )
     if basis.source_kind != src.source_kind:
         raise AdmittedObservationError(
-            f"AdmissionBasis.source_kind {basis.source_kind!r} != source.source_kind "
-            f"{src.source_kind!r}",
+            f"AdmissionBasis.source_kind {basis.source_kind!r} != source.source_kind {src.source_kind!r}",
             rejection_class="source-basis-coherence",
         )
     if basis.source_generation != src.source_generation:
@@ -198,8 +194,7 @@ def validate_admitted_observation(
         )
     if basis.program_ref != state.program_ref:
         raise AdmittedObservationError(
-            f"AdmissionBasis.program_ref {basis.program_ref!r} != state.program_ref "
-            f"{state.program_ref!r}",
+            f"AdmissionBasis.program_ref {basis.program_ref!r} != state.program_ref {state.program_ref!r}",
             rejection_class="source-basis-coherence",
         )
 
@@ -216,14 +211,12 @@ def validate_admitted_observation(
     artifact = observation.restart_artifact
     if artifact.program_ref != state.program_ref:
         raise AdmittedObservationError(
-            f"restart_artifact.program_ref {artifact.program_ref!r} != state.program_ref "
-            f"{state.program_ref!r}",
+            f"restart_artifact.program_ref {artifact.program_ref!r} != state.program_ref {state.program_ref!r}",
             rejection_class="restart-artifact-agreement",
         )
     if artifact.source_ref != src.source_ref:
         raise AdmittedObservationError(
-            f"restart_artifact.source_ref {artifact.source_ref!r} != source.source_ref "
-            f"{src.source_ref!r}",
+            f"restart_artifact.source_ref {artifact.source_ref!r} != source.source_ref {src.source_ref!r}",
             rejection_class="restart-artifact-agreement",
         )
     if artifact.operation_result_schema_ref != src.operation_result_schema_ref:

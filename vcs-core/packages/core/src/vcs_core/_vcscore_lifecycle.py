@@ -239,7 +239,7 @@ def activate(
             for substrate in reversed(owner._lifecycle_substrates):
                 try:
                     cast("Any", substrate).deactivate()
-                except Exception: # noqa: BLE001
+                except Exception:  # noqa: BLE001
                     logger.warning(
                         "Substrate %s raised during activate cleanup; continuing cleanup",
                         getattr(substrate, "name", substrate),
@@ -279,7 +279,7 @@ def deactivate(owner: VcsCore, *, warn_on_open_scopes: bool = True) -> None:
         for substrate in reversed(owner._lifecycle_substrates):
             try:
                 cast("Any", substrate).deactivate()
-            except Exception: # noqa: BLE001
+            except Exception:  # noqa: BLE001
                 logger.warning(
                     "Substrate %s raised during deactivate; continuing cleanup",
                     getattr(substrate, "name", substrate),
@@ -360,9 +360,9 @@ def _update_lifecycle_run(
     owner: VcsCore,
     *,
     phase: str | None = None,
-    prepared_effect_counts: tuple[tuple[str, int],...] | None = None,
-    prepared_substrates: tuple[str,...] | None = None,
-    completed_substrates: tuple[str,...] | None = None,
+    prepared_effect_counts: tuple[tuple[str, int], ...] | None = None,
+    prepared_substrates: tuple[str, ...] | None = None,
+    completed_substrates: tuple[str, ...] | None = None,
 ) -> LifecycleRun:
     return _lifecycle_state(owner).update(
         phase=phase,
@@ -388,7 +388,7 @@ def _ensure_runtime_mutation_allowed(
     owner: VcsCore,
     attempted: str,
     *,
-    authorized_operations: tuple[ReadinessOperationAuthority,...] = (),
+    authorized_operations: tuple[ReadinessOperationAuthority, ...] = (),
     scope_selector: str | None = None,
     runtime_admission_context: RuntimeAdmissionContext | None = None,
 ) -> None:
@@ -400,7 +400,7 @@ def _ensure_runtime_mutation_allowed(
     )
 
 
-def list_sibling_group_blockers(owner: VcsCore) -> tuple[str,...]:
+def list_sibling_group_blockers(owner: VcsCore) -> tuple[str, ...]:
     return _list_sibling_group_blockers(owner)
 
 
@@ -425,7 +425,7 @@ def _orphaned_scope_refs_from_registry(owner: VcsCore) -> list[str]:
     )
 
 
-def _v2_scope_authority_refs(owner: VcsCore) -> tuple[str,...]:
+def _v2_scope_authority_refs(owner: VcsCore) -> tuple[str, ...]:
     from vcs_core._world_storage_installation import default_world_storage_exists, open_existing_default_world_storage
 
     if not default_world_storage_exists(owner._repo_path):
@@ -881,7 +881,7 @@ def _uncaptured_workspace_effects(
     owner: VcsCore,
     scope: ScopeInfo,
     effects: Sequence[EffectRecord],
-) -> tuple[EffectRecord,...]:
+) -> tuple[EffectRecord, ...]:
     if not effects:
         return ()
     manager = owner._world_storage()
@@ -956,7 +956,7 @@ def _close_retained_substrates_locked(owner: VcsCore, scope: ScopeInfo, parent: 
             continue
         try:
             cast("Any", substrate).close_retained(scope.name, parent_scope=parent)
-        except Exception as exc: # noqa: BLE001
+        except Exception as exc:  # noqa: BLE001
             close_failures.append((substrate_name, exc))
             logger.warning(
                 "Substrate %s raised during retained runtime close of scope %r; continuing cleanup",
@@ -1217,7 +1217,7 @@ def fork(
             for branched_substrate in reversed(branched):
                 try:
                     branched_substrate.discard(scope.name)
-                except Exception: # noqa: BLE001
+                except Exception:  # noqa: BLE001
                     logger.warning(
                         "Failed to clean up substrate %s after fork failure",
                         getattr(branched_substrate, "name", branched_substrate),
@@ -1225,11 +1225,11 @@ def fork(
                     )
             try:
                 owner._store.discard(scope)
-            except Exception: # noqa: BLE001
+            except Exception:  # noqa: BLE001
                 logger.warning("Failed to clean up Store ref after fork failure", exc_info=True)
             try:
                 owner._discard_v2_scope_world(scope)
-            except Exception: # noqa: BLE001
+            except Exception:  # noqa: BLE001
                 logger.warning("Failed to clean up v2 scope world after fork failure", exc_info=True)
             owner._pipeline.set_context(previous_context)
             raise
@@ -1248,7 +1248,7 @@ def fork(
             for branched_substrate in reversed(branched):
                 try:
                     branched_substrate.discard(scope.name)
-                except Exception: # noqa: BLE001
+                except Exception:  # noqa: BLE001
                     logger.warning(
                         "Failed to clean up substrate %s after scope-registry fork publish failure",
                         getattr(branched_substrate, "name", branched_substrate),
@@ -1256,11 +1256,11 @@ def fork(
                     )
             try:
                 owner._store.discard(scope)
-            except Exception: # noqa: BLE001
+            except Exception:  # noqa: BLE001
                 logger.warning("Failed to clean up Store ref after scope-registry fork publish failure", exc_info=True)
             try:
                 owner._discard_v2_scope_world(scope)
-            except Exception: # noqa: BLE001
+            except Exception:  # noqa: BLE001
                 logger.warning(
                     "Failed to clean up v2 scope world after scope-registry fork publish failure",
                     exc_info=True,
@@ -1368,7 +1368,7 @@ def merge_with_authority(
             binding_roots_error = exc.reason_code
 
         prepared_substrates: list[ContainmentSubstrate] = []
-        effects_by_substrate: dict[str, tuple[EffectRecord,...]] = {}
+        effects_by_substrate: dict[str, tuple[EffectRecord, ...]] = {}
         for substrate in owner._lifecycle_substrates:
             if not isinstance(substrate, ContainmentSubstrate):
                 continue
@@ -1793,7 +1793,7 @@ def _owns_workspace_publication_pending(
 def _owned_workspace_publication_pending_records(
     owner: VcsCore,
     pending_records: Sequence[PendingAuthoritySettlement],
-) -> tuple[WorkspaceAuthorityPending,...]:
+) -> tuple[WorkspaceAuthorityPending, ...]:
     return tuple(
         workspace_pending
         for workspace_pending in pending_workspace_authority_records(owner._repo_path)
@@ -1824,7 +1824,7 @@ def _recover_owned_lifecycle(
     return _recover_lifecycle_locked(owner, mode="resume")
 
 
-def recover_authority_settlements(owner: VcsCore) -> tuple[str,...]:
+def recover_authority_settlements(owner: VcsCore) -> tuple[str, ...]:
     callbacks: list[tuple[str, str]] = []
     recovered: list[str] = []
     with owner._lock:
@@ -1959,7 +1959,7 @@ def _recover_one_authority_settlement(
                 "non-allowed pending record requests merge"
             )
         prepared_substrates: list[ContainmentSubstrate] = []
-        effects_by_substrate: dict[str, tuple[EffectRecord,...]] = {}
+        effects_by_substrate: dict[str, tuple[EffectRecord, ...]] = {}
         for substrate in owner._lifecycle_substrates:
             if not isinstance(substrate, ContainmentSubstrate):
                 continue
@@ -2091,7 +2091,7 @@ def _authority_safe_discard_locked(owner: VcsCore, scope: ScopeInfo, parent: Sco
         try:
             cast("Any", substrate).discard(scope.name)
             _mark_completed_substrate(owner, substrate_name)
-        except Exception as exc: # noqa: BLE001
+        except Exception as exc:  # noqa: BLE001
             discard_failures.append((substrate_name, exc))
             logger.warning(
                 "Substrate %s raised during authority-safe discard of scope %r; continuing cleanup",
@@ -2123,7 +2123,7 @@ def discard(owner: VcsCore, scope: ScopeInfo) -> str:
                 try:
                     cast("Any", substrate).discard(scope.name)
                     _mark_completed_substrate(owner, substrate_name)
-                except Exception as exc: # noqa: BLE001
+                except Exception as exc:  # noqa: BLE001
                     discard_failures.append((substrate_name, exc))
                     logger.warning(
                         "Substrate %s raised during discard of scope %r; continuing cleanup",
@@ -2218,7 +2218,7 @@ def archive_orphaned_scopes(owner: VcsCore, *, exclude_refs: Collection[str] = (
                 owner._discard_v2_scope_world(scope)
                 clear_pending_workspace_authority_for_scope(owner._repo_path, ref)
                 archived.append(scope.name)
-            except Exception: # noqa: BLE001
+            except Exception:  # noqa: BLE001
                 remaining_refs.append(ref)
                 logger.warning(
                     "Failed to archive orphaned scope ref %s",
@@ -2268,11 +2268,11 @@ def archive_orphaned_operations(owner: VcsCore) -> list[str]:
         return [owner._format_operation_label(op) for op in candidates if op.ref not in failed_refs]
 
 
-def list_orphaned_scope_refs(owner: VcsCore) -> tuple[str,...]:
+def list_orphaned_scope_refs(owner: VcsCore) -> tuple[str, ...]:
     return tuple(owner._orphaned_refs)
 
 
-def list_orphaned_operations(owner: VcsCore) -> tuple[OperationSummary,...]:
+def list_orphaned_operations(owner: VcsCore) -> tuple[OperationSummary, ...]:
     return _orphaned_operation_summaries(owner)
 
 
@@ -2284,7 +2284,7 @@ def on_discard(owner: VcsCore, callback: Callable[[str], None]) -> None:
     owner._discard_callbacks.append(callback)
 
 
-def _orphaned_operation_summaries(owner: VcsCore) -> tuple[OperationSummary,...]:
+def _orphaned_operation_summaries(owner: VcsCore) -> tuple[OperationSummary, ...]:
     summaries: list[OperationSummary] = []
     for operation in owner._orphaned_operations:
         if owner._store.ref_exists(operation.ref):
@@ -2327,7 +2327,7 @@ def _archive_orphaned_operations_locked(
     for operation in operations:
         try:
             owner._store.archive_operation(operation)
-        except Exception: # noqa: BLE001
+        except Exception:  # noqa: BLE001
             failed.append(operation)
             logger.warning(
                 "Failed to archive orphaned operation ref %s",

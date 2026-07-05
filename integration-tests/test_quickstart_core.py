@@ -20,9 +20,9 @@ def test_quickstart_templates_match_checked_in_examples() -> None:
     """The generator templates and checked-in examples must not drift."""
     templates = importlib.resources.files("shepherd.templates.quickstart")
     for filename in ("offline_task.py", "world_channel.py", "claude_readme.py", "agent_task.py"):
-        assert templates.joinpath(filename).read_text(encoding="utf-8") == (
-            QUICKSTART_EXAMPLES / filename
-        ).read_text(encoding="utf-8")
+        assert templates.joinpath(filename).read_text(encoding="utf-8") == (QUICKSTART_EXAMPLES / filename).read_text(
+            encoding="utf-8"
+        )
 
 
 def test_quickstart_generator_emits_compilable_demo() -> None:
