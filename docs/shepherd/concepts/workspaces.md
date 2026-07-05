@@ -2,7 +2,7 @@
 
 > Page status: release-ready
 > Source state: shipped-source
-> Applies to: Shepherd v0.1.1-dev
+> Applies to: Shepherd v0.2.0
 > Owner: @docs-system-owner (TBD)
 > Validation: scripts/check_shepherd_docs.py
 
@@ -14,10 +14,9 @@ silence is what keeps tasks reusable. The missing context comes from the
 **workspace**, the ambient scope your tasks run inside:
 
 ```python
-import shepherd as shp
-from shepherd.providers import claude
+import shepherd as sp
 
-with shp.workspace(model=claude("sonnet-4-5"), root="./my-project"):
+with sp.workspace(model="claude:sonnet-4-5", root="./my-project"):
     review = review_change(diff)
 ```
 

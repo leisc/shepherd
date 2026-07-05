@@ -4,7 +4,7 @@ Stands in for the unshipped ``shepherd`` package (surface) so the
 prototype's documented examples run end-to-end, deterministically, offline.
 It faithfully mirrors the load-bearing semantics the docs teach:
 
-- ``@shp.task`` on a bodyless function REQUIRES a docstring (the docstring is
+- ``@sp.task`` on a bodyless function REQUIRES a docstring (the docstring is
   the model-call goal — same contract as
   shepherd_runtime/nucleus/callable_task.py:272-278);
 - calls are answered from recorded transcripts (docs_src/_sim/transcripts.json),
@@ -90,7 +90,7 @@ def task(fn=None, *, may=None, name=None, guidance=None):
         @functools.wraps(target)
         def _call(*args, **kwargs):
             if _ACTIVE["model"] is None:
-                raise RuntimeError("call tasks inside `with shp.workspace(model=...)`")
+                raise RuntimeError("call tasks inside `with sp.workspace(model=...)`")
             try:
                 recorded = _TRANSCRIPTS[target.__name__]
             except KeyError as exc:
