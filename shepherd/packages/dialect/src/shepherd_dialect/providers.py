@@ -156,10 +156,11 @@ def _read_host_claude_login() -> _HostLoginLookup:
     CLI's sign-in state; these credentials are re-seeded into that scratch so a
     subscription login works exactly like an env-carried key. Locations are Claude
     Code internals and may shift across CLI versions — every source here fails soft
-    (the run then proceeds keyless and the CLI reports not-logged-in), but each
-    attempt is recorded (source class + coarse status, never a path or bytes) so a
-    keyless verdict can name *why*. Ambiguous platform signals collapse to
-    ``keychain_failed`` rather than guessing ``security`` exit-code trivia.
+    (a keyless resolution then makes the public headless provider refuse before
+    launch, unless ``SHEPHERD_ALLOW_KEYLESS_CLAUDE`` is set), but each attempt is
+    recorded (source class + coarse status, never a path or bytes) so a keyless
+    verdict can name *why*. Ambiguous platform signals collapse to ``keychain_failed``
+    rather than guessing ``security`` exit-code trivia.
     """
     attempts: list[tuple[str, str]] = []
     config_dir = os.environ.get("CLAUDE_CONFIG_DIR")
@@ -280,6 +281,37 @@ def _keyless_detail(resolution: _ClaudeAuthResolution) -> str:
     if status.endswith("_unreadable"):
         return f"a `claude` credential file was found but unreadable — {_AUTH_REMEDY}"
     return f"no signed-in `claude` login found — {_AUTH_REMEDY}"
+
+
+_KEYLESS_ESCAPE = (
+    "If a `claude` wrapper authenticates outside Shepherd's known credential routes, "
+    "set SHEPHERD_ALLOW_KEYLESS_CLAUDE=1 to launch anyway."
+)
+
+
+def _claude_preflight_refusal(resolution: _ClaudeAuthResolution) -> tuple[str, str, str] | None:
+    """``(classification, error_type, message)`` if a jailed launch is known-doomed, else ``None``.
+
+    The public headless provider redirects ``HOME``/``CLAUDE_CONFIG_DIR`` into an
+    empty scratch, so a body with no env credential and no seedable host login
+    authenticates against nothing — a guaranteed not-logged-in failure — and an
+    expired subscription blob cannot be refreshed under the jail. Both are refused
+    before launch (unless ``SHEPHERD_ALLOW_KEYLESS_CLAUDE`` is set) so a trace reader
+    sees a preflight refusal, not a wasted confined run that reads like a jail denial.
+    """
+    if resolution.mode is None:
+        message = f"Claude CLI auth is not available for a jailed run ({_keyless_detail(resolution)}). {_KEYLESS_ESCAPE}"
+        return "auth_missing", "ClaudeAuthMissing", message
+    if resolution.mode == "subscription_login" and _claude_blob_expiry(resolution.blob) is True:
+        message = (
+            "the seeded `claude` subscription login is expired and a jailed run cannot refresh it — "
+            "run `claude login` or set CLAUDE_CODE_OAUTH_TOKEN (from `claude setup-token`). If your "
+            "`claude` wrapper keeps its real auth outside the standard store, set "
+            "SHEPHERD_NO_CREDENTIAL_SEEDING=1 and SHEPHERD_ALLOW_KEYLESS_CLAUDE=1 to skip seeding the "
+            "stale blob and launch anyway."
+        )
+        return "auth_expired", "ClaudeAuthExpired", message
+    return None
 
 
 def probe_claude_auth(*, budget_seconds: int = 30) -> tuple[bool, str]:
@@ -1070,7 +1102,13 @@ class ClaudeHeadlessProvider:
             raise RuntimeError("claude CLI not found on PATH — see the package README runbook note")
         invocation_id = _invocation_id(self.provider_id, execution)
         sequence = count()
-        auth_mode, login_blob = _resolve_claude_auth()
+        resolution = _resolve_claude_auth_diagnostic()
+        auth_mode, login_blob = resolution.mode, resolution.blob
+        auth_payload = {
+            "auth_mode": auth_mode or "none",
+            "auth_source": resolution.source,
+            "auth_status": resolution.status,
+        }
         started = ProviderEvent(
             kind=PROVIDER_INVOCATION_STARTED,
             provider_id=self.provider_id,
@@ -1083,9 +1121,34 @@ class ClaudeHeadlessProvider:
                 "permission_mode": "bypassPermissions",
                 "tools": "default",
                 "max_turns": self.max_turns,
-                "auth_mode": auth_mode or "none",
+                **auth_payload,
             },
         )
+        # Pre-launch: a jailed body with no seedable/valid login authenticates
+        # against nothing (HOME/CLAUDE_CONFIG_DIR are redirected into an empty
+        # scratch), so refuse the known-doomed run *before* spending a confined
+        # launch — unless SHEPHERD_ALLOW_KEYLESS_CLAUDE opts a wrapper in. The
+        # refusal is a preflight, not a jail denial: `launch_attempted` is False
+        # and `launch_confined` is never called.
+        preflight = _claude_preflight_refusal(resolution)
+        if preflight is not None and not os.environ.get("SHEPHERD_ALLOW_KEYLESS_CLAUDE"):
+            classification, error_type, message = preflight
+            failed = ProviderEvent(
+                kind=PROVIDER_INVOCATION_FAILED,
+                provider_id=self.provider_id,
+                invocation_id=invocation_id,
+                sequence=next(sequence),
+                event_id=f"{invocation_id}:failed",
+                model=self.model or "claude-code-cli",
+                payload={
+                    "error_type": error_type,
+                    "failure_classification": classification,
+                    "launch_attempted": False,
+                    **auth_payload,
+                    **redacted_text_payload(message, field="error"),
+                },
+            )
+            raise ProviderInvocationError(message, provider_events=(started, failed))
         scratch = Path(execution.working_path) / self._SCRATCH
         for sub in ("home", "config", "tmp"):
             (scratch / sub).mkdir(parents=True, exist_ok=True)

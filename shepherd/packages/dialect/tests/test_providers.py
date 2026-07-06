@@ -56,7 +56,12 @@ def test_command_argv_is_the_s1_shape(tmp_path) -> None:
 
 
 def _clear_claude_auth_env(monkeypatch) -> None:
-    for var in ("ANTHROPIC_API_KEY", "CLAUDE_CODE_OAUTH_TOKEN", "SHEPHERD_NO_CREDENTIAL_SEEDING"):
+    for var in (
+        "ANTHROPIC_API_KEY",
+        "CLAUDE_CODE_OAUTH_TOKEN",
+        "SHEPHERD_NO_CREDENTIAL_SEEDING",
+        "SHEPHERD_ALLOW_KEYLESS_CLAUDE",
+    ):
         monkeypatch.delenv(var, raising=False)
 
 
@@ -203,8 +208,13 @@ _ORG_403_STDOUT = (
 
 
 def _run_headless_with_proc(tmp_path, monkeypatch, proc):
-    """Drive ClaudeHeadlessProvider.execute against a fake confined process."""
+    """Drive ClaudeHeadlessProvider.execute against a fake confined process.
+
+    Opts into ``SHEPHERD_ALLOW_KEYLESS_CLAUDE`` so the body actually launches:
+    these tests exercise the *CLI-envelope diagnosis* of a returned proc, not the
+    keyless preflight (which is covered separately below)."""
     _clear_claude_auth_env(monkeypatch)
+    monkeypatch.setenv("SHEPHERD_ALLOW_KEYLESS_CLAUDE", "1")
     monkeypatch.setattr(providers_module, "_read_host_claude_login", lambda: _absent())
     monkeypatch.setattr(providers_module.shutil, "which", lambda cmd: "/fake/claude" if cmd == "claude" else None)
 
@@ -369,6 +379,86 @@ def test_headless_alarm_kill_hints_at_hung_body_when_silent(tmp_path, monkeypatc
     with pytest.raises(BudgetExhausted) as excinfo:
         _run_headless_with_proc(tmp_path, monkeypatch, _Ran())
     assert "hung before starting" not in str(excinfo.value)
+
+
+class _RecordingCap:
+    """A fake ExecutionCapability that records whether launch_confined ran."""
+
+    def __init__(self, tmp_path, proc=None):
+        self.working_path = str(tmp_path)
+        self.launched = False
+        self._proc = proc
+
+    def launch_confined(self, command, confinement):
+        self.launched = True
+        return self._proc
+
+
+def _headless_with_cap(monkeypatch, cap, *, host_login, allow_keyless=False):
+    """Run ClaudeHeadlessProvider.execute against a recording cap, with env cleared."""
+    _clear_claude_auth_env(monkeypatch)
+    if allow_keyless:
+        monkeypatch.setenv("SHEPHERD_ALLOW_KEYLESS_CLAUDE", "1")
+    monkeypatch.setattr(providers_module, "_read_host_claude_login", lambda: host_login)
+    monkeypatch.setattr(providers_module.shutil, "which", lambda cmd: "/fake/claude" if cmd == "claude" else None)
+    provider = ClaudeHeadlessProvider(prompt="x")
+    return provider.execute(None, None, None, {}, execution=cap, confinement=object())
+
+
+def test_headless_refuses_keyless_launch_before_confinement(tmp_path, monkeypatch) -> None:
+    """No env credential and no host login → refuse *before* launch_confined, naming all
+    three exits; the failed event says launch_attempted:false (a preflight, not a jail denial)."""
+    from shepherd_dialect.provider_runtime import ProviderInvocationError
+
+    cap = _RecordingCap(tmp_path)
+    with pytest.raises(ProviderInvocationError) as excinfo:
+        _headless_with_cap(monkeypatch, cap, host_login=_absent())
+
+    assert cap.launched is False, "a known-keyless run must not spend a confined launch"
+    message = str(excinfo.value)
+    assert "CLAUDE_CODE_OAUTH_TOKEN" in message
+    assert "ANTHROPIC_API_KEY" in message
+    assert "SHEPHERD_ALLOW_KEYLESS_CLAUDE" in message
+    failed = excinfo.value.provider_events[-1]
+    assert failed.payload["failure_classification"] == "auth_missing"
+    assert failed.payload["error_type"] == "ClaudeAuthMissing"
+    assert failed.payload["launch_attempted"] is False
+    assert failed.payload["auth_mode"] == "none"
+
+
+def test_headless_keyless_allow_flag_permits_launch(tmp_path, monkeypatch) -> None:
+    """SHEPHERD_ALLOW_KEYLESS_CLAUDE=1 opts a wrapper back into the launch path."""
+    from shepherd_dialect.provider_runtime import ProviderInvocationError
+
+    class _Proc:
+        returncode = 1
+        stderr = ""
+        stdout = _NOT_LOGGED_IN_STDOUT
+
+    cap = _RecordingCap(tmp_path, _Proc())
+    with pytest.raises(ProviderInvocationError):  # the CLI still fails, but the body ran
+        _headless_with_cap(monkeypatch, cap, host_login=_absent(), allow_keyless=True)
+    assert cap.launched is True
+
+
+def test_headless_refuses_expired_login_before_confinement(tmp_path, monkeypatch) -> None:
+    """An expired seeded subscription blob is refused before launch as auth_expired —
+    a jailed run cannot refresh it, so seeding-and-launching is a guaranteed failure."""
+    import time
+
+    from shepherd_dialect.provider_runtime import ProviderInvocationError
+
+    expired = int((time.time() - 3600) * 1000)
+    cap = _RecordingCap(tmp_path)
+    with pytest.raises(ProviderInvocationError) as excinfo:
+        _headless_with_cap(monkeypatch, cap, host_login=_found(b'{"claudeAiOauth":{"expiresAt":%d}}' % expired))
+
+    assert cap.launched is False
+    failed = excinfo.value.provider_events[-1]
+    assert failed.payload["failure_classification"] == "auth_expired"
+    assert failed.payload["error_type"] == "ClaudeAuthExpired"
+    assert failed.payload["launch_attempted"] is False
+    assert "CLAUDE_CODE_OAUTH_TOKEN" in str(excinfo.value)
 
 
 def test_claude_auth_status_env_and_absent(monkeypatch) -> None:
