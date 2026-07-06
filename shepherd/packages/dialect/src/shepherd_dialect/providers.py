@@ -13,6 +13,8 @@ import os
 import shutil
 import subprocess
 import sys
+import tempfile
+import time
 from collections.abc import Mapping
 from dataclasses import dataclass
 from importlib import resources
@@ -129,6 +131,118 @@ def _read_host_claude_login() -> bytes | None:
     return None
 
 
+def _claude_blob_expiry(blob: bytes | None) -> bool | None:
+    """Whether a subscription login blob's access token is expired.
+
+    ``True`` = expired, ``False`` = still valid, ``None`` = not determinable
+    (missing field / unrecognized shape). Never raises. The blob is Claude Code's
+    ``.credentials.json`` / keychain payload: ``{"claudeAiOauth": {"expiresAt": <ms>}}``.
+    """
+    if not blob:
+        return None
+    try:
+        data = json.loads(blob)
+        oauth = data.get("claudeAiOauth") if isinstance(data, Mapping) else None
+        expires_at = oauth.get("expiresAt") if isinstance(oauth, Mapping) else None
+        if not isinstance(expires_at, (int, float)):
+            return None
+        return (expires_at / 1000.0) < time.time()
+    except Exception:  # noqa: BLE001 — best-effort; an unreadable blob is "not determinable"
+        return None
+
+
+@dataclass(frozen=True)
+class ClaudeAuthStatus:
+    """The offline readiness verdict for the jailed Claude lane."""
+
+    mode: str | None
+    ok: bool
+    detail: str
+
+
+def claude_auth_status() -> ClaudeAuthStatus:
+    """Offline verdict on whether the jailed Claude lane can authenticate.
+
+    Cheap and network-free. Env credentials pass; an absent login fails; a
+    subscription login is inspected for token expiry — an expired access token
+    cannot be refreshed under the jail (keychain write-back is blocked), so it is
+    a hard fail. A valid-looking login is reported ``ok`` but *unverified*:
+    ``probe_claude_auth`` is the authoritative check. This is what makes a green
+    ``doctor`` honest rather than merely "a blob is readable".
+    """
+    mode, blob = _resolve_claude_auth()
+    if mode == "api_key":
+        return ClaudeAuthStatus(mode, True, "ANTHROPIC_API_KEY set")
+    if mode == "oauth_token":
+        return ClaudeAuthStatus(mode, True, "CLAUDE_CODE_OAUTH_TOKEN set")
+    if mode is None:
+        return ClaudeAuthStatus(
+            None, False, "set ANTHROPIC_API_KEY or CLAUDE_CODE_OAUTH_TOKEN, or sign in with `claude login`"
+        )
+    expired = _claude_blob_expiry(blob)
+    if expired is True:
+        return ClaudeAuthStatus(
+            mode,
+            False,
+            "signed-in `claude` CLI, but the access token is expired — a jailed run cannot "
+            "refresh it; run `claude login` or set CLAUDE_CODE_OAUTH_TOKEN",
+        )
+    unverified = "run `shepherd doctor claude --probe` to authenticate"
+    if expired is False:
+        return ClaudeAuthStatus(mode, True, f"signed-in `claude` CLI (found, not verified — {unverified})")
+    return ClaudeAuthStatus(mode, True, f"signed-in `claude` CLI (found, format unrecognized, not verified — {unverified})")
+
+
+def probe_claude_auth(*, budget_seconds: int = 30) -> tuple[bool, str]:
+    """Authenticate the jailed Claude lane for real; return ``(ok, detail)``.
+
+    Runs a minimal ``claude -p`` under the provider's scrubbed-config +
+    seeded-credential conditions (the auth-relevant half of a real run) and
+    classifies the outcome with the same envelope parser the run path uses — the
+    authoritative counterpart to the offline ``claude_auth_status``. Reaches the
+    network and may briefly call the model. Never raises.
+    """
+    cli = shutil.which("claude")
+    if cli is None:
+        return False, "`claude` not found on PATH"
+    auth_mode, login_blob = _resolve_claude_auth()
+    if auth_mode is None:
+        return False, "no credentials (set ANTHROPIC_API_KEY or CLAUDE_CODE_OAUTH_TOKEN, or `claude login`)"
+    provider = ClaudeHeadlessProvider(prompt="Reply with the single word: ok", max_turns=1, budget_seconds=budget_seconds)
+    with tempfile.TemporaryDirectory(prefix="shepherd-claude-probe-") as tmp:
+        working = Path(tmp)
+        scratch = working / ClaudeHeadlessProvider._SCRATCH
+        for sub in ("home", "config", "tmp"):
+            (scratch / sub).mkdir(parents=True, exist_ok=True)
+        if login_blob is not None:
+            cred = scratch / "config" / ".credentials.json"
+            cred.write_bytes(login_blob)
+            cred.chmod(0o600)
+        try:
+            proc = subprocess.run(
+                provider.command_argv(working, cli),
+                capture_output=True,
+                text=True,
+                timeout=budget_seconds + 15,
+                check=False,
+            )
+        except subprocess.TimeoutExpired:
+            return False, f"probe timed out after ~{budget_seconds}s"
+        except Exception as exc:  # noqa: BLE001 — a probe that cannot launch is a failed probe, not a crash
+            return False, f"probe could not launch: {exc}"
+    if proc.returncode == 0:
+        try:
+            result_event, _events = _parse_claude_cli_output(proc.stdout or "")
+        except Exception:  # noqa: BLE001 — unparseable-but-zero-exit is treated as authenticated
+            return True, f"authenticated ({auth_mode})"
+        if result_event.get("is_error"):
+            diagnosis = _diagnose_claude_cli_failure(proc.returncode, proc.stdout, proc.stderr)
+            return False, str(diagnosis["summary"])
+        return True, f"authenticated ({auth_mode})"
+    diagnosis = _diagnose_claude_cli_failure(proc.returncode, proc.stdout, proc.stderr)
+    return False, str(diagnosis["summary"] or f"claude exited rc={proc.returncode}")
+
+
 def _signals_max_turns_exhaustion(signal: str) -> bool:
     """True when a nonzero-exit ``signal`` is the CLI's turn-limit stop.
 
@@ -141,6 +255,63 @@ def _signals_max_turns_exhaustion(signal: str) -> bool:
     neither real form, so turn exhaustion was silently misclassified.)
     """
     return "maximum number of turns" in signal or '"terminal_reason":"max_turns"' in signal
+
+
+def _diagnose_claude_cli_failure(
+    returncode: int, stdout: str | None, stderr: str | None
+) -> dict[str, str | None]:
+    """Turn a nonzero ``claude`` CLI exit into an actionable cause + remedy.
+
+    The headless CLI reports real errors *inside* a well-formed stream-json
+    result envelope (e.g. ``result: "Not logged in · Please run /login"`` with an
+    ``authentication_failed`` assistant message) and still exits nonzero. A blind
+    tail-slice of that ~3 KB envelope surfaces only trailing bookkeeping fields and
+    drops the cause, so this parses the ``result`` text and classifies the common
+    stops so the raised error and the recorded trace name what actually happened.
+    Best-effort: it never raises.
+    """
+    signal_text = (stderr or "") + (stdout or "")
+    lowered = signal_text.lower()
+    cli_result: str | None = None
+    try:
+        result_event, _events = _parse_claude_cli_output(stdout or "")
+        raw = result_event.get("result")
+        if isinstance(raw, str) and raw.strip():
+            cli_result = raw.strip()
+    except Exception:  # noqa: BLE001 — diagnosis must never mask the original failure
+        cli_result = None
+
+    if "cannot be used with root" in lowered:
+        classification = "root_permission"
+        remedy: str | None = (
+            "the jailed `claude` CLI refuses bypass permissions when run as root; run "
+            "as a non-root user, or set IS_SANDBOX=1 if you are intentionally sandboxed"
+        )
+    elif (
+        "not logged in" in lowered
+        or "authentication_failed" in lowered
+        or "please run /login" in lowered
+        or "invalid api key" in lowered
+        or "oauth token has expired" in lowered
+    ):
+        classification = "auth_failure"
+        remedy = (
+            "the jailed `claude` CLI is not authenticated — a seeded subscription login "
+            "may be missing or expired. Set CLAUDE_CODE_OAUTH_TOKEN (from `claude "
+            "setup-token`) or ANTHROPIC_API_KEY, or sign in again with `claude login`"
+        )
+    else:
+        classification = "unknown"
+        remedy = None
+
+    stripped = signal_text.strip()
+    summary = cli_result or (stripped[-300:] if stripped else f"no output (rc={returncode})")
+    return {
+        "classification": classification,
+        "remedy": remedy,
+        "cli_result": cli_result,
+        "summary": summary,
+    }
 
 
 def _codex_runner_source() -> str:
@@ -592,7 +763,17 @@ class ClaudeAgentProvider:
                 from shepherd_dialect.nucleus import BudgetExhausted
 
                 raise BudgetExhausted(f"max turns reached ({self.max_turns})")
-            raise RuntimeError(f"confined body refused (rc={proc.returncode}): {signal[-300:]}")
+            if proc.returncode == -14:
+                from shepherd_dialect.nucleus import BudgetExhausted
+
+                raise BudgetExhausted(f"budget exceeded ({self.budget_seconds}s)")
+            # Same actionable diagnosis as the headless lane: surface the CLI's own
+            # reason (e.g. not-logged-in) instead of a blind tail-slice that drops it.
+            diagnosis = _diagnose_claude_cli_failure(proc.returncode, proc.stdout, proc.stderr)
+            message = f"confined body refused (rc={proc.returncode}): {diagnosis['summary']}"
+            if diagnosis["remedy"]:
+                message += f"\n  → {diagnosis['remedy']}"
+            raise RuntimeError(message)
         return {
             "status": "ok",
             "provider": self.provider_id,
@@ -746,15 +927,26 @@ class ClaudeHeadlessProvider:
             shutil.rmtree(scratch, ignore_errors=True)
         if proc.returncode != 0:
             signal = ((proc.stderr or "") + (proc.stdout or "")).strip()
-            # The one positively identified budget stop: the CLI reports turn
-            # exhaustion distinguishably (prose + structured terminal_reason) —
-            # D3's Exhausted emitter. Ambiguous stops (incl. alarm kills, rc -14)
-            # stay refusals.
+            # Two positively identified budget stops map to the trace-preserving
+            # Exhausted outcome rather than an ambiguous refusal: the CLI's own
+            # turn-exhaustion report (prose + structured terminal_reason), and the
+            # ``budget_seconds`` alarm kill (SIGALRM → rc -14; the perl ``alarm`` in
+            # the argv is the only SIGALRM source on this path).
             if _signals_max_turns_exhaustion(signal):
                 from shepherd_dialect.nucleus import BudgetExhausted
 
                 raise BudgetExhausted(f"max turns reached ({self.max_turns})")
-            message = f"confined body refused (rc={proc.returncode}): {signal[-300:]}"
+            if proc.returncode == -14:
+                from shepherd_dialect.nucleus import BudgetExhausted
+
+                raise BudgetExhausted(f"budget exceeded ({self.budget_seconds}s)")
+            # Otherwise: parse the CLI's own result envelope so the raised error and
+            # the recorded trace name the cause (e.g. not-logged-in) instead of a
+            # blind tail-slice that drops it. The full stdout is kept in the event.
+            diagnosis = _diagnose_claude_cli_failure(proc.returncode, proc.stdout, proc.stderr)
+            message = f"confined body refused (rc={proc.returncode}): {diagnosis['summary']}"
+            if diagnosis["remedy"]:
+                message += f"\n  → {diagnosis['remedy']}"
             failed = ProviderEvent(
                 kind=PROVIDER_INVOCATION_FAILED,
                 provider_id=self.provider_id,
@@ -765,9 +957,11 @@ class ClaudeHeadlessProvider:
                 payload={
                     "returncode": proc.returncode,
                     "error_type": "ConfinedProcessRefused",
+                    "failure_classification": diagnosis["classification"],
                     **redacted_text_payload(message, field="error"),
-                    **redacted_text_payload(proc.stdout or "", field="stdout"),
+                    **redacted_text_payload(proc.stdout or "", field="stdout", excerpt_limit=4000),
                     **redacted_text_payload(proc.stderr or "", field="stderr"),
+                    **redacted_text_payload(diagnosis["cli_result"] or "", field="cli_result"),
                 },
             )
             raise ProviderInvocationError(message, provider_events=(started, failed))

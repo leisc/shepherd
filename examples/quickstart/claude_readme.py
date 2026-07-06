@@ -28,12 +28,14 @@ def update_readme(repo: sp.May[sp.GitRepo, sp.ReadWrite], goal: str, output_path
 
 
 def _live_ready() -> tuple[bool, str]:
-    from shepherd_dialect import claude_auth_mode
+    from shepherd_dialect import claude_auth_status
 
     if shutil.which("claude") is None:
         return False, "`claude` is not on PATH"
-    if claude_auth_mode() is None:
-        return False, "no ANTHROPIC_API_KEY and no signed-in `claude` CLI"
+    auth = claude_auth_status()
+    if not auth.ok:
+        # Honest about an expired/absent login instead of launching a doomed run.
+        return False, auth.detail
     try:
         from shepherd_dialect import native_jail_available
     except (ImportError, OSError, RuntimeError, ValueError) as exc:
