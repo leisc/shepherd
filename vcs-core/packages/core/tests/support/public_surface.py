@@ -35,4 +35,7 @@ PUBLIC_LOOKING_TOP_LEVEL_MODULES = {
     "surface_profiles",
     "substrates",
     "types",
+    # In-package test-support seam promoted by the V1.1 refactor (PR #24):
+    # `vcs_core.testing` (decisions.md `vcs_core.testing seam`).
+    "testing",
 }

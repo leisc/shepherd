@@ -70,6 +70,23 @@ EXPECTED_PACKAGE_ROOT_EXPORTS = {
     "VerifyFailedError",
     "WorldQuiescenceError",
     "WorkspaceChange",
+    # World-value vocabulary + VcsCoreError-root error re-exports, promoted to the package
+    # root by the V1.1 controller-extraction refactor (PR #24); synced 2026-07-06.
+    "WorldSnapshot",
+    "EvidenceRef",
+    "WORLD_TRANSITION_SCHEMA",
+    "canonical_bytes",
+    "canonical_digest",
+    "VcsCoreError",
+    "ReadOnlyCarrierError",
+    "ScopeAdmissionError",
+    "InvalidIdentityError",
+    "UnknownForkHintError",
+    "UnresolvedPatchPathError",
+    "UnsupportedOverlayEntryError",
+    "SubstrateCommandError",
+    "SiblingGroupRecoveryRequiredError",
+    "WorkspaceAuthorityRecoveryRequiredError",
 }
 
 # The stable implement-side surface (decisions.md `spi-top-level-promotion`).
