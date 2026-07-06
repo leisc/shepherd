@@ -8,7 +8,7 @@ review — nothing touches your files unless you `shepherd run select` it.
 import shutil
 import sys
 
-from shepherd_dialect import claude_auth_mode
+from shepherd_dialect import claude_auth_status
 
 import shepherd as sp
 
@@ -26,8 +26,12 @@ def write_program(repo: sp.May[sp.GitRepo, sp.ReadWrite], prompt: str, output_pa
     """
 
 
-if shutil.which("claude") is None or claude_auth_mode() is None:
-    sys.exit("not ready — run `shepherd doctor claude` to see what's missing")
+if shutil.which("claude") is None:
+    sys.exit("not ready — `claude` is not on PATH; run `shepherd doctor claude`")
+_auth = claude_auth_status()
+if not _auth.ok:
+    # An expired/absent login is caught here rather than failing mid-run.
+    sys.exit(f"not ready — {_auth.detail}")
 
 workspace = sp.open(".")
 try:

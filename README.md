@@ -45,6 +45,12 @@ agent.
 > Needs the `claude` CLI — signed in (a Claude subscription works) or with an
 > `ANTHROPIC_API_KEY`. Neither? Jump to the
 > [Offline Quickstart](#offline-quickstart) — it runs anywhere, keyless.
+>
+> On a subscription, a sandboxed run is most reliable with a long-lived token:
+> `export CLAUDE_CODE_OAUTH_TOKEN=$(claude setup-token)`. A short-lived signed-in
+> session can't be refreshed from inside the sandbox, so it may work
+> interactively yet fail here — `shepherd doctor claude` (add `--probe` to
+> actually authenticate) tells you which credential you have before you run.
 
 A task is a plain Python function with **no body**; the signature and docstring
 are the contract the agent fulfils at runtime — including its permissions: the
