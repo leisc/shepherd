@@ -315,13 +315,16 @@ def _claude_preflight_refusal(resolution: _ClaudeAuthResolution) -> tuple[str, s
 
 
 def probe_claude_auth(*, budget_seconds: int = 30) -> tuple[bool, str]:
-    """Authenticate the jailed Claude lane for real; return ``(ok, detail)``.
+    """Check Claude CLI auth under Shepherd's scrubbed-config conditions; return ``(ok, detail)``.
 
-    Runs a minimal ``claude -p`` under the provider's scrubbed-config +
-    seeded-credential conditions (the auth-relevant half of a real run) and
-    classifies the outcome with the same envelope parser the run path uses — the
-    authoritative counterpart to the offline ``claude_auth_status``. Reaches the
-    network and may briefly call the model. Never raises.
+    Runs a minimal ``claude -p`` in the **parent** (not through the jail — no
+    ``launch_confined``) under the provider's scrubbed-config + seeded-credential
+    conditions (the auth-relevant half of a real run) and classifies the outcome
+    with the same envelope parser the run path uses — the authoritative counterpart
+    to the offline ``claude_auth_status``. Because it does not run under the jail, a
+    pass does not rule out jail-only failure modes (e.g. a token that expires between
+    probe and run, whose Seatbelt-blocked keychain refresh only bites the confined
+    body). Reaches the network and may briefly call the model. Never raises.
     """
     cli = shutil.which("claude")
     if cli is None:
