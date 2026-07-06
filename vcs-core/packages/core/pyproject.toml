@@ -31,6 +31,9 @@ test = [
     "hypothesis>=6.100.0",
     # CLI tests import click.testing.CliRunner.
     "click>=8.0",
+    # Recovery PID-reuse detection (test_session_lock) uses psutil; declaring it here runs
+    # that leg instead of skipping. psutil stays optional at runtime (see _lock.py).
+    "psutil",
 ]
 lint = ["ruff>=0.5.0,<1.0.0"]
 typing = [
@@ -105,5 +108,12 @@ warn_unreachable = true
 # ignores cannot satisfy both platforms at once). Full dual-platform coverage is a
 # follow-up CI matrix leg, not this pin.
 platform = "linux"
+
+[[tool.mypy.overrides]]
+# psutil is an optional, undeclared runtime dependency (see _lock.py) with no stubs. Treat it
+# as an untyped/absent import (Any) so the `psutil = None` fallback and the runtime
+# `psutil is None` guard both type-check cleanly without stubs or per-line ignores.
+module = ["psutil"]
+ignore_missing_imports = true
 
 # Ruff: see ruff.toml at workspace root.

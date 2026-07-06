@@ -87,6 +87,9 @@ EXPECTED_PACKAGE_ROOT_EXPORTS = {
     "SubstrateCommandError",
     "SiblingGroupRecoveryRequiredError",
     "WorkspaceAuthorityRecoveryRequiredError",
+    # Recovery's SIGTERM-to-interrupt bridge, promoted to the package root by the
+    # interrupted-run-recovery feature.
+    "terminate_as_interrupt",
 }
 
 # The stable implement-side surface (decisions.md `spi-top-level-promotion`).

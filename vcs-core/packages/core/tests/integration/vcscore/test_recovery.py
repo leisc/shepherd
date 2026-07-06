@@ -1784,3 +1784,150 @@ def test_merge_preflight_blocks_substrate_side_effects(workspace: Path) -> None:
 
     assert not any(call.startswith("prepare:task-preflight-second") for call in calls)
     assert not any(call.startswith("commit:task-preflight-second") for call in calls)
+
+
+# --- Liveness-gated auto-recovery of orphaned operations at activation (Layer 2) -------------
+#
+# "If a run dies, just run it again — unless something is genuinely still running."
+# The safety gate is structural: activate() calls acquire_session_lock() first, which reclaims a
+# dead owner's lock but refuses while a live one holds it — so by the time auto-recovery runs, no
+# live session owns the repo and every orphaned operation is a dead run's bookkeeping.
+
+
+def test_activate_auto_recovers_dead_orphaned_operation(workspace: Path) -> None:
+    """The fix: an interrupted run's orphaned operation ref is reclaimed at activation, so the
+    next run just works — no manual archive_orphaned_operations() and no OrphanedOperationsError."""
+    m1 = VcsCore(str(workspace))
+    m1.activate()
+    _abandon_session_with_open_ground_operation(m1, handle_id="op-auto-recover")
+
+    m2 = VcsCore(str(workspace))
+    m2.activate(auto_recover_orphaned_operations=True)
+    try:
+        assert m2.list_orphaned_operations() == ()
+        assert m2.store.list_open_operations() == []
+        # the "just run it again" run proceeds instead of raising OrphanedOperationsError
+        with m2.runtime_activity(
+            scope=m2.ground, operation_label="next-run", operation_kind="runtime-run"
+        ):
+            pass
+    finally:
+        m2.deactivate()
+
+
+def test_activate_auto_recovery_is_fail_soft_when_recovery_is_blocked(workspace: Path) -> None:
+    """Fail-soft: when recovery is blocked by other pending state (here, an entangled orphaned
+    scope), auto-recovery must NOT turn activation into a failure — it leaves the orphan in place,
+    so the caller still gets today's detect-and-refuse behavior, exactly as the manual path does."""
+    m1 = VcsCore(str(workspace))
+    m1.activate()
+    m1.fork(m1.ground, "task-entangled-orphan-scope")
+    _abandon_session_with_open_ground_operation(m1, handle_id="op-blocked")
+
+    m2 = VcsCore(str(workspace))
+    m2.activate(auto_recover_orphaned_operations=True)  # must not raise
+    try:
+        # recovery was declined (blocked by the orphaned scope); the orphan persists
+        assert m2.list_orphaned_operations() != ()
+    finally:
+        m2.deactivate()
+
+
+def test_activate_default_preserves_the_wedge(workspace: Path) -> None:
+    """Default (auto_recover_orphaned_operations=False) is unchanged: the orphan persists and the
+    existing detect-and-refuse contract holds, so no current caller/test behavior shifts."""
+    m1 = VcsCore(str(workspace))
+    m1.activate()
+    _abandon_session_with_open_ground_operation(m1, handle_id="op-default")
+
+    m2 = VcsCore(str(workspace))
+    m2.activate()  # default: no auto-recovery
+    try:
+        assert m2.list_orphaned_operations() != ()
+    finally:
+        m2.deactivate()
+
+
+def test_activate_refuses_when_a_live_session_holds_the_lock(workspace: Path) -> None:
+    """Safety: a genuinely live session (a live PID in the lock) makes activation refuse, so
+    auto-recovery can never run against — let alone reclaim — a live session's operations."""
+    import time
+
+    m1 = VcsCore(str(workspace))
+    m1.activate()
+    m1.deactivate()  # initialise the repo, release the lock
+
+    lock = Path(workspace) / ".vcscore" / "session.lock"
+    lock.write_text(f"other-session\n{os.getpid()}\n{time.time()}\n")  # this process = a live owner
+    try:
+        m2 = VcsCore(str(workspace))
+        with pytest.raises(ActivationError, match="Another session is active"):
+            m2.activate(auto_recover_orphaned_operations=True)
+    finally:
+        lock.unlink()
+
+
+@pytest.mark.parametrize("interrupt_cls", [KeyboardInterrupt, SystemExit, RuntimeError])
+def test_interrupted_run_operation_is_cleaned_up_not_orphaned(workspace: Path, interrupt_cls) -> None:
+    """A *catchable* interrupt during a run must not orphan its operation.
+
+    Ctrl-C (``KeyboardInterrupt``), ``SystemExit``, and ordinary exceptions all propagate
+    through the reversible operation lifecycle, which discards the operation in-flight — so
+    no orphan is left, and auto-recovery (the run-start reclaim) is only ever needed for
+    *uncatchable* termination (SIGKILL, OOM, power loss). This pins the operation boundary's
+    ``except BaseException``: narrowing it to ``except Exception`` would silently resurrect the
+    Ctrl-C orphan (``KeyboardInterrupt``/``SystemExit`` are ``BaseException``, not ``Exception``).
+    """
+    m = VcsCore(str(workspace))
+    m.activate()
+    try:
+        with pytest.raises(interrupt_cls), m.runtime_activity(
+            scope=m.ground, operation_label="interrupted-run", operation_kind="runtime-run"
+        ):
+            raise interrupt_cls()
+        assert m.store.list_open_operations() == []  # cleaned up in-flight, not orphaned
+    finally:
+        m.deactivate()
+
+
+# --- SIGTERM prevention: `kill` / `docker stop` routed through the clean-discard path (Layer 1) ---
+#
+# Python's default SIGTERM disposition terminates *without* unwinding, so a killed run would orphan
+# its open operation — and SIGTERM is the common non-interactive stop (`kill`, `docker stop`,
+# systemd, k8s, CI-cancel). `terminate_as_interrupt()` routes SIGTERM through KeyboardInterrupt so
+# the operation boundary discards it in-flight, exactly as Ctrl-C already does. Both the `vcs-core
+# run` CLI and the shepherd run path apply it; these pin the mechanism deterministically by
+# signalling this process (no subprocess), which the experiment harness confirmed end-to-end.
+# SIGKILL / OOM / power-loss stay uncatchable and are covered by run-start auto-recovery instead.
+
+
+def test_sigterm_under_terminate_as_interrupt_discards_not_orphans(workspace: Path) -> None:
+    """A SIGTERM delivered while an operation is open discards it (no orphan) rather than the
+    default terminate-without-unwinding that leaves the next run wedged."""
+    import signal
+
+    from vcs_core import terminate_as_interrupt
+
+    m = VcsCore(str(workspace))
+    m.activate()
+    try:
+        with pytest.raises(KeyboardInterrupt), terminate_as_interrupt(), m.runtime_activity(
+            scope=m.ground, operation_label="killed-run", operation_kind="runtime-run"
+        ):
+            os.kill(os.getpid(), signal.SIGTERM)  # the `kill` / `docker stop` signal
+        assert m.store.list_open_operations() == []  # discarded in-flight, not orphaned
+    finally:
+        m.deactivate()
+
+
+def test_terminate_as_interrupt_installs_and_restores_the_sigterm_handler() -> None:
+    """The SIGTERM handler is installed for the block and the prior handler is always restored,
+    so nesting and post-run code are unaffected."""
+    import signal
+
+    from vcs_core import terminate_as_interrupt
+
+    before = signal.getsignal(signal.SIGTERM)
+    with terminate_as_interrupt():
+        assert signal.getsignal(signal.SIGTERM) is not before  # our handler is active
+    assert signal.getsignal(signal.SIGTERM) is before  # ...and restored on exit
