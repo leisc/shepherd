@@ -1,3 +1,4 @@
+# under-test: vcs_core._world_substrate_adapters
 """Tranche 2 integration tests for tree-backed workspace driver flows.
 
 These tests exercise the full driver -> coordinator -> substrate path with a
@@ -22,12 +23,12 @@ import hashlib
 from pathlib import Path
 
 import pygit2
-from vcs_core._world_storage_manager import SubstrateStoreSpec, WorldStorageManager
 from vcs_core._world_substrate_adapters import (
     WorkspaceSubstrateAdapter,
     workspace_state_revision_payload,
 )
-from vcs_core._world_types import SubstrateStoreIdentity
+from vcs_core.spi import SubstrateStoreIdentity
+from vcs_core.testing import SubstrateStoreSpec, WorldStorageManager
 
 
 def _digest(content: bytes) -> str:
@@ -75,7 +76,7 @@ def test_workspace_driver_propagates_git_tree_oid_into_transition_draft(tmp_path
         ({"path": "a.txt", "state": "present", "mode": 0o100644, "content_digest": _digest(b"hi\n")},),
         byte_authority="tree-backed",
     )
-    from vcs_core._substrate_driver import ScanRequest
+    from vcs_core.spi import ScanRequest
 
     result = adapter.driver.prepare(
         adapter._context(operation_id="op-scan", parents=()),
@@ -222,7 +223,7 @@ def test_workspace_tree_oid_outside_alternates_fails_closed(tmp_path) -> None:
         byte_authority="tree-backed",
     )
     import pytest
-    from vcs_core._errors import InvalidRepositoryStateError
+    from vcs_core import InvalidRepositoryStateError
 
     # The Tranche 1 manifest/tree correspondence validator catches this first
     # at write time: it tries to resolve the tree from the substrate's ODB and

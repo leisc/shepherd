@@ -1,3 +1,4 @@
+# under-test: vcs_core._performed_event_admission
 from __future__ import annotations
 
 from dataclasses import dataclass

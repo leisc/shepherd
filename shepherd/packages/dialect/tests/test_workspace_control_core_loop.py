@@ -18,8 +18,14 @@ import pytest
 import vcs_core._vcscore_lifecycle as lifecycle
 import vcs_core._vcscore_runtime as vcscore_runtime
 from shepherd_runtime.nucleus import GitRepo, GitRepoBasis
-from vcs_core import FilesystemSubstrate, MarkerSubstrate, Store, VcsCore, build_builtin_substrate_context
-from vcs_core._errors import InvalidRepositoryStateError
+from vcs_core import (
+    FilesystemSubstrate,
+    InvalidRepositoryStateError,
+    MarkerSubstrate,
+    Store,
+    VcsCore,
+    build_builtin_substrate_context,
+)
 from vcs_core._execution_capability import detect_containment_backend
 from vcs_core.runtime_substrate import TaskTraceSubstrateDriver
 from vcs_core.spi import DriverAuthorityRequiredError

@@ -1,3 +1,4 @@
+# under-test: vcs_core._projection_store
 """Store scope-registry projection tests."""
 
 from __future__ import annotations

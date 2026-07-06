@@ -15,7 +15,7 @@ import shutil
 import stat
 import sys
 import tempfile
-from pathlib import Path, PurePosixPath
+from pathlib import Path
 from typing import TYPE_CHECKING, Any, Self
 
 from vcs_core._capture_reducer import (
@@ -53,6 +53,7 @@ from vcs_core._substrate_runtime import (
     PythonPatch,
     bootstrap_builtin_runtime,
 )
+from vcs_core._workspace_paths import normalize_workspace_relative_path
 from vcs_core.authority import SubstrateAuthority, make_authority_aspect
 from vcs_core.spi import (
     CapabilitySet,
@@ -993,11 +994,7 @@ class FilesystemSubstrate:
         return self._pipeline.store.file_exists_in_workspace(scope.ref, path)
 
     def _workspace_path(self, path: str) -> Path:
-        pure = PurePosixPath(path)
-        if not path or pure.is_absolute() or ".." in pure.parts:
-            msg = f"Invalid workspace-relative path: {path!r}"
-            raise ValueError(msg)
-        return self._workspace.joinpath(*pure.parts)
+        return self._workspace / normalize_workspace_relative_path(path)
 
     def _read_physical_file(self, path: str) -> tuple[bytes, int] | None:
         destination = self._workspace_path(path)

@@ -13,6 +13,8 @@ import math
 from collections.abc import Mapping, Sequence
 from typing import cast
 
+from vcs_core._errors import VcsCoreError
+
 PERMISSION_PLAN_SCHEMA = "shepherd.permission-plan.v1"
 CARRIER_MONITOR = "carrier_check_at_commit"
 _FALLBACKS = frozenset({"enforce", "refuse"})
@@ -30,7 +32,7 @@ _ASSIGNMENT_FIELDS = frozenset(
 )
 
 
-class PermissionPlanEvidenceError(ValueError):
+class PermissionPlanEvidenceError(VcsCoreError, ValueError):
     """Raised when persisted PermissionPlan evidence is malformed or mismatched."""
 
 

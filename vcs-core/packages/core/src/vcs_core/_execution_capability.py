@@ -31,10 +31,13 @@ import sys
 from dataclasses import dataclass, field
 from typing import TYPE_CHECKING, Any, Protocol, runtime_checkable
 
+from vcs_core._errors import VcsCoreError
+
 if TYPE_CHECKING:
     import subprocess
     from pathlib import Path
 
+    from vcs_core._containment import ContainmentBackend
     from vcs_core._runtime_types import ExecutionContext
     from vcs_core._substrate_driver import DriverContext, DriverIngressResult, IngressRequest
 
@@ -47,7 +50,7 @@ EXECUTION_CAPABILITY_VERSION = "v0"
 NON_REVERSIBLE_RUN_FLAG = "non_reversible_run"
 
 
-class UnsupportedConfinementSpecError(ValueError):
+class UnsupportedConfinementSpecError(VcsCoreError, ValueError):
     """The spec has no faithful lowering on this host's enforcement surface.
 
     Fail-closed: a spec that cannot be enforced exactly as declared refuses to
@@ -56,7 +59,7 @@ class UnsupportedConfinementSpecError(ValueError):
     """
 
 
-class ExecutionAuthorityRequired(RuntimeError):  # noqa: N818 — refusal-state name, per JailNotEstablished
+class ExecutionAuthorityRequired(VcsCoreError, RuntimeError):  # noqa: N818 — refusal-state name, per JailNotEstablished
     """An execution command was dispatched without execution authority.
 
     The negotiation rule (PD4, ``decisions.md`` ``spi-additive-no-bump``): an
@@ -175,9 +178,9 @@ class ExecutionCapability:
     identity: ExecutionContext
     working_path: Path
     isolation: str
-    _containment: Any | None = None
+    _containment: ContainmentBackend | None = None
 
-    def launch_confined(self, command: list[str], spec: ConfinementSpec) -> subprocess.CompletedProcess:
+    def launch_confined(self, command: list[str], spec: ConfinementSpec) -> subprocess.CompletedProcess[str]:
         """The only real-execution verb. Fail-closed: no jail, no real run (D-4)."""
         from vcs_core._containment import JailNotEstablished
 
@@ -237,7 +240,7 @@ def verify_execution_negotiation(driver: ExecutionBoundDriver) -> None:
     from vcs_core._substrate_driver import CommandRequest, DriverContext
     from vcs_core._world_types import SubstrateStoreIdentity
 
-    schema = driver.describe()
+    schema = driver.describe()  # type: ignore[attr-defined]  # base SubstrateDriver method; the capability protocol stays minimal (runtime_checkable)
     undeclared = sorted(set(driver.execution_commands) - set(schema.commands))
     if undeclared:
         raise AssertionError(
@@ -256,7 +259,7 @@ def verify_execution_negotiation(driver: ExecutionBoundDriver) -> None:
     )
     for command in sorted(driver.execution_commands):
         try:
-            driver.prepare(probe_context, CommandRequest(command=command, params={}))
+            driver.prepare(probe_context, CommandRequest(command=command, params={}))  # type: ignore[attr-defined]  # base SubstrateDriver method (see describe above)
         except ExecutionAuthorityRequired:
             continue
         except Exception as exc:
@@ -282,4 +285,4 @@ def detect_containment_backend() -> Any | None:
 
         backend = LandlockContainmentBackend()
         return backend if backend.available()[0] else None
-    return None
+    return None  # type: ignore[unreachable]  # both platform branches return; unreachable under the linux mypy pin

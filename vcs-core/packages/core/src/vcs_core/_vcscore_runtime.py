@@ -1,3 +1,15 @@
+"""VcsCore run/runtime execution — FENCED for P3 (see P3-forward-exploration.md).
+
+Deliberately **not** retired into a no-`owner` collaborator (V3.4, reclassified from
+extract to fence, D-C rev i). Its run orchestration composes VcsCore's own top-level
+public verbs — `owner.fork`/`merge`/`merge_with_authority`/`discard`/`seal`/`world_oid`
+(the run loop, ~L900-L1160) — so it is orchestration that belongs at the facade like
+`_vcscore_lifecycle`, not a decoupled service. Extracting it would inject ~16 owner
+methods for no decoupling gain. A `RunController(owner)` *tidy* (real class holding
+`owner`, like `MaterializationController`) is an optional future follow-up; it is not
+part of P3's claim.
+"""
+
 from __future__ import annotations
 
 import hashlib
@@ -142,7 +154,7 @@ def python_runtime_events_from_effects(
 
     The patch manager intercepts Python ``open()`` / ``os.remove()`` / etc.
     calls and produces ``EffectRecord`` values with
-    ``workspace_changes: tuple[WorkspaceChange,...]``. T2c routes these
+    ``workspace_changes: tuple[WorkspaceChange, ...]``. T2c routes these
     through ``PythonRuntimeCaptureAdapter`` rather than the legacy
     ``driver_command="scan"`` dispatch; this helper builds the raw event
     dicts the adapter consumes.

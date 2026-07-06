@@ -93,9 +93,15 @@ warn_unused_ignores = false
 asyncio_mode = "auto"
 asyncio_default_fixture_loop_scope = "function"
 addopts = "--import-mode=importlib"
+# Dialect tests import shared doubles as a top-level `support` package. Under
+# --import-mode=importlib, dialect/tests is not a package (it must not become a
+# `tests` package — that would collide with vcs-core's tests package under the
+# aggregate `make test` run), so the shared-doubles dir goes on pythonpath
+# declaratively here rather than via an ordering-fragile sys.path.insert in a
+# conftest (the former C4 aggregate-collection race).
+pythonpath = ["shepherd/packages/dialect/tests"]
 markers = [
     "slow: marks tests as slow (>1s execution time)",
-    "slow: marks expensive /workspace-control scenario tests excluded from fast local dialect checks",
     "workspace_scenario: marks full workspace-control scenario/integration tests excluded from fast local dialect checks",
     "workspace_native_jail: marks workspace-control tests that require a proven native syscall jail",
     "integration: marks tests requiring external resources or network",

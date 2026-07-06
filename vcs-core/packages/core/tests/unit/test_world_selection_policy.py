@@ -1,3 +1,4 @@
+# under-test: vcs_core._world_selection_policy
 """Unit tests for private world-vector selection policy helpers."""
 
 from __future__ import annotations
@@ -5,8 +6,7 @@ from __future__ import annotations
 from dataclasses import replace
 
 import pytest
-from vcs_core._errors import InvalidRepositoryStateError
-from vcs_core._transition_kernel_records import EvidenceRef
+from vcs_core import EvidenceRef, InvalidRepositoryStateError
 from vcs_core._world_selection_policy import (
     allowed_existing_head_semantic_ops,
     resolve_candidate_selection_kind,

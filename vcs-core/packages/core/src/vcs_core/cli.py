@@ -210,7 +210,7 @@ def activate(path: str, recover: str | None, recover_lifecycle: str | None) -> N
     else:
         click.echo("Repository validated.")
         for sub in substrates:
-            click.echo(f"  {sub.name:20s} active")
+            click.echo(f"  {getattr(sub, 'name', '?'):20s} active")
 
 
 @main.command("recover-materialization")

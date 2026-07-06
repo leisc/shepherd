@@ -1,3 +1,4 @@
+# under-test: vcs_core._world_operation_journal
 """Guard: the closed set of ``ops/open/*`` membership writers stays enumerated and co-written.
 
 The open-journal index is EXACT *only* because the atomic co-write is the sole producer/consumer

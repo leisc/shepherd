@@ -13,6 +13,7 @@ from importlib.metadata import entry_points
 from typing import TYPE_CHECKING, Any, Literal
 
 from vcs_core._driver_schema_validation import DriverSchemaValidationError, validate_driver_schema
+from vcs_core._errors import VcsCoreError
 from vcs_core._substrate_runtime import build_builtin_substrate_context
 from vcs_core.config import SecretRef, VcsCoreConfig, _deep_merge
 from vcs_core.manifest import BUILT_IN_PLUGINS, MANIFESTS, ImplementationKind, SubstrateManifest, SubstratePlugin
@@ -58,7 +59,7 @@ class BindingSpec:
     entry_point_name: str | None = None
 
 
-class SubstrateResolutionError(Exception):
+class SubstrateResolutionError(VcsCoreError):
     """One or more substrates failed validation during resolution."""
 
     def __init__(self, errors: list[str]) -> None:

@@ -71,7 +71,7 @@ class HostAtom:
         if self.op == "exact":
             return host == self.value
         if self.op == "in":
-            return host in set(self.value)  # type: ignore[arg-type]
+            return isinstance(self.value, (list, tuple, set, frozenset)) and host in self.value
         if self.op == "contains":
             return isinstance(self.value, str) and self.value in host
         if self.op == "matches":

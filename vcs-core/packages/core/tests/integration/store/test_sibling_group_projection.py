@@ -1,3 +1,4 @@
+# under-test: vcs_core._sibling_groups
 """Deferred sibling-group control-ref recovery projection tests."""
 
 from __future__ import annotations
@@ -6,8 +7,7 @@ import json
 from dataclasses import replace
 
 import pytest
-from vcs_core import _sibling_groups
-from vcs_core._errors import InvalidRepositoryStateError
+from vcs_core import InvalidRepositoryStateError, _sibling_groups
 from vcs_core._sibling_groups import (
     CarrierLeaseRecord,
     SiblingGroupRecord,

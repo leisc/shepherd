@@ -5,6 +5,7 @@ from __future__ import annotations
 from dataclasses import dataclass
 from typing import TYPE_CHECKING, Protocol
 
+from vcs_core._errors import VcsCoreError
 from vcs_core._workspace_external import (
     ExternalWorkspace,
     ExternalWorkspaceFile,
@@ -32,7 +33,7 @@ class ExternalStateBlocker:
     reason: str
 
 
-class ExternalWorkspaceStateError(RuntimeError):
+class ExternalWorkspaceStateError(VcsCoreError, RuntimeError):
     """Expected admission failure for dirty or unadopted physical workspace state."""
 
     def __init__(self, blockers: tuple[ExternalStateBlocker, ...], *, action: str) -> None:

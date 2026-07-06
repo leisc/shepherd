@@ -1,3 +1,4 @@
+# under-test: vcs_core._world_substrate_adapters
 """Unit tests for narrow v2 world substrate adapters."""
 
 from __future__ import annotations
@@ -5,12 +6,9 @@ from __future__ import annotations
 from dataclasses import replace
 
 import pytest
+from vcs_core import WORLD_TRANSITION_SCHEMA, InvalidRepositoryStateError, WorldSnapshot, canonical_digest
 from vcs_core._capture_reducer import CaptureJournalEvent
-from vcs_core._errors import InvalidRepositoryStateError
-from vcs_core._substrate_driver import CommandRequest, DriverIngressResult, ObservationDraft, SubstrateDriver
-from vcs_core._transition_kernel_records import PayloadDescriptorClaim, RetentionPolicyRequirement
-from vcs_core._world_operation_builder import CandidateSelection, OperationFinalBuilder
-from vcs_core._world_storage_manager import DEFAULT_GROUND_REF, SubstrateStoreSpec, WorldStorageManager
+from vcs_core._transition_kernel_records import RetentionPolicyRequirement
 from vcs_core._world_substrate_adapters import (
     SESSION_STATE_REVISION_SCHEMA,
     TRACE_REVISION_SCHEMA,
@@ -28,13 +26,15 @@ from vcs_core._world_substrate_adapters import (
     workspace_state_manifest_payload,
     workspace_state_revision_payload,
 )
-from vcs_core._world_types import (
-    WORLD_REF_SUBSTRATE_KIND,
-    WORLD_TRANSITION_SCHEMA,
-    SubstrateStoreIdentity,
-    WorldRefPayload,
-    WorldSnapshot,
-    canonical_digest,
+from vcs_core._world_types import WORLD_REF_SUBSTRATE_KIND, WorldRefPayload
+from vcs_core.runtime_api import CommandRequest, DriverIngressResult
+from vcs_core.spi import ObservationDraft, PayloadDescriptorClaim, SubstrateDriver, SubstrateStoreIdentity
+from vcs_core.testing import (
+    DEFAULT_GROUND_REF,
+    CandidateSelection,
+    OperationFinalBuilder,
+    SubstrateStoreSpec,
+    WorldStorageManager,
 )
 
 

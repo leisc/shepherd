@@ -6,12 +6,11 @@ from dataclasses import replace
 from pathlib import Path
 
 import pytest
-from vcs_core import Store, VcsCore, build_builtin_substrate_context
-from vcs_core._errors import InvalidRepositoryStateError
+from vcs_core import InvalidRepositoryStateError, Store, VcsCore, build_builtin_substrate_context
 from vcs_core._projection_store import SEAL_AND_SELECT_ENV
 from vcs_core._seal_handoff import read_seal_handoff
 from vcs_core._substrate_tree_read import read_substrate_workspace_file
-from vcs_core._world_substrate_adapters import TaskTraceSubstrateDriver
+from vcs_core.runtime_substrate import TaskTraceSubstrateDriver
 from vcs_core.substrates import FilesystemSubstrate, MarkerSubstrate
 from vcs_core.types import RetainedOutputIdentity, RetainedOutputQueryResult, ScopeInfo
 

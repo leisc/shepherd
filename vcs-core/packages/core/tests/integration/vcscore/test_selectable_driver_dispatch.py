@@ -15,19 +15,11 @@ from pathlib import Path
 from typing import Any
 
 import pytest
+from vcs_core import build_builtin_substrate_context
 from vcs_core._fork_hints import ForkHints
-from vcs_core._substrate_driver import (
-    BaseSubstrateDriver,
-    CapabilitySet,
-    CommandRequest,
-    CommandSpec,
-    DriverContext,
-    DriverIngressResult,
-    DriverSchema,
-    ParamSpec,
-)
-from vcs_core._substrate_runtime import build_builtin_substrate_context
-from vcs_core._world_substrate_adapters import TaskTraceSubstrateDriver
+from vcs_core.runtime_api import CommandRequest, DriverContext, DriverIngressResult
+from vcs_core.runtime_substrate import TaskTraceSubstrateDriver
+from vcs_core.spi import BaseSubstrateDriver, CapabilitySet, CommandSpec, DriverSchema, ParamSpec
 from vcs_core.store import Store
 from vcs_core.substrates import FilesystemSubstrate, MarkerSubstrate
 from vcs_core.vcscore import VcsCore

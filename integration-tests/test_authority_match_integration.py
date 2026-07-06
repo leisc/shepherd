@@ -12,7 +12,7 @@ from vcs_core.substrates import FilesystemSubstrate, MarkerSubstrate
 from vcs_core.types import FileState, normalize_git_filemode
 
 if TYPE_CHECKING:
-    from vcs_core._authority import AuthorityOutcome, GitRepoAuthorityRequest
+    from vcs_core.runtime_api import AuthorityOutcome, GitRepoAuthorityRequest
 
 # The authority merge seam requires PermissionPlan monitor evidence (fail-closed
 # since 2026-07-01). This carrier-diff descriptor mirrors the green pattern in

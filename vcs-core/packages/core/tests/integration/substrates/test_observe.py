@@ -1,3 +1,4 @@
+# under-test: vcs_core._substrate_runtime
 """Marker and declarative filesystem substrate integration tests."""
 
 from __future__ import annotations

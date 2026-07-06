@@ -18,7 +18,7 @@ from typing import Any, NewType, Protocol
 
 NodeId = NewType("NodeId", str)  # world_oid | journal-entry oid | lease ref | trace fact id
 Ordinal = NewType("Ordinal", int)  # monotonic position within a LINEAR stream
-Cut = frozenset  # an antichain boundary over NodeId; {tip} for a linear stream
+Cut = frozenset[NodeId]  # an antichain boundary over NodeId; {tip} for a linear stream
 Watermark = Any  # Cut | Ordinal — the boundary of a certified prefix
 
 _RESERVED = "reserved for a later tranche; the lease cut implements DeltaIndex (B) only"

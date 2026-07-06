@@ -1,3 +1,4 @@
+# under-test: vcs_core._session
 """Session exec CLI behavior tests."""
 
 from __future__ import annotations
@@ -21,18 +22,17 @@ from typing import Any
 import pytest
 import vcs_core.store as store_module
 from click.testing import CliRunner
+from vcs_core import canonical_digest
 from vcs_core._capture_reducer import CAPTURE_REDUCTION_KIND
 from vcs_core._cli_session_runtime import run_managed_exec
 from vcs_core._fs_capture import FsCaptureEvent
 from vcs_core._hook_frontier import HookEventFrontier
-from vcs_core._hooks import HookManager
-from vcs_core._ipc import SessionInfo
 from vcs_core._session import SessionDaemon
 from vcs_core._session_dispatch import SessionCommandDispatcher
 from vcs_core._world_refs import candidate_ref, world_fork_origin_receipt_ref
 from vcs_core._world_storage_installation import default_world_storage_root
-from vcs_core._world_types import canonical_digest
 from vcs_core.cli import main
+from vcs_core.testing import HookManager, SessionInfo
 from vcs_core.vcscore import VcsCore
 
 from ...support.builders import make_marker_filesystem_vcscore

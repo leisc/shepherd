@@ -3,7 +3,7 @@
 from __future__ import annotations
 
 import pytest
-from vcs_core._errors import MergePreconditionError, ScopeAdmissionError, SiblingGroupRecoveryRequiredError
+from vcs_core import MergePreconditionError, ScopeAdmissionError, SiblingGroupRecoveryRequiredError
 from vcs_core._sibling_groups import (
     CarrierLeaseRecord,
     SiblingGroupRecord,

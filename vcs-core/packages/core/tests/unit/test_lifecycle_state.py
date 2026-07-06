@@ -1,3 +1,4 @@
+# under-test: vcs_core._lifecycle_state
 from __future__ import annotations
 
 from pathlib import Path

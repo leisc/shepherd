@@ -11,6 +11,7 @@ import click
 from vcs_core import _cli_delegation, _cli_schema
 from vcs_core._admission.identifiers import ParseError, parse_optional_scope_name
 from vcs_core._cli_errors import exit_app_error
+from vcs_core._errors import VcsCoreError
 
 if TYPE_CHECKING:
     from collections.abc import Mapping
@@ -18,7 +19,7 @@ if TYPE_CHECKING:
     from vcs_core._app import AppError, VcsCoreApp
 
 
-class CommandValueRenderError(RuntimeError):
+class CommandValueRenderError(VcsCoreError, RuntimeError):
     """Raised when a command result cannot be rendered safely in the CLI."""
 
 

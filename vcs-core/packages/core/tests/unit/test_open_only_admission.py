@@ -1,3 +1,4 @@
+# under-test: vcs_core._operation_journal_inventory
 """Step 2 — bounded (open-only) readiness admission.
 
 Admission scopes its operation-journal scan to the `open` family: a healthy non-`open`
@@ -24,13 +25,12 @@ from vcs_core._world_operation_journal import OPERATION_JOURNAL_PATH
 from vcs_core._world_refs import (
     encode_ref_component,
     operation_journal_family_prefix,
-    operation_journal_ref,
     world_open_operation_journal_index_ref,
 )
 from vcs_core._world_storage_installation import open_or_init_default_world_storage
-from vcs_core._world_storage_manager import DEFAULT_GROUND_REF, SubstrateStoreSpec, WorldStorageManager
-from vcs_core._world_types import SubstrateStoreIdentity
 from vcs_core.git_store import create_commit_with_recovery, insert_tree_entry
+from vcs_core.spi import SubstrateStoreIdentity
+from vcs_core.testing import DEFAULT_GROUND_REF, SubstrateStoreSpec, WorldStorageManager, operation_journal_ref
 from vcs_core.vcscore import VcsCore
 
 

@@ -4,7 +4,8 @@ import pytest
 from vcs_core._cli_session_runtime import _float_value, _int_value
 from vcs_core._lifecycle_run import LifecycleRun
 from vcs_core._session_dispatch import _optional_int
-from vcs_core._typed_json import decode_typed_json, encode_typed_json
+from vcs_core._typed_json import decode_typed_json
+from vcs_core.types import encode_typed_json
 
 
 def _valid_lifecycle_payload() -> dict[str, object]:

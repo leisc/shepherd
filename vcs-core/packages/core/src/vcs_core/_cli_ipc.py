@@ -5,11 +5,13 @@ from __future__ import annotations
 import os
 from typing import TYPE_CHECKING
 
+from vcs_core._errors import VcsCoreError
+
 if TYPE_CHECKING:
     from vcs_core._ipc import JsonObject, SessionErrorResponse, SessionInfo, SessionOkResponse, SessionResponse
 
 
-class SessionIpcError(RuntimeError):
+class SessionIpcError(VcsCoreError, RuntimeError):
     """Raised when a daemon-backed session exists but cannot be reached."""
 
 

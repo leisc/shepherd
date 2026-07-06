@@ -798,7 +798,7 @@ def test_vcscore_discard_uses_pipeline(mg: VcsCore) -> None:
 
 
 def test_backward_compat_store_construction(workspace: Path) -> None:
-    from vcs_core._substrate_runtime import build_builtin_substrate_context
+    from vcs_core import build_builtin_substrate_context
     from vcs_core.store import Store
     from vcs_core.substrates import MarkerSubstrate
 
@@ -818,7 +818,7 @@ def test_backward_compat_store_construction(workspace: Path) -> None:
 
 
 def test_single_pipeline_invariant(workspace: Path) -> None:
-    from vcs_core._substrate_runtime import build_builtin_substrate_context
+    from vcs_core import build_builtin_substrate_context
     from vcs_core.store import Store
     from vcs_core.substrates import DeclarativeFilesystemSubstrate, MarkerSubstrate
 

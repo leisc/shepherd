@@ -1,3 +1,4 @@
+# under-test: vcs_core._world_storage_manager
 """Lease-level validation: the active-lease accelerator stays equivalent to the
 authoritative ref scan across the real publish path, and the manager wiring is
 fail-closed (missing -> fallback + self-heal; corrupt -> raise).
@@ -9,10 +10,9 @@ from __future__ import annotations
 
 import pygit2
 import pytest
-from vcs_core._errors import InvalidRepositoryStateError
+from vcs_core import InvalidRepositoryStateError, canonical_bytes
 from vcs_core._world_refs import world_publication_lease_index_ref
 from vcs_core._world_storage_manager import DEFAULT_GROUND_REF
-from vcs_core._world_types import canonical_bytes
 
 from .test_world_storage_manager import _manager, _published_workspace_world, _workspace_advance_world
 
@@ -107,7 +107,9 @@ def test_hot_read_does_not_scan_lease_ref_namespace(tmp_path, monkeypatch):
 def test_index_leads_authority_so_a_crash_yields_a_superset(tmp_path, monkeypatch):
     """The index updates BEFORE the authoritative lease ref is created, so a crash there
     leaves the index a SUPERSET of the authority (over-protect), never a subset."""
-    import vcs_core._world_storage_manager as wsm
+    # V2.2c: _write_publication_leases and its create_or_update_reference import moved to the
+    # publication/retention controller module; patch the name where it now lives.
+    import vcs_core._publication_retention_controller as pubret_mod
 
     manager = _manager(tmp_path)
     _, world_oid = _published_workspace_world(manager)
@@ -115,7 +117,7 @@ def test_index_leads_authority_so_a_crash_yields_a_superset(tmp_path, monkeypatc
     def _boom(*_args, **_kwargs):
         raise RuntimeError("simulated crash before the lease ref is created")
 
-    monkeypatch.setattr(wsm, "create_or_update_reference", _boom)
+    monkeypatch.setattr(pubret_mod, "create_or_update_reference", _boom)
     with pytest.raises(RuntimeError):
         manager._write_publication_leases((DEFAULT_GROUND_REF,), manager.read_world(world_oid))
 
@@ -186,7 +188,8 @@ def test_release_crash_after_ref_delete_leaves_superset(tmp_path, monkeypatch):
     def _boom(*_args, **_kwargs):
         raise RuntimeError("simulated crash after the lease ref is deleted")
 
-    monkeypatch.setattr(manager, "_record_lease_index", _boom)
+    # V2.2c: caller and _record_lease_index both moved to the controller; patch it there.
+    monkeypatch.setattr(manager._pubret, "_record_lease_index", _boom)
     with pytest.raises(RuntimeError):
         manager._release_publication_leases(lease_refs, world_oid=world_oid)
 
@@ -304,7 +307,9 @@ def test_fsck_world_deep_surfaces_stale_lease_index(tmp_path, monkeypatch):
     _, world_oid = _published_workspace_world(manager)
     manager._write_publication_leases((DEFAULT_GROUND_REF,), manager.read_world(world_oid))
 
-    monkeypatch.setattr(manager, "verify_active_lease_index", lambda: Health("stale", "index has 0; authority has 1"))
+    # V2.3: fsck_world_deep moved to WorldFsckController and calls verify_active_lease_index on
+    # the pub/ret controller directly; patch it there (the WSM shim is bypassed).
+    monkeypatch.setattr(manager._pubret, "verify_active_lease_index", lambda: Health("stale", "index has 0; authority has 1"))
     report = manager.fsck_world(world_oid, mode="deep")
     assert "active_lease_index_stale" in {issue.code for issue in report.issue_details}
 

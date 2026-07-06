@@ -1,3 +1,4 @@
+# under-test: vcs_core._substrate_driver
 """Unit tests for the SPI v0.1 typed ingress family.
 
 Covers:
@@ -13,7 +14,7 @@ Covers:
 from __future__ import annotations
 
 import pytest
-from vcs_core._errors import InvalidRepositoryStateError
+from vcs_core import InvalidRepositoryStateError
 from vcs_core._substrate_driver import (
     ActiveSurface,
     CapabilitySet,
@@ -42,7 +43,7 @@ from vcs_core._world_transition_coordinator import (
     _check_active_surface_pre_dispatch,
     _check_capability_accepts,
 )
-from vcs_core._world_types import SubstrateStoreIdentity
+from vcs_core.spi import SubstrateStoreIdentity
 
 
 def _store_identity() -> SubstrateStoreIdentity:

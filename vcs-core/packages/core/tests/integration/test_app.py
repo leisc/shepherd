@@ -1,3 +1,4 @@
+# under-test: vcs_core._app
 """App-layer control-plane integration tests."""
 
 from __future__ import annotations
@@ -6,6 +7,7 @@ from typing import TYPE_CHECKING
 
 import pytest
 from click.testing import CliRunner
+from vcs_core import WorkspaceAuthorityRecoveryRequiredError
 from vcs_core._app import (
     AppCommandBlocked,
     AppOpenMode,
@@ -14,7 +16,6 @@ from vcs_core._app import (
     AppScopeResolutionError,
     VcsCoreApp,
 )
-from vcs_core._errors import WorkspaceAuthorityRecoveryRequiredError
 from vcs_core._sibling_groups import SiblingGroupRecord, SiblingHandleRecord, sibling_machine_scope_name
 from vcs_core.cli import main
 from vcs_core.store import Store

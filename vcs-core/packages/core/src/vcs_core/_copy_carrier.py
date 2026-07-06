@@ -25,11 +25,15 @@ from __future__ import annotations
 import os
 import shutil
 import stat
-from pathlib import Path, PurePosixPath
+from typing import TYPE_CHECKING
 
 from vcs_core._errors import UnsupportedOverlayEntryError
 from vcs_core._overlay_entries import unsupported_overlay_entry_kind
+from vcs_core._workspace_paths import normalize_workspace_relative_path
 from vcs_core.types import FileState, normalize_git_filemode, posix_to_git_mode
+
+if TYPE_CHECKING:
+    from pathlib import Path
 
 
 class CopyCarrierBackend:
@@ -261,12 +265,4 @@ class CopyCarrierBackend:
         return self._workspace / self._normalize_relative_path(path)
 
     def _normalize_relative_path(self, path: str) -> Path:
-        pure = PurePosixPath(path)
-        if not path or pure.is_absolute() or ".." in pure.parts:
-            msg = f"Invalid workspace-relative path: {path!r}"
-            raise ValueError(msg)
-        normalized = Path(*pure.parts)
-        if not normalized.parts:
-            msg = f"Invalid workspace-relative path: {path!r}"
-            raise ValueError(msg)
-        return normalized
+        return normalize_workspace_relative_path(path)

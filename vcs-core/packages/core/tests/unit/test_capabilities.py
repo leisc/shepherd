@@ -6,7 +6,7 @@ from pathlib import Path
 
 import pytest
 
-from tests.support.capabilities import probe_local_bind_capability
+from ..support.capabilities import probe_local_bind_capability
 
 
 class _FakeSocket:

@@ -1,3 +1,4 @@
+# under-test: vcs_core._landlock_containment
 """B2b — Linux Landlock ContainmentBackend (real, container-verified).
 
 Run via ``make test_container`` (privileged Podman, kernel >=5.13). These assert the real

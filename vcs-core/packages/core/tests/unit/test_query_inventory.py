@@ -1,3 +1,4 @@
+# under-test: vcs_core._query_inventory
 from __future__ import annotations
 
 from vcs_core._query_inventory import (

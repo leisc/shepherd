@@ -1,3 +1,4 @@
+# under-test: vcs_core._overlay_capture_adapter
 """Unit tests for ``OverlayCaptureAdapter``.
 
 Validates the SPI v0.1 ``CaptureAdapter`` Protocol against the overlay
@@ -21,16 +22,16 @@ from vcs_core._overlay_capture_adapter import (
     OVERLAY_MECHANISM,
     OverlayCaptureAdapter,
 )
-from vcs_core._substrate_driver import (
+from vcs_core.runtime_api import DriverContext
+from vcs_core.spi import (
     CaptureAdapter,
     Diagnostic,
-    DriverContext,
     FanOutSink,
     ObservationDraft,
     ParseResult,
+    SubstrateStoreIdentity,
     TupleSink,
 )
-from vcs_core._world_types import SubstrateStoreIdentity
 
 
 def _ctx() -> DriverContext:

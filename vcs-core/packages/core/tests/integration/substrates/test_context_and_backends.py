@@ -1,3 +1,4 @@
+# under-test: vcs_core._substrate_runtime
 """Substrate context and backend selection integration tests."""
 
 from __future__ import annotations

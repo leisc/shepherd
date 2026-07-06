@@ -8,11 +8,6 @@ from vcs_core._errors import InvalidRepositoryStateError
 from vcs_core._retained_output_selection import _validate_retained_selection_world
 from vcs_core._retained_output_settlement import read_retained_output_settlement, retained_output_settlement_ref
 from vcs_core._retained_output_settlement_ops import ReceiptOnlyAction, _receipt_only_operation_id
-from vcs_core._vcscore_seal import (
-    ValidatedRetainedWorkspace,
-    _require_public_retained_read_allowed,
-    _validated_retained_workspace,
-)
 from vcs_core.store import GROUND_REF
 from vcs_core.types import (
     RetainedOutputIdentity,
@@ -25,6 +20,7 @@ from vcs_core.types import (
 
 if TYPE_CHECKING:
     from vcs_core._projection_store import ScopeRegistryEntry, ScopeRegistrySnapshot
+    from vcs_core._vcscore_seal import ValidatedRetainedWorkspace
     from vcs_core.vcscore import VcsCore
 
 _VALID_STATES = frozenset({"unconsumed", "selected", "applied", "released", "discarded", "invalid"})
@@ -45,7 +41,7 @@ def list_retained_outputs(
     if state is not None and state not in _VALID_STATES:
         raise ValueError(f"unsupported retained-output state filter: {state!r}")
     with owner._lock:
-        _require_public_retained_read_allowed(owner)
+        owner._seal.require_public_retained_read_allowed()
         registry = owner.store.require_scope_registry_projection()
         parent_ref = _resolve_parent_ref(owner, parent)
         rows: list[RetainedOutputQueryResult] = []
@@ -70,7 +66,7 @@ def get_retained_output(
     if not isinstance(identity, RetainedOutputIdentity):
         raise TypeError("retained-output direct lookup requires RetainedOutputIdentity")
     with owner._lock:
-        _require_public_retained_read_allowed(owner)
+        owner._seal.require_public_retained_read_allowed()
         registry = owner.store.require_scope_registry_projection()
         entry = registry.entries_by_ref.get(identity.scope_ref)
         if entry is None:
@@ -93,7 +89,7 @@ def _query_retained_entry(
     scope = owner.store.scope_info_from_registry_entry(entry)
     parent_scope_name, parent_scope_instance_id = _parent_identity_from_ref(owner, registry, entry.parent_ref)
     try:
-        retained = _validated_retained_workspace(owner, scope)
+        retained = owner._seal.validated_retained_workspace(scope)
     except InvalidRepositoryStateError as exc:
         return _invalid_result(
             entry,

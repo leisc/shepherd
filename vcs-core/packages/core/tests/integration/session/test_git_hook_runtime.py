@@ -1,3 +1,4 @@
+# under-test: vcs_core._session
 """End-to-end Git PATH-wrapper hook runtime tests."""
 
 from __future__ import annotations
@@ -10,7 +11,7 @@ import time
 from pathlib import Path
 
 from vcs_core._ipc import is_session_alive, read_session_info, send_request
-from vcs_core._workspace_adoption import adopt_workspace_baseline
+from vcs_core.runtime_api import adopt_workspace_baseline
 from vcs_core.store import Store
 
 

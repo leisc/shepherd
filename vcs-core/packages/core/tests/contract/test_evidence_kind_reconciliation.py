@@ -1,3 +1,4 @@
+# under-test: vcs_core._substrate_driver
 """Evidence-kind reconciliation positive contract test (SPI v0.1 SP3.6).
 
 The Q4 invariant — "every observation ``evidence_kind`` emitted by a
@@ -21,7 +22,7 @@ from __future__ import annotations
 
 import pytest
 from vcs_core._substrate_driver import DriverContext, SubstrateDriver
-from vcs_core._world_types import SubstrateStoreIdentity
+from vcs_core.spi import SubstrateStoreIdentity
 from vcs_core.spi.testing import conformance_cases
 
 from tests.contract.conftest import DRIVERS_UNDER_TEST

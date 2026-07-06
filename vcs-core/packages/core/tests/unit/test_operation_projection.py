@@ -1,3 +1,4 @@
+# under-test: vcs_core._operation_projection
 """Unit tests for pointer-linked operation projection."""
 
 from __future__ import annotations
@@ -6,7 +7,7 @@ from dataclasses import dataclass
 
 import pytest
 import vcs_core._operation_projection as operation_projection
-from vcs_core._errors import InvalidRepositoryStateError
+from vcs_core import InvalidRepositoryStateError
 from vcs_core._operation_projection import derive_status, project_pointer_history
 
 

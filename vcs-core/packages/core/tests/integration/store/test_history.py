@@ -3,7 +3,7 @@
 from __future__ import annotations
 
 import pytest
-from vcs_core._errors import MergePreconditionError, StaleScopeError
+from vcs_core import MergePreconditionError, StaleScopeError
 from vcs_core.store import Store
 
 

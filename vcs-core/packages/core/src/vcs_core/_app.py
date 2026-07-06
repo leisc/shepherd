@@ -25,6 +25,7 @@ from vcs_core._errors import (
     StaleScopeError,
     SubstrateCommandError,
     UnsupportedOverlayEntryError,
+    VcsCoreError,
     WorkspaceAuthorityRecoveryRequiredError,
 )
 from vcs_core._fork_hints import ForkHints
@@ -128,7 +129,7 @@ class RepoStatusSummary:
     orphaned_operations: tuple[OperationSummary, ...] = ()
 
 
-class AppError(Exception):
+class AppError(VcsCoreError):
     """Base class for expected app-layer failures."""
 
 

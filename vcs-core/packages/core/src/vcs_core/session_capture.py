@@ -18,6 +18,8 @@ from io import BytesIO
 from pathlib import Path
 from typing import TYPE_CHECKING, Any
 
+from vcs_core._errors import VcsCoreError
+
 if TYPE_CHECKING:
     from collections.abc import Iterator, Mapping, Sequence
 
@@ -26,7 +28,7 @@ if TYPE_CHECKING:
 SESSION_CAPTURE_API_VERSION = "v0.1"
 
 
-class SessionCaptureError(RuntimeError):
+class SessionCaptureError(VcsCoreError, RuntimeError):
     """Raised when the daemon-backed capture facade cannot complete a request."""
 
 

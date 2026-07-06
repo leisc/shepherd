@@ -1,3 +1,4 @@
+# under-test: vcs_core._transition_kernel_records
 """Frozen-contract pin for vcs-core's candidate/selection kernel (D12).
 
 This is the kernel API-stability gate from the seal-and-select build plan
@@ -30,7 +31,7 @@ import re
 import typing
 from pathlib import Path
 
-from vcs_core._substrate_driver import SUBSTRATE_DRIVER_CONTRACT_REVISION
+from vcs_core import WORLD_TRANSITION_SCHEMA, WorldSnapshot
 from vcs_core._substrate_store import SubstrateStore
 from vcs_core._transition_kernel_records import (
     CANDIDATE_OUTCOME_SCHEMA,
@@ -38,19 +39,15 @@ from vcs_core._transition_kernel_records import (
     CandidateOutcomeStatus,
 )
 from vcs_core._world_authority_finalizer import WorldAuthorityFinalizer
-from vcs_core._world_operation_builder import CandidateSelection, OperationFinalBuilder
-from vcs_core._world_storage_manager import (
+from vcs_core._world_types import OPERATION_FINAL_SCHEMA
+from vcs_core.spi import SPI_VERSION, SUBSTRATE_DRIVER_CONTRACT_REVISION, SubstrateStoreIdentity
+from vcs_core.testing import (
     DEFAULT_GROUND_REF,
+    CandidateSelection,
+    OperationFinalBuilder,
     SubstrateStoreSpec,
     WorldStorageManager,
 )
-from vcs_core._world_types import (
-    OPERATION_FINAL_SCHEMA,
-    WORLD_TRANSITION_SCHEMA,
-    SubstrateStoreIdentity,
-    WorldSnapshot,
-)
-from vcs_core.spi import SPI_VERSION
 
 GOLDEN_PATH = Path(__file__).parent / "golden" / "candidate_kernel_pin_v0.json"
 

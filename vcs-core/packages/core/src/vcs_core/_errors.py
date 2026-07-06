@@ -3,7 +3,18 @@
 from __future__ import annotations
 
 
-class ActivationError(Exception):
+class VcsCoreError(Exception):
+    """Root of every vcs-core exception.
+
+    Consumers (Shepherd, the child-runtime driver) can catch `VcsCoreError` at the
+    package boundary instead of a bare `except Exception`. Domain exceptions that
+    also subclass a stdlib type (`ValueError`, `RuntimeError`) keep that base via
+    multiple inheritance, so existing `except ValueError` / `except RuntimeError`
+    call sites are unaffected.
+    """
+
+
+class ActivationError(VcsCoreError):
     """Base class for errors that prevent VcsCore.activate()."""
 
 
@@ -11,7 +22,7 @@ class InvalidIdentityError(ActivationError):
     """Persistent repo identity state is invalid or unsupported."""
 
 
-class InvalidRepositoryStateError(RuntimeError):
+class InvalidRepositoryStateError(VcsCoreError, RuntimeError):
     """Repository history violates an invariant required for safe queries."""
 
 
@@ -66,11 +77,11 @@ class InterruptedLifecycleError(ActivationError):
         super().__init__(self.recovery_hint)
 
 
-class OpenScopeError(Exception):
+class OpenScopeError(VcsCoreError):
     """push() was requested while a child scope is still live."""
 
 
-class OrphanedOperationsError(Exception):
+class OrphanedOperationsError(VcsCoreError):
     """A mutating operation was attempted while orphaned operation refs exist."""
 
     def __init__(self, *, attempted: str, operations: list[str]) -> None:
@@ -85,7 +96,7 @@ class OrphanedOperationsError(Exception):
         )
 
 
-class SiblingGroupRecoveryRequiredError(Exception):
+class SiblingGroupRecoveryRequiredError(VcsCoreError):
     """A mutating operation was attempted while sibling-group recovery is pending."""
 
     def __init__(self, *, attempted: str, groups: list[str]) -> None:
@@ -100,7 +111,7 @@ class SiblingGroupRecoveryRequiredError(Exception):
         )
 
 
-class WorkspaceAuthorityRecoveryRequiredError(Exception):
+class WorkspaceAuthorityRecoveryRequiredError(VcsCoreError):
     """A mutating operation was attempted while v2 workspace authority is pending."""
 
     def __init__(self, *, attempted: str, operations: list[str]) -> None:
@@ -119,11 +130,11 @@ class WorldQuiescenceError(InvalidRepositoryStateError):
     """A parent mutation was attempted while a merge-bound child operation is open."""
 
 
-class ScopeAdmissionError(ValueError):
+class ScopeAdmissionError(VcsCoreError, ValueError):
     """A new child scope would violate the live-scope admission policy."""
 
 
-class UnknownForkHintError(ValueError):
+class UnknownForkHintError(VcsCoreError, ValueError):
     """A fork/branch hint key outside the accepted set was supplied.
 
     Raised at ``ForkHints`` construction (the coordinator's typed layer) and
@@ -132,7 +143,7 @@ class UnknownForkHintError(ValueError):
     """
 
 
-class LifecycleRecoveryRequiredError(Exception):
+class LifecycleRecoveryRequiredError(VcsCoreError):
     """A mutating operation was attempted while lifecycle recovery is pending."""
 
     def __init__(self, *, attempted: str, operation: str, scope_name: str, phase: str) -> None:
@@ -146,7 +157,7 @@ class LifecycleRecoveryRequiredError(Exception):
         )
 
 
-class UnscopedMutationError(Exception):
+class UnscopedMutationError(VcsCoreError):
     """A mutating workspace operation was attempted without an active scope."""
 
     def __init__(self, operation: str, path: str | None = None) -> None:
@@ -159,7 +170,7 @@ class UnscopedMutationError(Exception):
         )
 
 
-class UnresolvedPatchPathError(Exception):
+class UnresolvedPatchPathError(VcsCoreError):
     """A mutating operation used a path vcs-core cannot safely classify."""
 
     def __init__(self, operation: str) -> None:
@@ -170,7 +181,7 @@ class UnresolvedPatchPathError(Exception):
         )
 
 
-class OverlayDirtyError(Exception):
+class OverlayDirtyError(VcsCoreError):
     """Uncommitted overlay changes exist outside any scope."""
 
     def __init__(self, message: str, paths: list[str] | None = None) -> None:
@@ -181,7 +192,7 @@ class OverlayDirtyError(Exception):
         super().__init__(message)
 
 
-class UnsupportedOverlayEntryError(Exception):
+class UnsupportedOverlayEntryError(VcsCoreError):
     """Overlay diff encountered a filesystem entry vcs-core cannot represent safely."""
 
     def __init__(self, *, path: str, kind: str) -> None:
@@ -193,7 +204,7 @@ class UnsupportedOverlayEntryError(Exception):
         )
 
 
-class ReadOnlyCarrierError(Exception):
+class ReadOnlyCarrierError(VcsCoreError):
     """A write was attempted against a read-only carrier (the EROFS tier).
 
     A carrier mounted ``read_only`` (lowerdir-only, no writable upper) refuses
@@ -206,11 +217,11 @@ class ReadOnlyCarrierError(Exception):
     """
 
 
-class StaleScopeError(Exception):
+class StaleScopeError(VcsCoreError):
     """Scope ref is missing -- the scope may have been archived."""
 
 
-class MergePreconditionError(Exception):
+class MergePreconditionError(VcsCoreError):
     """Parent ref moved past the scope's fork point."""
 
 
@@ -218,19 +229,19 @@ class ParentWorkingTreeDivergedError(MergePreconditionError):
     """The parent's effective carrier layer changed after a child fork."""
 
 
-class VerifyFailedError(Exception):
+class VerifyFailedError(VcsCoreError):
     """Real filesystem does not match ground tree after crash recovery."""
 
 
-class SubstrateNotBoundError(Exception):
+class SubstrateNotBoundError(VcsCoreError):
     """A required substrate binding (e.g., env var) could not be resolved."""
 
 
-class RefResolutionError(ValueError):
+class RefResolutionError(VcsCoreError, ValueError):
     """A commitish could not be resolved to a valid commit."""
 
 
-class SubstrateCommandError(Exception):
+class SubstrateCommandError(VcsCoreError):
     """Expected failure while executing a substrate command."""
 
     def __init__(self, *, substrate: str, command: str, message: str) -> None:

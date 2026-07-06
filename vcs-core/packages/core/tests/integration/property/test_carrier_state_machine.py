@@ -1,3 +1,4 @@
+# under-test: vcs_core._clonefile_carrier
 """Property-based tests for the clonefile carrier using Hypothesis stateful testing.
 
 Sibling of ``test_store_state_machine.py``, aimed at the carrier layer: random

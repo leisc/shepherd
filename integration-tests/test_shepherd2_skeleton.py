@@ -28,10 +28,9 @@ from shepherd2.trace_store import SQLiteTraceStore, TraceStoreError
 from shepherd2.vnext import skeleton
 from shepherd_dialect.workspace_control import RunOutputCitationRef, RunOutputResolver
 from shepherd_dialect.workspace_control import TraceRef as WorkspaceTraceRef
-from vcs_core import Store, VcsCore, build_builtin_substrate_context
-from vcs_core._errors import InvalidRepositoryStateError
-from vcs_core._world_substrate_adapters import TaskTraceSubstrateDriver
+from vcs_core import InvalidRepositoryStateError, Store, VcsCore, build_builtin_substrate_context
 from vcs_core.git_store import create_or_update_reference
+from vcs_core.runtime_substrate import TaskTraceSubstrateDriver
 from vcs_core.substrates import FilesystemSubstrate, MarkerSubstrate
 
 if TYPE_CHECKING:

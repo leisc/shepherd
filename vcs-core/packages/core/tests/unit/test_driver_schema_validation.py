@@ -1,3 +1,4 @@
+# under-test: vcs_core._driver_schema_validation
 """Tests for driver schema validation and projectability classification."""
 
 from __future__ import annotations

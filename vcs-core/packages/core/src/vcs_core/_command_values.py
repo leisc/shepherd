@@ -6,12 +6,13 @@ import json
 import math
 from typing import Any, Literal, TypeAlias
 
+from vcs_core._errors import VcsCoreError
 from vcs_core._typed_json import decode_typed_json, encode_typed_json
 
 CommandValueSource: TypeAlias = Literal["cli", "native", "typed-json"]
 
 
-class CommandValueError(ValueError):
+class CommandValueError(VcsCoreError, ValueError):
     """Raised when one command value cannot be coerced or rendered faithfully."""
 
 

@@ -7,8 +7,10 @@ from typing import ClassVar
 
 import pygit2
 
+from vcs_core._errors import VcsCoreError
 
-class ParseError(ValueError):
+
+class ParseError(VcsCoreError, ValueError):
     """User input could not be parsed into a domain identifier."""
 
 

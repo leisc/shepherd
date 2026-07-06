@@ -9,7 +9,7 @@ from typing import Annotated
 
 import pytest
 from shepherd_runtime.nucleus import GitRepo
-from vcs_core._authority import AuthzMatchView
+from vcs_core.runtime_api import AuthzMatchView
 
 from shepherd_dialect.workspace_control.authority import (
     GitRepoAuthorityDecisionPolicy,

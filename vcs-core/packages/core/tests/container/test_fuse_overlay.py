@@ -1,3 +1,4 @@
+# under-test: vcs_core._fuse_overlay
 """Tests for the fuse-overlayfs backend."""
 
 from __future__ import annotations
@@ -7,7 +8,7 @@ import stat
 from pathlib import Path
 
 import pytest
-from vcs_core._errors import UnsupportedOverlayEntryError
+from vcs_core import UnsupportedOverlayEntryError
 from vcs_core._fuse_overlay import FuseOverlayBackend
 
 

@@ -1,3 +1,4 @@
+# under-test: vcs_core._cli_session_runtime
 """Session shell CLI behavior tests."""
 
 from __future__ import annotations
@@ -12,8 +13,8 @@ import pytest
 from click.testing import CliRunner
 from vcs_core._cli_session_group import _shell_capture_bashrc
 from vcs_core._cli_session_runtime import SessionCliError, begin_shell_command_envelope, finish_exec_envelope
-from vcs_core._ipc import SessionInfo
 from vcs_core.cli import main
+from vcs_core.testing import SessionInfo
 
 from ...support.cli import init_repo as _init
 

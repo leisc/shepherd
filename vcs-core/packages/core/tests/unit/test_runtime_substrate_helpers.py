@@ -1,3 +1,4 @@
+# under-test: vcs_core._runtime_substrate_helpers
 """The runtime-substrate seam helpers that stay vcs-core-side after PD5.
 
 Tier-A resolution and the in-process provider are generic pieces of the seam;

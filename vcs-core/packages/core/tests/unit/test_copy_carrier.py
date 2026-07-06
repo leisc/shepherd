@@ -1,3 +1,4 @@
+# under-test: vcs_core._copy_carrier
 """The portable copy CarrierBackend — the universal reversibility floor.
 
 Backend-level coverage mirroring ``test_clonefile_carrier.py`` but WITHOUT the
@@ -87,7 +88,7 @@ def test_copy_diff_rejects_symlinks(tmp_path) -> None:
     """Symlinks are unsupported, consistent with the overlay and clonefile carriers:
     a symlink in a scope surfaces as UnsupportedOverlayEntryError at diff time,
     never silently skipped or mis-captured."""
-    from vcs_core._errors import UnsupportedOverlayEntryError
+    from vcs_core import UnsupportedOverlayEntryError
 
     backend = _make(tmp_path)
     backend.create_layer("ground", parent_scope_id=None)

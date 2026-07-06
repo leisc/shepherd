@@ -97,5 +97,13 @@ plugins = ["pydantic.mypy"]
 strict = true
 enable_error_code = "deprecated"
 warn_unreachable = true
+# Pin the OS view so `make typecheck` is deterministic on any runner (CI is ubuntu,
+# dev is darwin) and so the production Landlock jail (`_landlock_containment`) is the
+# type-checked path. This pin is authoritative. Consequence of the pin: darwin-only
+# Seatbelt branches read as unreachable and carry `# type: ignore[unreachable]` calibrated
+# to it — a `mypy --platform darwin` override is intentionally NOT ignore-clean (static
+# ignores cannot satisfy both platforms at once). Full dual-platform coverage is a
+# follow-up CI matrix leg, not this pin.
+platform = "linux"
 
 # Ruff: see ruff.toml at workspace root.

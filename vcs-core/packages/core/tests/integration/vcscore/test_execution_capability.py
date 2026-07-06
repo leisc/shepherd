@@ -1,3 +1,4 @@
+# under-test: vcs_core._execution_capability
 """PD1+PD2: the execution-mechanism capability surface and the reversible wrap.
 
 PD1: execution authority is an opt-in capability — only an ``ExecutionBoundDriver``
@@ -25,9 +26,8 @@ from typing import Any, Literal
 
 import pytest
 import vcs_core._vcscore_lifecycle as lifecycle
+from vcs_core import InvalidRepositoryStateError
 from vcs_core._command_admission import CommandAdmissionError
-from vcs_core._command_envelope import AuthorityMergeControl, CommandExecutionOptions
-from vcs_core._errors import InvalidRepositoryStateError
 from vcs_core._execution_capability import (
     ExecutionAuthorityRequired,
     ExecutionBoundDriver,
@@ -39,19 +39,23 @@ from vcs_core._lock import release_session_lock
 from vcs_core._permission_plan_evidence import permission_plan_digest
 from vcs_core._projection_store import SEAL_AND_SELECT_ENV
 from vcs_core._schema_errors import SchemaValidationError
-from vcs_core._substrate_driver import (
-    BaseSubstrateDriver,
-    CapabilitySet,
+from vcs_core._world_transition_coordinator import dispatch_driver
+from vcs_core.runtime_api import (
+    AuthorityMergeControl,
+    CommandExecutionOptions,
     CommandRequest,
-    CommandSpec,
     DriverContext,
     DriverIngressResult,
+)
+from vcs_core.spi import (
+    BaseSubstrateDriver,
+    CapabilitySet,
+    CommandSpec,
     DriverSchema,
     ParamSpec,
+    SubstrateStoreIdentity,
     TransitionDraft,
 )
-from vcs_core._world_transition_coordinator import dispatch_driver
-from vcs_core._world_types import SubstrateStoreIdentity
 from vcs_core.store import Store
 from vcs_core.substrates import FilesystemSubstrate, MarkerSubstrate
 from vcs_core.types import AuthorityExecutionOutcome, ScopeInfo, SealedExecutionOutcome
@@ -103,7 +107,7 @@ def _result(context: DriverContext, request: CommandRequest, *, reached: str) ->
 
 
 def _authority_options(outcome: Literal["allowed", "denied", "refused"] = "allowed") -> CommandExecutionOptions:
-    from vcs_core._authority import AuthorityDecision
+    from vcs_core.runtime_api import AuthorityDecision
 
     def decide(request: object) -> AuthorityDecision:
         return AuthorityDecision(
@@ -298,7 +302,7 @@ def _make_env(
 ) -> tuple[VcsCore, _RunDriver, MockOverlayBackend | None]:
     root.mkdir()
     store = Store(str(root / ".vcscore"))
-    from vcs_core._substrate_runtime import build_builtin_substrate_context
+    from vcs_core import build_builtin_substrate_context
 
     ctx = build_builtin_substrate_context(store, workspace=root, config={})
     backend = MockOverlayBackend() if isolation_capable else None
@@ -324,7 +328,7 @@ def test_pure_data_driver_dispatches_plain_without_authority(tmp_path: Path) -> 
     root = tmp_path / "ws"
     root.mkdir()
     store = Store(str(root / ".vcscore"))
-    from vcs_core._substrate_runtime import build_builtin_substrate_context
+    from vcs_core import build_builtin_substrate_context
 
     ctx = build_builtin_substrate_context(store, workspace=root, config={})
     driver = _PlainDriver()
@@ -369,7 +373,7 @@ def test_selectable_driver_refused_at_bridge(tmp_path: Path) -> None:
     root = tmp_path / "ws"
     root.mkdir()
     store = Store(str(root / ".vcscore"))
-    from vcs_core._substrate_runtime import build_builtin_substrate_context
+    from vcs_core import build_builtin_substrate_context
 
     ctx = build_builtin_substrate_context(store, workspace=root, config={})
     backend = MockOverlayBackend()

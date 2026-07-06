@@ -1,10 +1,11 @@
+# under-test: vcs_core._fuse_overlay
 from __future__ import annotations
 
 import shutil
 from pathlib import Path
 
 import pytest
-from vcs_core._errors import ParentWorkingTreeDivergedError
+from vcs_core import ParentWorkingTreeDivergedError
 from vcs_core._fuse_overlay import FuseOverlayBackend
 
 from ..support.builders import make_marker_filesystem_vcscore

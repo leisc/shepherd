@@ -1,3 +1,4 @@
+# under-test: vcs_core._capture_reducer
 """Capture journal parsing and reducer helper tests."""
 
 from __future__ import annotations

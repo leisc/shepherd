@@ -996,14 +996,12 @@ def _complete_seal_locked(
     prepared: PreparedSealHandoff | None = None,
     output_binding: str | None = None,
 ) -> SealResult:
-    from vcs_core._vcscore_seal import prepare_seal_handoff, write_prepared_seal_handoff
-
     if not seal_and_select_enabled():
         raise InvalidRepositoryStateError("Cannot complete seal: VCS_CORE_SEAL_AND_SELECT is not enabled.")
     _update_lifecycle_run(owner, phase="seal_handoff")
     if prepared is None:
-        prepared = prepare_seal_handoff(owner, scope=scope, parent=parent, output_binding=output_binding)
-    loaded = write_prepared_seal_handoff(owner, prepared=prepared)
+        prepared = owner._seal.prepare_seal_handoff(scope=scope, parent=parent, output_binding=output_binding)
+    loaded = owner._seal.write_prepared_seal_handoff(prepared=prepared)
     _update_lifecycle_run(owner, phase="seal_runtime_close")
     _close_retained_substrates_locked(owner, scope, parent)
     _update_lifecycle_run(owner, phase="seal_registry")
@@ -2159,10 +2157,8 @@ def seal(owner: VcsCore, scope: ScopeInfo, *, output_binding: str | None = None)
         parent = owner._scope_parents[scope.name]
         if owner._scope_registry_mismatches:
             raise InvalidRepositoryStateError("Cannot seal scope while scope-registry mismatches are present.")
-        from vcs_core._vcscore_seal import prepare_seal_handoff
-
         _snapshot_seal_effects_locked(owner, scope, parent)
-        prepared = prepare_seal_handoff(owner, scope=scope, parent=parent, output_binding=output_binding)
+        prepared = owner._seal.prepare_seal_handoff(scope=scope, parent=parent, output_binding=output_binding)
         _begin_lifecycle_run(owner, operation="seal", phase="seal_handoff", scope=scope, parent=parent)
         return _complete_seal_locked(owner, scope, parent, prepared=prepared, output_binding=output_binding)
 

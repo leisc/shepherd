@@ -1,3 +1,4 @@
+# under-test: vcs_core._kernel_overlay
 """Tests for the kernel overlay backend."""
 
 from __future__ import annotations

@@ -1,3 +1,4 @@
+# under-test: vcs_core._world_store
 """Unit tests for the v2 WorldStore storage kernel."""
 
 from __future__ import annotations
@@ -7,14 +8,19 @@ from dataclasses import replace
 
 import pygit2
 import pytest
-from vcs_core._errors import InvalidRepositoryStateError
+from vcs_core import (
+    WORLD_TRANSITION_SCHEMA,
+    EvidenceRef,
+    InvalidRepositoryStateError,
+    WorldSnapshot,
+    canonical_bytes,
+    canonical_digest,
+)
 from vcs_core._substrate_store import SubstrateStore
 from vcs_core._transition_kernel import JsonPayloadTransitionDriver
 from vcs_core._transition_kernel_records import (
     CandidateCommitRecord,
     EvidenceRecord,
-    EvidenceRef,
-    RelationshipRequirement,
     RetentionPolicyRequirement,
     RevisionPreparationRecord,
     ValidatedPayloadDescriptor,
@@ -24,16 +30,12 @@ from vcs_core._world_store import WorldStore
 from vcs_core._world_types import (
     OPERATION_FINAL_SCHEMA,
     WORLD_REF_SUBSTRATE_KIND,
-    WORLD_TRANSITION_SCHEMA,
     OperationFinalRecord,
     SubstrateHead,
-    SubstrateStoreIdentity,
     WorldRefPayload,
-    WorldSnapshot,
-    canonical_bytes,
-    canonical_digest,
     compact_json_bytes,
 )
+from vcs_core.spi import RelationshipRequirement, SubstrateStoreIdentity
 
 from .world_vectors_v2_helpers import (
     attach_selection_evidence_ref,

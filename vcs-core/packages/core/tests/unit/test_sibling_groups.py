@@ -1,3 +1,4 @@
+# under-test: vcs_core._sibling_groups
 """Deferred sibling-group DTO and canonical serialization tests."""
 
 from __future__ import annotations

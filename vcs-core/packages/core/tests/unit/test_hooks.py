@@ -1,3 +1,4 @@
+# under-test: vcs_core._hooks
 """Tests for internal hook runtime helpers."""
 
 from __future__ import annotations
@@ -10,6 +11,7 @@ import sys
 from pathlib import Path
 
 import pytest
+from vcs_core import build_builtin_substrate_context
 from vcs_core._hooks import (
     HookBinding,
     HookEffects,
@@ -20,7 +22,6 @@ from vcs_core._hooks import (
     parse_hook_event,
     parse_hook_event_line,
 )
-from vcs_core._substrate_runtime import build_builtin_substrate_context
 from vcs_core.git_substrate import GitSubstrate
 from vcs_core.substrates import FilesystemSubstrate
 from vcs_core.types import BoundSubstrate, EffectRecord, ScopeInfo

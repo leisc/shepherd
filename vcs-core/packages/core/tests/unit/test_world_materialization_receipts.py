@@ -1,13 +1,14 @@
+# under-test: vcs_core._world_materialization_receipts
 """Unit tests for private v2 materialization receipt storage."""
 
 from __future__ import annotations
 
 import pygit2
 import pytest
-from vcs_core._errors import InvalidRepositoryStateError
+from vcs_core import InvalidRepositoryStateError, canonical_bytes
 from vcs_core._world_materialization_receipts import MaterializationReceiptStore, materialization_receipt_ref
 from vcs_core._world_store import WorldStore
-from vcs_core._world_types import MaterializationReceipt, canonical_bytes
+from vcs_core._world_types import MaterializationReceipt
 from vcs_core.git_store import create_commit_with_recovery, insert_tree_entry
 
 

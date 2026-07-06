@@ -1,12 +1,13 @@
+# under-test: vcs_core._payload_authority
 """Unit tests for coordinator-owned payload descriptor authority."""
 
 from __future__ import annotations
 
 import pytest
-from vcs_core._errors import InvalidRepositoryStateError
+from vcs_core import InvalidRepositoryStateError, canonical_digest
 from vcs_core._payload_authority import validate_payload_descriptor_claim
-from vcs_core._transition_kernel_records import PayloadDescriptorClaim, ValidatedPayloadDescriptor
-from vcs_core._world_types import canonical_digest
+from vcs_core._transition_kernel_records import ValidatedPayloadDescriptor
+from vcs_core.spi import PayloadDescriptorClaim
 
 
 def test_payload_authority_accepts_json_claim() -> None:

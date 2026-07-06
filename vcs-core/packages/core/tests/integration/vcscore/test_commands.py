@@ -7,10 +7,9 @@ import types
 from pathlib import Path
 
 import pytest
+from vcs_core import StaleScopeError, build_builtin_substrate_context
 from vcs_core._binding_contracts import BindingContractError
-from vcs_core._errors import StaleScopeError
 from vcs_core._schema_errors import SchemaValidationError
-from vcs_core._substrate_runtime import build_builtin_substrate_context
 from vcs_core.spi import (
     CapabilitySet,
     CommandRequest,

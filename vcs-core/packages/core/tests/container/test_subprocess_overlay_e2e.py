@@ -26,7 +26,7 @@ import uuid
 from pathlib import Path
 
 import pytest
-from vcs_core._substrate_runtime import build_builtin_substrate_context
+from vcs_core import build_builtin_substrate_context
 from vcs_core.store import Store
 from vcs_core.substrates import FilesystemSubstrate, MarkerSubstrate
 from vcs_core.vcscore import VcsCore
@@ -340,7 +340,7 @@ def test_v2_gate_under_4a_nested(monkeypatch, tmp_path_factory) -> None:
     """
     import shutil
 
-    from vcs_core._substrate_runtime import build_builtin_substrate_context
+    from vcs_core import build_builtin_substrate_context
     from vcs_core.store import Store
     from vcs_core.substrates import (
         STRICT_TREE_BACKED_MATERIALIZATION_ENV,

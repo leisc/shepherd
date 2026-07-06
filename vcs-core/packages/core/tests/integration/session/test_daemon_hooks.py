@@ -1,3 +1,4 @@
+# under-test: vcs_core._session
 """Session daemon generic hook runtime tests."""
 
 from __future__ import annotations
@@ -50,8 +51,8 @@ def test_handle_hook_line_rejects_stale_scope_instance(
     workspace: Path,
     monkeypatch: pytest.MonkeyPatch,
 ) -> None:
-    from vcs_core._hooks import HookManager
     from vcs_core._session import SessionDaemon
+    from vcs_core.testing import HookManager
 
     daemon = SessionDaemon(str(workspace))
     task = ScopeInfo(name="task", ref="refs/vcscore/scopes/task", instance_id="live-scope", creation_oid="")
@@ -116,8 +117,8 @@ def test_handle_hook_line_records_effect_for_live_scope(
     workspace: Path,
     monkeypatch: pytest.MonkeyPatch,
 ) -> None:
-    from vcs_core._hooks import HookManager
     from vcs_core._session import SessionDaemon
+    from vcs_core.testing import HookManager
 
     daemon = SessionDaemon(str(workspace))
     task = ScopeInfo(name="task", ref="refs/vcscore/scopes/task", instance_id="live-scope", creation_oid="")
@@ -196,8 +197,8 @@ def test_handle_hook_line_prefers_child_operation_path_for_live_scope(
     workspace: Path,
     monkeypatch: pytest.MonkeyPatch,
 ) -> None:
-    from vcs_core._hooks import HookManager
     from vcs_core._session import SessionDaemon
+    from vcs_core.testing import HookManager
 
     daemon = SessionDaemon(str(workspace))
     task = ScopeInfo(name="task", ref="refs/vcscore/scopes/task", instance_id="live-scope", creation_oid="")
@@ -286,8 +287,8 @@ def test_handle_hook_line_rejects_stale_ground_scope_instance(
     workspace: Path,
     monkeypatch: pytest.MonkeyPatch,
 ) -> None:
-    from vcs_core._hooks import HookManager
     from vcs_core._session import SessionDaemon
+    from vcs_core.testing import HookManager
 
     daemon = SessionDaemon(str(workspace))
     seen_records: list[tuple[str, EffectRecord, ScopeInfo]] = []
@@ -351,8 +352,8 @@ def test_handle_hook_line_records_effect_for_live_ground_scope(
     workspace: Path,
     monkeypatch: pytest.MonkeyPatch,
 ) -> None:
-    from vcs_core._hooks import HookManager
     from vcs_core._session import SessionDaemon
+    from vcs_core.testing import HookManager
 
     daemon = SessionDaemon(str(workspace))
     seen_records: list[tuple[str, EffectRecord, ScopeInfo, str, str, dict]] = []
@@ -430,8 +431,8 @@ def test_handle_hook_line_prefers_child_operation_path_for_live_ground_scope(
     workspace: Path,
     monkeypatch: pytest.MonkeyPatch,
 ) -> None:
-    from vcs_core._hooks import HookManager
     from vcs_core._session import SessionDaemon
+    from vcs_core.testing import HookManager
 
     daemon = SessionDaemon(str(workspace))
     seen_records: list[tuple[str, EffectRecord, ScopeInfo]] = []

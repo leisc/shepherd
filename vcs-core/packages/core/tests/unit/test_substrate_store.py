@@ -1,3 +1,4 @@
+# under-test: vcs_core._substrate_store
 """Unit tests for the v2 Git-backed SubstrateStore."""
 
 from __future__ import annotations
@@ -6,12 +7,10 @@ from dataclasses import replace
 
 import pygit2
 import pytest
-from vcs_core._errors import InvalidRepositoryStateError
-from vcs_core._substrate_driver import KeyedJsonPut, KeyedJsonTreeDraft
+from vcs_core import EvidenceRef, InvalidRepositoryStateError, canonical_bytes, canonical_digest
 from vcs_core._substrate_store import SubstrateStore
 from vcs_core._transition_kernel_records import (
     EvidenceRecord,
-    EvidenceRef,
     LogicalTransition,
     PreparedRevisionPlan,
     RevisionPreparationRecord,
@@ -23,15 +22,9 @@ from vcs_core._world_refs import (
     encode_ref_component,
     is_ref_safe_component,
 )
-from vcs_core._world_types import (
-    SubstrateRevisionMetadata,
-    SubstrateStoreIdentity,
-    canonical_bytes,
-    canonical_digest,
-    compact_json_bytes,
-    load_canonical_json,
-)
+from vcs_core._world_types import SubstrateRevisionMetadata, compact_json_bytes, load_canonical_json
 from vcs_core.git_store import build_tree, create_commit_with_recovery, insert_tree_entry
+from vcs_core.spi import KeyedJsonPut, KeyedJsonTreeDraft, SubstrateStoreIdentity
 
 
 def _identity(

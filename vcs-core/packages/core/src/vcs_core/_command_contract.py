@@ -7,7 +7,7 @@ from dataclasses import dataclass
 from types import MappingProxyType
 from typing import TYPE_CHECKING, TypeAlias
 
-from vcs_core._errors import InvalidRepositoryStateError
+from vcs_core._errors import InvalidRepositoryStateError, VcsCoreError
 from vcs_core._ingress_params import (
     IngressParamContract,
     IngressParamError,
@@ -22,7 +22,7 @@ if TYPE_CHECKING:
     from vcs_core._command_values import CommandValueSource
 
 
-class CommandContractError(ValueError):
+class CommandContractError(VcsCoreError, ValueError):
     """Raised when a command schema or invocation violates the semantic contract."""
 
 

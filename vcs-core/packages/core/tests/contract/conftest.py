@@ -25,13 +25,13 @@ tests (``tests/unit/test_spi_testing_kit.py``) prove it passes/fails correctly.
 
 from __future__ import annotations
 
-from vcs_core._substrate_driver import SubstrateDriver
 from vcs_core._world_substrate_adapters import (
     SessionStateSubstrateDriver,
-    TaskTraceSubstrateDriver,
     WorkspaceSubstrateDriver,
     WorldRefSubstrateDriver,
 )
+from vcs_core.runtime_substrate import TaskTraceSubstrateDriver
+from vcs_core.spi import SubstrateDriver
 
 DRIVERS_UNDER_TEST: tuple[type[SubstrateDriver], ...] = (
     WorkspaceSubstrateDriver,

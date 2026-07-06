@@ -1,8 +1,9 @@
+# under-test: vcs_core._operation_journal_inventory
 from __future__ import annotations
 
 import pygit2
 import pytest
-from vcs_core._errors import InvalidRepositoryStateError
+from vcs_core import InvalidRepositoryStateError, canonical_bytes
 from vcs_core._operation_journal_inventory import probe_operation_journal, probe_operation_journals
 from vcs_core._query_inventory import (
     OPERATION_JOURNAL_IDENTITY_MISMATCH,
@@ -12,10 +13,10 @@ from vcs_core._query_inventory import (
 )
 from vcs_core._world_authority_finalizer import WorldAuthorityFinalizer
 from vcs_core._world_operation_journal import OPERATION_JOURNAL_PATH, OPERATION_JOURNAL_SCHEMA
-from vcs_core._world_refs import encode_ref_component, operation_journal_ref
-from vcs_core._world_storage_manager import DEFAULT_GROUND_REF, SubstrateStoreSpec, WorldStorageManager
-from vcs_core._world_types import SubstrateStoreIdentity, canonical_bytes
+from vcs_core._world_refs import encode_ref_component
 from vcs_core.git_store import create_commit_with_recovery, insert_tree_entry
+from vcs_core.spi import SubstrateStoreIdentity
+from vcs_core.testing import DEFAULT_GROUND_REF, SubstrateStoreSpec, WorldStorageManager, operation_journal_ref
 
 
 def _workspace_identity() -> SubstrateStoreIdentity:

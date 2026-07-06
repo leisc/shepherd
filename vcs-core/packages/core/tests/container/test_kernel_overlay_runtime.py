@@ -10,7 +10,7 @@ import uuid
 from pathlib import Path
 
 import pytest
-from vcs_core._substrate_runtime import build_builtin_substrate_context
+from vcs_core import build_builtin_substrate_context
 from vcs_core.store import Store
 from vcs_core.substrates import FilesystemSubstrate, MarkerSubstrate
 from vcs_core.vcscore import VcsCore
@@ -452,7 +452,7 @@ def test_kernel_runtime_push_crash_recovery(
     kernel_overlay_state_root: Path,
 ) -> None:
     """R1b test 7: dirty flag protocol interacts correctly with overlay."""
-    from vcs_core._dirty_flag import write_dirty_flag
+    from vcs_core.testing import write_dirty_flag
 
     repo_path = runtime_workspace / ".vcscore"
 

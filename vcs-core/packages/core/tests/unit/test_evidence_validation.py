@@ -1,12 +1,12 @@
+# under-test: vcs_core._evidence_validation
 """Unit tests for transition-kernel evidence authority validation."""
 
 from __future__ import annotations
 
 import pytest
-from vcs_core._errors import InvalidRepositoryStateError
+from vcs_core import EvidenceRef, InvalidRepositoryStateError, canonical_digest
 from vcs_core._evidence_validation import EvidenceCitationScope, validate_preparation_evidence_refs
-from vcs_core._transition_kernel_records import EvidenceRecord, EvidenceRef
-from vcs_core._world_types import canonical_digest
+from vcs_core._transition_kernel_records import EvidenceRecord
 
 
 def test_preparation_evidence_validation_accepts_local_first_cited_suffix() -> None:

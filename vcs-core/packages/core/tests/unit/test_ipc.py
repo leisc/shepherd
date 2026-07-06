@@ -1,3 +1,4 @@
+# under-test: vcs_core._ipc
 """Tests for IPC protocol types (no platform gating -- pure Python)."""
 
 from __future__ import annotations

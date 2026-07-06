@@ -1,3 +1,4 @@
+# under-test: vcs_core._session
 """Session daemon lifecycle and IPC dispatch tests."""
 
 from __future__ import annotations
@@ -9,9 +10,10 @@ from contextlib import contextmanager
 from pathlib import Path
 
 import pytest
-from vcs_core._command_envelope import CommandExecutionOptions
-from vcs_core._ipc import SessionInfo, is_session_alive, write_session_info
+from vcs_core._ipc import is_session_alive, write_session_info
+from vcs_core.runtime_api import CommandExecutionOptions
 from vcs_core.store import Store
+from vcs_core.testing import SessionInfo
 from vcs_core.types import (
     CommitInfo,
     OperationHistory,
@@ -201,8 +203,9 @@ def test_stale_session_info_cleanup(workspace: Path) -> None:
 
 
 def test_cleanup_deactivates_patches_before_uninstalling_hook_wrappers(workspace: Path) -> None:
-    from vcs_core._hooks import HookEffects, HookEvent, HookManager, SystemHook
+    from vcs_core._hooks import HookEffects, HookEvent, SystemHook
     from vcs_core._session import SessionDaemon
+    from vcs_core.testing import HookManager
     from vcs_core.types import BoundSubstrate, EffectRecord
 
     from ...support.builders import make_marker_filesystem_vcscore
@@ -611,10 +614,10 @@ def test_session_state_uses_split_hook_env_only(workspace: Path, monkeypatch: py
 
 
 def test_session_state_rejects_unknown_hook_capability(workspace: Path, monkeypatch: pytest.MonkeyPatch) -> None:
-    from vcs_core._hooks import HookManager
+    from vcs_core import build_builtin_substrate_context
     from vcs_core._session import SessionDaemon
-    from vcs_core._substrate_runtime import build_builtin_substrate_context
     from vcs_core.substrates import FilesystemSubstrate
+    from vcs_core.testing import HookManager
     from vcs_core.types import BoundSubstrate, ScopeInfo
 
     daemon = SessionDaemon(str(workspace))
@@ -732,7 +735,8 @@ def test_do_exec_passes_nested_command_params_without_routing_collisions(
 
 def test_do_exec_normalizes_driver_ingress_result_for_ipc(workspace: Path, monkeypatch: pytest.MonkeyPatch) -> None:
     from vcs_core._session import SessionDaemon
-    from vcs_core._substrate_driver import Diagnostic, DriverIngressResult, ObservationDraft, TransitionDraft
+    from vcs_core.runtime_api import DriverIngressResult
+    from vcs_core.spi import Diagnostic, ObservationDraft, TransitionDraft
     from vcs_core.types import DRIVER_INGRESS_RESULT_VALUE_SCHEMA
 
     daemon = SessionDaemon(str(workspace))

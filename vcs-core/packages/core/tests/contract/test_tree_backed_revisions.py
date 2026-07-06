@@ -1,3 +1,4 @@
+# under-test: vcs_core._world_types
 """Contract tests for tree-backed workspace substrate revisions (Track A / Tranche 1).
 
 These tests pin the schema-enablement boundary between digest-only and tree-backed
@@ -20,11 +21,10 @@ from dataclasses import replace
 
 import pygit2
 import pytest
-from vcs_core._errors import InvalidRepositoryStateError
+from vcs_core import EvidenceRef, InvalidRepositoryStateError
 from vcs_core._substrate_store import SubstrateStore
 from vcs_core._transition_kernel_records import (
     EvidenceRecord,
-    EvidenceRef,
     LogicalTransition,
     PreparedRevisionPlan,
     RevisionPreparationRecord,

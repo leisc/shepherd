@@ -1,3 +1,4 @@
+# under-test: vcs_core._session
 """N+2 live thread: the Claude Agent SDK edits a Git workspace under vcs-core
 capture, reversibly, in Podman.
 

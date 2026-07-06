@@ -16,6 +16,7 @@ from vcs_core._command_values import (
     parse_command_type,
     validate_ingress_choice,
 )
+from vcs_core._errors import VcsCoreError
 from vcs_core._substrate_driver import ParamSpec
 
 if TYPE_CHECKING:
@@ -25,7 +26,7 @@ if TYPE_CHECKING:
 IngressValueSource = CommandValueSource
 
 
-class IngressParamError(ValueError):
+class IngressParamError(VcsCoreError, ValueError):
     """Raised when an ingress parameter declaration or payload is invalid."""
 
 

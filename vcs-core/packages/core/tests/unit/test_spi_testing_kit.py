@@ -11,12 +11,10 @@ from __future__ import annotations
 import sys
 
 import pytest
-from vcs_core._substrate_driver import (
+from vcs_core.runtime_api import CommandRequest, DriverContext, DriverIngressResult
+from vcs_core.spi import (
     CapabilitySet,
-    CommandRequest,
     CommandSpec,
-    DriverContext,
-    DriverIngressResult,
     DriverSchema,
     IngressRequest,
     ParamSpec,
@@ -283,7 +281,7 @@ class _UnauthorizedExecutionDriver(_MemoryDriver):
         return frozenset({"run"})
 
     def describe(self) -> DriverSchema:
-        from vcs_core._substrate_driver import CommandSpec
+        from vcs_core.spi import CommandSpec
 
         return DriverSchema(
             driver_id=self.driver_id,
@@ -321,7 +319,7 @@ def test_kit_catches_unauthorized_execution() -> None:
 
 
 def test_match_dispatch_exhaustiveness_check_passes_on_match_driver() -> None:
-    from vcs_core._world_substrate_adapters import TaskTraceSubstrateDriver
+    from vcs_core.runtime_substrate import TaskTraceSubstrateDriver
 
     assert_match_dispatch_exhaustive(TaskTraceSubstrateDriver)
 

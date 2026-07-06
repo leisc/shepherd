@@ -1,3 +1,4 @@
+# under-test: vcs_core._upstream
 from __future__ import annotations
 
 import pytest

@@ -8,7 +8,7 @@ import threading
 from collections.abc import Callable
 from contextlib import contextmanager
 from dataclasses import dataclass
-from typing import TYPE_CHECKING, Any, ClassVar, Protocol
+from typing import TYPE_CHECKING, Any, ClassVar, Protocol, cast
 
 from vcs_core._errors import UnresolvedPatchPathError, UnscopedMutationError
 from vcs_core._patch_paths import (
@@ -44,7 +44,7 @@ class NamedSubstrate(Protocol):
 
 @dataclass(frozen=True)
 class _PatchBinding:
-    substrate: PerformedEventProvider
+    substrate: PerformedEventProvider | PythonPatchProvider
     patch: PythonPatch
 
 
@@ -464,7 +464,11 @@ class PatchManager:
             if translated is None:
                 continue
             event, params = translated
-            self.record_performed_event(binding.substrate, event, params, boundary_policy="forced_child")
+            # Reached only when after_translator is set, and install_substrates rejects any such
+            # binding whose substrate is not also a PerformedEventProvider — so this cast is sound.
+            self.record_performed_event(
+                cast("PerformedEventProvider", binding.substrate), event, params, boundary_policy="forced_child"
+            )
             break
         return result
 
@@ -577,7 +581,7 @@ def _require_performed_effects(
             f"got {actual_type}."
         )
     try:
-        effects = tuple(result)  # type: ignore[arg-type]
+        effects: tuple[EffectRecord, ...] = tuple(result)  # type: ignore[arg-type]
     except TypeError as exc:
         actual_type = type(result).__name__
         raise TypeError(

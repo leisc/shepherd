@@ -6,9 +6,8 @@ from pathlib import Path
 
 import pytest
 import vcs_core as vcs_core_pkg
-from vcs_core import spi
-from vcs_core._errors import InvalidRepositoryStateError
-from vcs_core._substrate_runtime import ContainmentSubstrate, build_builtin_substrate_context
+from vcs_core import InvalidRepositoryStateError, build_builtin_substrate_context, spi
+from vcs_core._substrate_runtime import ContainmentSubstrate
 from vcs_core.spi import (
     SPI_VERSION,
     SUBSTRATE_DRIVER_CONTRACT_REVISION,
@@ -128,7 +127,7 @@ class _MemoryDriver:
                     ),
                 )
             )
-        from vcs_core._substrate_driver import UnsupportedRequestError
+        from vcs_core.spi import UnsupportedRequestError
 
         raise UnsupportedRequestError(driver_id=self.driver_id, request_type=type(request))
 
@@ -223,10 +222,10 @@ def test_typed_dispatch_drivers_end_match_with_assert_never() -> None:
 
     from vcs_core._world_substrate_adapters import (
         SessionStateSubstrateDriver,
-        TaskTraceSubstrateDriver,
         WorkspaceSubstrateDriver,
         WorldRefSubstrateDriver,
     )
+    from vcs_core.runtime_substrate import TaskTraceSubstrateDriver
 
     typed_dispatch_drivers = (
         WorkspaceSubstrateDriver,

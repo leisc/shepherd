@@ -11,7 +11,7 @@ from vcs_core._command_contract import (
     compile_command_contract,
 )
 from vcs_core._command_projection import CommandProjectionError, project_command_contract
-from vcs_core._errors import InvalidRepositoryStateError
+from vcs_core._errors import InvalidRepositoryStateError, VcsCoreError
 from vcs_core._ingress_params import IngressParamError, compile_ingress_params
 from vcs_core._substrate_driver import (
     DriverSchema,
@@ -22,7 +22,7 @@ from vcs_core._substrate_driver import (
 )
 
 
-class DriverSchemaValidationError(ValueError):
+class DriverSchemaValidationError(VcsCoreError, ValueError):
     """Raised when a driver schema or projected command surface is invalid."""
 
 
@@ -155,13 +155,16 @@ def _validate_named_param_specs(
             raise DriverSchemaValidationError(
                 f"Driver '{driver_id}' {ingress_kind} '{name}' must be a {expected_type.__name__}."
             )
-        if not isinstance(spec.params, Mapping):
+        # `expected_type` is a runtime variable (`type[ScanSpec | MergeSpec]`), so the isinstance
+        # guard above does not narrow `spec` for the checker — bind the proven type explicitly.
+        spec_typed: ScanSpec | MergeSpec = spec  # type: ignore[assignment]
+        if not isinstance(spec_typed.params, Mapping):
             raise DriverSchemaValidationError(f"Driver '{driver_id}' {ingress_kind} '{name}' params must be a mapping.")
         try:
             compile_ingress_params(
                 owner_label=f"Driver '{driver_id}'",
                 ingress_label=f"{ingress_kind} '{name}'",
-                specs=spec.params,
+                specs=spec_typed.params,
                 strict_schema=True,
             )
         except IngressParamError as exc:

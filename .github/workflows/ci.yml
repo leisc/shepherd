@@ -74,6 +74,11 @@ jobs:
       - name: Kernel-v3 conformance + goldens
         run: >
           uv run --directory shepherd/packages/kernel-v3-reference pytest -q
+      - name: Type check vcs-core (mypy src/, strict; platform-pinned in pyproject)
+        # vcs-core ships in the wheel; this gate keeps its strict-typecheck state
+        # from regressing. Green as of the controller-extraction refactor that
+        # cleared the prior mypy errors.
+        run: make typecheck-vcs-core
 
   test:
     name: Tests (macOS · clonefile carrier)

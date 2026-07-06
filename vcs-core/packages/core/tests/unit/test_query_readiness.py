@@ -1,10 +1,10 @@
+# under-test: vcs_core._query_readiness
 from __future__ import annotations
 
 import pygit2
 import pytest
+from vcs_core import OrphanedOperationsError
 from vcs_core._authority import _authority_settlement_pending_path
-from vcs_core._dirty_flag import write_dirty_flag
-from vcs_core._errors import OrphanedOperationsError
 from vcs_core._materialization_run import MaterializationRun, write_materialization_run
 from vcs_core._query_readiness import (
     ReadinessOperationAuthority,
@@ -25,7 +25,7 @@ from vcs_core._sibling_groups import (
 )
 from vcs_core._workspace_authority import WorkspaceAuthorityPending, write_pending_workspace_authority
 from vcs_core._world_operation_journal import OPERATION_JOURNAL_PATH
-from vcs_core._world_refs import operation_journal_ref, world_open_operation_journal_index_ref
+from vcs_core._world_refs import world_open_operation_journal_index_ref
 from vcs_core._world_storage_installation import (
     default_world_storage_root,
     open_existing_default_world_storage,
@@ -34,6 +34,7 @@ from vcs_core._world_storage_installation import (
 from vcs_core.git_store import create_commit_with_recovery, insert_tree_entry
 from vcs_core.recording import NestedParentAuthorization
 from vcs_core.store import Store
+from vcs_core.testing import operation_journal_ref, write_dirty_flag
 from vcs_core.vcscore import VcsCore
 
 

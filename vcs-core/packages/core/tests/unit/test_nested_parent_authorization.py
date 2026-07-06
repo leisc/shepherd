@@ -1,3 +1,4 @@
+# under-test: vcs_core._vcscore_runtime
 """The nested-ops authorization object — the graduation gate, discharged.
 
 ``nested-operations.md``'s gate: the former ``allow_nested_parent: bool``

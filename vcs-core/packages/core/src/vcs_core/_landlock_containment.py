@@ -57,7 +57,7 @@ class _PathBeneathAttr(ctypes.Structure):
 
 def _syscall(*args: Any) -> int:
     conv = [a if not isinstance(a, int) else ctypes.c_long(a) for a in args]
-    return _LIBC.syscall(*conv)
+    return int(_LIBC.syscall(*conv))
 
 
 def landlock_abi() -> int:
@@ -131,7 +131,7 @@ class LandlockContainmentBackend:
 
     def launch(
         self, profile: str, working_root: Any, command: list[str], *, env: dict[str, str] | None = None
-    ) -> subprocess.CompletedProcess:
+    ) -> subprocess.CompletedProcess[str]:
         """Run command under a Landlock confine-then-exec runner (this module's ``__main__``)."""
         return subprocess.run(
             [sys.executable, "-m", "vcs_core._landlock_containment", _RUNNER_SENTINEL, profile, *command],
@@ -208,8 +208,8 @@ def _run_confined() -> int:
         return _CONFINE_FAILED_RC  # fail-closed: never run the body if confinement failed
     if not command:
         return 0
-    os.execvp(command[0], command)  # noqa: S606 intentional shell-free exec (the confined runner)
-    return 127  # unreachable unless exec fails
+    os.execvp(command[0], command)  # noqa: S606  intentional shell-free exec (the confined runner)
+    return 127  # type: ignore[unreachable]  # os.execvp replaces the process or raises; never returns
 
 
 if __name__ == "__main__":

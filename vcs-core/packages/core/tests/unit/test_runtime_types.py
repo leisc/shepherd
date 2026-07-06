@@ -1,3 +1,4 @@
+# under-test: vcs_core._runtime_types
 """Tests for internal runtime-handle types and boundaries."""
 
 from __future__ import annotations

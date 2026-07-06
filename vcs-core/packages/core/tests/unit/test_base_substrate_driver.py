@@ -1,3 +1,4 @@
+# under-test: vcs_core._substrate_driver
 """Unit tests for ``BaseSubstrateDriver`` (SPI v0.1 Phase A.1).
 
 Validates that the mixin's default implementations behave per the SPI
@@ -41,7 +42,7 @@ from vcs_core._substrate_driver import (
     UnsupportedRequestError,
     command,
 )
-from vcs_core._world_types import SubstrateStoreIdentity
+from vcs_core.spi import SubstrateStoreIdentity
 
 
 @dataclass(frozen=True)
@@ -160,7 +161,7 @@ def test_subclass_can_override_capture_adapters() -> None:
 
 def test_subclass_can_override_validate_result() -> None:
     """Subclasses with semantic rules raise InvalidRepositoryStateError."""
-    from vcs_core._errors import InvalidRepositoryStateError
+    from vcs_core import InvalidRepositoryStateError
 
     @dataclass(frozen=True)
     class _StrictDriver(_MinimalDriver):
@@ -291,7 +292,7 @@ def test_command_decorator_rejects_noncanonical_metadata_shapes() -> None:
 
 
 def test_decorated_driver_rejects_noncanonical_mapping_choices_metadata() -> None:
-    from vcs_core._errors import InvalidRepositoryStateError
+    from vcs_core import InvalidRepositoryStateError
 
     @dataclass(frozen=True)
     class _DecoratedDriver(BaseSubstrateDriver):
@@ -595,7 +596,7 @@ def test_decorated_command_name_collisions_fail() -> None:
             del context, value
             return DriverIngressResult()
 
-    from vcs_core._errors import InvalidRepositoryStateError
+    from vcs_core import InvalidRepositoryStateError
 
     with pytest.raises(InvalidRepositoryStateError, match="decorated command name collision"):
         _BadDriver().derived_command_specs()

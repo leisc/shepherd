@@ -1,3 +1,4 @@
+# under-test: vcs_core._session_paths
 """Regression checks for deterministic short session runtime paths."""
 
 from __future__ import annotations

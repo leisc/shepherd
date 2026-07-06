@@ -3,13 +3,17 @@
 from __future__ import annotations
 
 from dataclasses import dataclass
+from typing import TYPE_CHECKING
 
 import pygit2
 
 from vcs_core._errors import InvalidRepositoryStateError
 from vcs_core._world_operation_builder import PreparedWorldOperation
 from vcs_core._world_publication_plan import PublicationPlan
-from vcs_core._world_storage_manager import DEFAULT_GROUND_REF, WorldStorageManager
+from vcs_core._world_storage_records import DEFAULT_GROUND_REF
+
+if TYPE_CHECKING:
+    from vcs_core._world_storage_manager import WorldStorageManager
 
 
 @dataclass(frozen=True)

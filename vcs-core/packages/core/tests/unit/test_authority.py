@@ -6,8 +6,7 @@ from pathlib import Path
 
 import pytest
 from click.testing import CliRunner
-from vcs_core import VcsCore
-from vcs_core._substrate_runtime import build_builtin_substrate_context
+from vcs_core import VcsCore, build_builtin_substrate_context
 from vcs_core.authority import (
     AuthorityAspect,
     AuthorityValidationError,

@@ -1,3 +1,4 @@
+# under-test: vcs_core._query_readiness
 """Part B: the admission tier is bounded-when-present behind a test-enforced boundary.
 
 Splits the one overloaded readiness source into a bounded index-backed *admission* source (the only
@@ -13,9 +14,9 @@ import vcs_core._operation_journal_inventory as oji
 import vcs_core._query_readiness as qr
 from vcs_core._operation_journal_inventory import probe_operation_journals
 from vcs_core._query_readiness import ReadinessRequest, _admission_operation_journal_items
-from vcs_core._world_refs import operation_journal_ref, world_open_operation_journal_index_ref
+from vcs_core._world_refs import world_open_operation_journal_index_ref
 from vcs_core._world_storage_installation import open_or_init_default_world_storage
-from vcs_core._world_storage_manager import WorldStorageManager
+from vcs_core.testing import WorldStorageManager, operation_journal_ref
 from vcs_core.vcscore import VcsCore
 
 _OPEN_A = operation_journal_ref("open", "op-a")

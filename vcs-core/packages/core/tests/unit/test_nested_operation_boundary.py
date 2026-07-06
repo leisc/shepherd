@@ -1,3 +1,4 @@
+# under-test: vcs_core._vcscore_runtime
 from __future__ import annotations
 
 from typing import TYPE_CHECKING

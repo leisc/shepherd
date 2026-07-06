@@ -19,7 +19,6 @@ from vcs_core._vcscore_seal import (
     ValidatedRetainedWorkspace,
     _scope_selector,
     _validate_retained_workspace_handle,
-    _validated_retained_workspace,
 )
 from vcs_core._world_types import canonical_digest
 from vcs_core.types import (
@@ -68,7 +67,7 @@ def _settle_retained_output(
     action: ReceiptOnlyAction,
 ) -> RetainedOutputSettlementResult:
     with owner._lock:
-        retained = _validated_retained_workspace(owner, _scope_selector(scope_or_handle))
+        retained = owner._seal.validated_retained_workspace(_scope_selector(scope_or_handle))
         if isinstance(scope_or_handle, RetainedWorkspaceHandle):
             _validate_retained_workspace_handle(scope_or_handle, retained)
         parent = owner._live_scope(parent)

@@ -1,3 +1,4 @@
+# under-test: vcs_core._workspace_external_state
 """Physical workspace admission checks for snapshot-backed sessions."""
 
 from __future__ import annotations

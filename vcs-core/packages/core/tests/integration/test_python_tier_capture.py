@@ -22,7 +22,7 @@ import json
 
 import pytest
 from vcs_core._active_surface_profiles import permissive_active_surface, read_only_filesystem_surface
-from vcs_core._substrate_driver import SurfacePolicyError
+from vcs_core.spi import SurfacePolicyError
 from vcs_core.types import ScopeInfo
 from vcs_core.vcscore import VcsCore
 
@@ -264,8 +264,8 @@ def test_python_tier_uses_registry_owned_adapter_not_driver_default(mg: VcsCore)
 
     workspace_driver = WorkspaceSubstrateDriver()
     # Build a minimal context to pass to capture_adapters.
-    from vcs_core._substrate_driver import DriverContext
-    from vcs_core._world_types import SubstrateStoreIdentity
+    from vcs_core.runtime_api import DriverContext
+    from vcs_core.spi import SubstrateStoreIdentity
 
     ctx = DriverContext(
         operation_id="op-test",

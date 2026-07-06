@@ -1,3 +1,4 @@
+# under-test: vcs_core._world_substrate_adapters
 """Unit tests for ``WorkspaceSubstrateDriver``'s typed ingress dispatch.
 
 Covers the migration table from SPI v0.1 §Migration Table for the
@@ -22,25 +23,23 @@ from vcs_core._overlay_capture_adapter import (
     OVERLAY_EVIDENCE_KINDS,
     OverlayCaptureAdapter,
 )
-from vcs_core._substrate_driver import (
-    CaptureRequest,
-    CommandRequest,
-    DriverContext,
-    DriverIngressResult,
-    DriverSchema,
-    MergeRequest,
-    ObservationDraft,
-    ReduceRequest,
-    ReductionBatch,
-    ScanRequest,
-    SubstrateDriver,
-    validate_driver_ingress,
-)
+from vcs_core._substrate_driver import ReductionBatch
 from vcs_core._world_substrate_adapters import (
     WORKSPACE_REVISION_SCHEMA,
     WorkspaceSubstrateDriver,
 )
-from vcs_core._world_types import SubstrateStoreIdentity
+from vcs_core.runtime_api import CommandRequest, DriverContext, DriverIngressResult
+from vcs_core.spi import (
+    CaptureRequest,
+    DriverSchema,
+    MergeRequest,
+    ObservationDraft,
+    ReduceRequest,
+    ScanRequest,
+    SubstrateDriver,
+    SubstrateStoreIdentity,
+    validate_driver_ingress,
+)
 
 
 def _ctx(*, base_heads: tuple[str, ...] = ()) -> DriverContext:
@@ -211,9 +210,9 @@ def test_reduce_request_requires_at_least_one_citation() -> None:
 
 def test_reduce_request_happy_path_emits_capture_reduction_transition() -> None:
     """T2c happy-path: typed ReduceRequest produces a workspace-capture-reduction transition."""
+    from vcs_core import canonical_digest
     from vcs_core._substrate_driver import EvidenceCitation
     from vcs_core._world_substrate_adapters import workspace_state_revision_payload
-    from vcs_core._world_types import canonical_digest
 
     driver = WorkspaceSubstrateDriver()
     payload = workspace_state_revision_payload(

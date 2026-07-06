@@ -1,3 +1,4 @@
+# under-test: vcs_core._cli_errors
 from __future__ import annotations
 
 from vcs_core._cli_errors import prefixed_error_message

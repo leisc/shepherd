@@ -12,9 +12,9 @@ from typing import Any
 import pytest
 from click.testing import CliRunner
 from vcs_core._command_contract import compile_command_contract
-from vcs_core._ipc import SessionInfo
 from vcs_core.cli import main
 from vcs_core.spi import CapabilitySet, CommandRequest, CommandSpec, DriverSchema, ParamSpec
+from vcs_core.testing import SessionInfo
 
 from ...support.cli import init_repo as _init
 

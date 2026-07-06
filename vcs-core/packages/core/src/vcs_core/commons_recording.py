@@ -16,6 +16,7 @@ import pygit2
 from commons_vcs import Object, Repo
 from commons_vcs.backends.git import GitBackend
 
+from vcs_core._errors import VcsCoreError
 from vcs_core.profiles.committed_view import reachable_from_heads
 from vcs_core.profiles.commons_refs import (
     carrier_commit_ref,
@@ -40,15 +41,15 @@ if TYPE_CHECKING:
 _UNSET: Final = object()
 
 
-class CommonsShadowConflictError(RuntimeError):
+class CommonsShadowConflictError(VcsCoreError, RuntimeError):
     """Raised when shadow state was concurrently advanced."""
 
 
-class CommonsShadowRecoveryError(RuntimeError):
+class CommonsShadowRecoveryError(VcsCoreError, RuntimeError):
     """Raised when shadow pending state cannot be repaired safely."""
 
 
-class CommonsShadowUnsupportedError(RuntimeError):
+class CommonsShadowUnsupportedError(VcsCoreError, RuntimeError):
     """Raised when a caller attempts an unsupported shadow recording path."""
 
 

@@ -10,7 +10,7 @@ from pathlib import Path
 import pygit2
 import pytest
 import vcs_core.vcscore as vcscore_module
-from vcs_core._errors import (
+from vcs_core import (
     InvalidIdentityError,
     InvalidRepositoryStateError,
     OpenScopeError,
@@ -18,8 +18,8 @@ from vcs_core._errors import (
     UnknownForkHintError,
     WorkspaceAuthorityRecoveryRequiredError,
 )
-from vcs_core._workspace_adoption import adopt_workspace_baseline
 from vcs_core._world_operation_runner import WorldOperationResult, WorldOperationRunner
+from vcs_core.runtime_api import adopt_workspace_baseline
 from vcs_core.scope_stack import ScopeStack
 from vcs_core.vcscore import VcsCore
 

@@ -1,3 +1,4 @@
+# under-test: vcs_core._python_runtime_capture_adapter
 """Unit tests for ``PythonRuntimeCaptureAdapter``.
 
 Validates the SPI v0.1 ``CaptureAdapter`` Protocol against the
@@ -24,21 +25,21 @@ from vcs_core._python_runtime_capture_adapter import (
     PYTHON_RUNTIME_MECHANISM,
     PythonRuntimeCaptureAdapter,
 )
-from vcs_core._substrate_driver import (
-    CaptureAdapter,
-    Diagnostic,
-    DriverContext,
-    FanOutSink,
-    ObservationDraft,
-    ParseResult,
-    TupleSink,
-)
 from vcs_core._substrate_evidence_kinds import (
     PYTHON_RUNTIME_EVIDENCE_KINDS,
     EvidenceKind,
     Mechanism,
 )
-from vcs_core._world_types import SubstrateStoreIdentity
+from vcs_core.runtime_api import DriverContext
+from vcs_core.spi import (
+    CaptureAdapter,
+    Diagnostic,
+    FanOutSink,
+    ObservationDraft,
+    ParseResult,
+    SubstrateStoreIdentity,
+    TupleSink,
+)
 
 
 def _ctx() -> DriverContext:

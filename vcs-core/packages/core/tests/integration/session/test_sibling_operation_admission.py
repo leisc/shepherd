@@ -1,3 +1,4 @@
+# under-test: vcs_core._operation_start_authority
 """Session operation-start admission while sibling groups require recovery."""
 
 from __future__ import annotations
@@ -7,8 +8,8 @@ from pathlib import Path
 from types import SimpleNamespace
 
 import pytest
+from vcs_core import OrphanedOperationsError, SiblingGroupRecoveryRequiredError
 from vcs_core._capture_reducer import CAPTURE_DIAGNOSTIC_KIND, CAPTURE_REDUCTION_KIND, reduction_operation_id
-from vcs_core._errors import OrphanedOperationsError, SiblingGroupRecoveryRequiredError
 from vcs_core._fs_capture import FsCaptureEvent
 from vcs_core._operation_start_authority import begin_executable_operation
 from vcs_core._session_dispatch import SessionCommandDispatcher

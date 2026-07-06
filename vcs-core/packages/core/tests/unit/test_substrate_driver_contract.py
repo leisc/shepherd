@@ -1,3 +1,4 @@
+# under-test: vcs_core._substrate_driver
 """Unit tests for the private substrate driver draft contract."""
 
 from __future__ import annotations
@@ -5,7 +6,7 @@ from __future__ import annotations
 from dataclasses import fields, is_dataclass, replace
 
 import pytest
-from vcs_core._errors import InvalidRepositoryStateError
+from vcs_core import InvalidRepositoryStateError, canonical_digest
 from vcs_core._substrate_driver import (
     CapabilitySet,
     ChildWorldSnapshot,
@@ -27,8 +28,8 @@ from vcs_core._substrate_driver import (
     validate_driver_ingress,
     validate_driver_ingress_result,
 )
-from vcs_core._transition_kernel_records import PayloadDescriptorClaim, ValidatedPayloadDescriptor
-from vcs_core._world_types import SubstrateStoreIdentity, canonical_digest
+from vcs_core._transition_kernel_records import ValidatedPayloadDescriptor
+from vcs_core.spi import PayloadDescriptorClaim, SubstrateStoreIdentity
 
 
 class _ChildWorldResolver:

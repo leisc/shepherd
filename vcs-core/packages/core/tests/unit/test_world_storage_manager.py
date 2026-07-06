@@ -1,3 +1,4 @@
+# under-test: vcs_core._world_storage_manager
 """Unit tests for the private v2 WorldStorageManager."""
 
 from __future__ import annotations
@@ -8,26 +9,24 @@ from dataclasses import replace
 
 import pygit2
 import pytest
-from vcs_core._errors import InvalidRepositoryStateError
-from vcs_core._substrate_driver import (
-    DriverIngressResult,
-    DriverSelectionRequirementDraft,
-    ObservationDraft,
-    ReductionBatch,
-    RetentionHint,
-    TransitionDraft,
+from vcs_core import (
+    WORLD_TRANSITION_SCHEMA,
+    EvidenceRef,
+    InvalidRepositoryStateError,
+    WorldSnapshot,
+    canonical_bytes,
+    canonical_digest,
 )
+from vcs_core._substrate_driver import ReductionBatch
 from vcs_core._substrate_store import SubstrateStore
 from vcs_core._transition_kernel import JsonPayloadTransitionDriver
 from vcs_core._transition_kernel_records import (
     CandidateCommitRecord,
     EvidenceOnlyEnvelopeRecord,
-    EvidenceRef,
     HeadSelectionEvidence,
-    PayloadDescriptorClaim,
     RetentionPolicyRequirement,
 )
-from vcs_core._world_operation_builder import CandidateSelection, OperationFinalBuilder, PreparedWorldOperation
+from vcs_core._world_operation_builder import PreparedWorldOperation
 from vcs_core._world_refs import (
     candidate_ref,
     child_world_retention_ref,
@@ -39,18 +38,18 @@ from vcs_core._world_refs import (
     world_retention_receipt_ref,
 )
 from vcs_core._world_storage_manager import DEFAULT_GROUND_REF, SubstrateStoreSpec, WorldStorageManager
-from vcs_core._world_types import (
-    WORLD_REF_SUBSTRATE_KIND,
-    WORLD_TRANSITION_SCHEMA,
-    SubstrateHead,
-    SubstrateStoreIdentity,
-    WorldRefPayload,
-    WorldSnapshot,
-    canonical_bytes,
-    canonical_digest,
-    load_canonical_json,
-)
+from vcs_core._world_types import WORLD_REF_SUBSTRATE_KIND, SubstrateHead, WorldRefPayload, load_canonical_json
 from vcs_core.git_store import create_commit_with_recovery, create_or_update_reference, insert_tree_entry
+from vcs_core.runtime_api import DriverIngressResult
+from vcs_core.spi import (
+    DriverSelectionRequirementDraft,
+    ObservationDraft,
+    PayloadDescriptorClaim,
+    RetentionHint,
+    SubstrateStoreIdentity,
+    TransitionDraft,
+)
+from vcs_core.testing import CandidateSelection, OperationFinalBuilder
 
 from .world_vectors_v2_helpers import (
     attach_selection_evidence_ref,
@@ -3372,13 +3371,18 @@ def test_world_storage_manager_publish_computes_closure_a_constant_number_of_tim
     workspace, p0 = _published_workspace_world(manager)
 
     counter = {"n": 0}
-    original_closure = WorldStorageManager.compute_publish_retention_closure
+    # V2.2c: compute_publish_retention_closure moved to PublicationRetentionController, and its
+    # internal caller (cleanup_orphan_pins) moved with it, so it now self-calls on the controller.
+    # Patch the controller class, not the WSM shim, or intra-controller calls are missed (vacuous).
+    from vcs_core._publication_retention_controller import PublicationRetentionController
+
+    original_closure = PublicationRetentionController.compute_publish_retention_closure
 
     def _counting_closure(self, oid):
         counter["n"] += 1
         return original_closure(self, oid)
 
-    monkeypatch.setattr(WorldStorageManager, "compute_publish_retention_closure", _counting_closure)
+    monkeypatch.setattr(PublicationRetentionController, "compute_publish_retention_closure", _counting_closure)
 
     calls_per_publish: list[int] = []
     parent, parent_workspace = p0, workspace
@@ -3395,6 +3399,10 @@ def test_world_storage_manager_publish_computes_closure_a_constant_number_of_tim
         parent = child
         parent_workspace = manager.read_world(child).snapshot.head_for("workspace").head
 
+    # Interception proof (standing rule 9): the spy must actually fire, or the equality/max
+    # guards below pass vacuously on an all-zero list — the same self-guard the sibling
+    # _release_publication_leases fault-injection tests get from their `len(stale) == 1`.
+    assert min(calls_per_publish) >= 1, calls_per_publish
     # Independent of lineage depth: the deepest publish computes the closure the same number of times
     # as the shallowest. Observed: exactly 1. The prior-lineage preflight made this grow as 2N-1.
     assert calls_per_publish[-1] == calls_per_publish[0], calls_per_publish
@@ -4101,7 +4109,9 @@ def test_world_storage_manager_cleanup_removes_stale_publication_lease_after_pub
         assert lease_refs
         assert world_oid == p1
 
-    monkeypatch.setattr(manager, "_release_publication_leases", keep_publication_lease)
+    # V2.2c: _release_publication_leases moved to the controller; patch it there or the fault
+    # injection is vacuous (the downstream stale-lease assertion is the interception proof).
+    monkeypatch.setattr(manager._pubret, "_release_publication_leases", keep_publication_lease)
 
     assert _publish_world(manager, ref=DEFAULT_GROUND_REF, world_oid=p1, expected_oid=p0)
     stale_leases = tuple(
@@ -4153,7 +4163,9 @@ def test_world_storage_manager_cleanup_removes_stale_scope_publication_lease_by_
         assert lease_refs
         assert world_oid == p1
 
-    monkeypatch.setattr(manager, "_release_publication_leases", keep_publication_lease)
+    # V2.2c: _release_publication_leases moved to the controller; patch it there or the fault
+    # injection is vacuous (the downstream stale-lease assertion is the interception proof).
+    monkeypatch.setattr(manager._pubret, "_release_publication_leases", keep_publication_lease)
 
     assert manager.fork_world_ref(
         ref=scope,

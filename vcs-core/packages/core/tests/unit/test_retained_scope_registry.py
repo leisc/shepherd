@@ -1,3 +1,4 @@
+# under-test: vcs_core._projection_store
 """Focused tests for retained scope-registry status semantics."""
 
 from __future__ import annotations

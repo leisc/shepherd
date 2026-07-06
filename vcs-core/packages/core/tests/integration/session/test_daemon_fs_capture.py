@@ -1,3 +1,4 @@
+# under-test: vcs_core._session
 """Session daemon filesystem hook routing tests."""
 
 from __future__ import annotations
@@ -8,9 +9,10 @@ import time
 from pathlib import Path
 
 import pytest
-from vcs_core._hooks import HookManager
-from vcs_core._substrate_runtime import BuiltInRuntimeBinding, build_builtin_substrate_context
+from vcs_core import build_builtin_substrate_context
+from vcs_core._substrate_runtime import BuiltInRuntimeBinding
 from vcs_core.substrates import FilesystemSubstrate
+from vcs_core.testing import HookManager
 from vcs_core.types import BoundSubstrate, EffectRecord, ScopeInfo
 
 

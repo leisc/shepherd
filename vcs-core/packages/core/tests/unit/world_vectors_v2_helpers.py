@@ -12,21 +12,21 @@ from dataclasses import replace
 from typing import Any
 
 import pygit2
+from vcs_core import EvidenceRef
 from vcs_core._transition_kernel_records import (
     CandidateCommitRecord,
     CandidateOutcomeRecord,
     EvidenceRecord,
-    EvidenceRef,
     HeadSelectionEvidence,
     HeadSelectionRecord,
     LogicalTransition,
     PreparedRevisionPlan,
-    RelationshipRequirement,
     RetentionPolicyRequirement,
     RevisionPreparationRecord,
     ValidatedPayloadDescriptor,
 )
 from vcs_core._world_types import CandidateRevision
+from vcs_core.spi import RelationshipRequirement
 
 SIG = pygit2.Signature("vcs-core v2 test", "test@example.invalid")
 FILEMODE_COMMIT = getattr(pygit2, "GIT_FILEMODE_COMMIT", 0o160000)

@@ -1,3 +1,4 @@
+# under-test: vcs_core._graph
 """Tests for ASCII graph rendering."""
 
 from __future__ import annotations

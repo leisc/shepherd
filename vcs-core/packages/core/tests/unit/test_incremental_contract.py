@@ -1,3 +1,4 @@
+# under-test: vcs_core._incremental
 """Conformance suite for the vcs-core incremental-accelerator contract.
 
 Runs the generic ``SingleSegmentDeltaIndex`` (the lease customer's engine) against
@@ -14,13 +15,12 @@ from __future__ import annotations
 
 import pygit2
 import pytest
+from vcs_core import InvalidRepositoryStateError, canonical_bytes
 from vcs_core import _ref_txn as rt
-from vcs_core._errors import InvalidRepositoryStateError
 from vcs_core._incremental import SingleSegmentDeltaIndex, atomic_co_write
 from vcs_core._incremental import _delta_index as di
 from vcs_core._incremental import _git_record as gr
 from vcs_core._incremental._delta_index import TOMBSTONE
-from vcs_core._world_types import canonical_bytes
 
 _REF = "refs/vcscore/test/incremental-idx"
 _SCHEMA = "vcscore/test-index/v1"

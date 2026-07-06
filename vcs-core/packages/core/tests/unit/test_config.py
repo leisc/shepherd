@@ -76,7 +76,7 @@ def test_secret_ref_resolution(monkeypatch: pytest.MonkeyPatch) -> None:
 
 
 def test_secret_ref_resolution_failure() -> None:
-    from vcs_core._errors import SubstrateNotBoundError
+    from vcs_core import SubstrateNotBoundError
 
     ref = SecretRef(env="DEFINITELY_NOT_SET_12345")
     with pytest.raises(SubstrateNotBoundError, match="DEFINITELY_NOT_SET_12345"):

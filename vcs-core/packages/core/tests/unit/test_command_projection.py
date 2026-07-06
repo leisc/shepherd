@@ -1,3 +1,4 @@
+# under-test: vcs_core._command_projection
 """Tests for backend-neutral command projection descriptors."""
 
 from __future__ import annotations

@@ -162,7 +162,7 @@ def test_resolve_to_commit(store: Store) -> None:
 
 
 def test_checkout_raises_on_bad_ref(store: Store, tmp_path) -> None:
-    from vcs_core._errors import RefResolutionError
+    from vcs_core import RefResolutionError
 
     dest = str(tmp_path / "bad-ref-dest")
     with pytest.raises(RefResolutionError, match="Cannot resolve ref"):
@@ -172,7 +172,7 @@ def test_checkout_raises_on_bad_ref(store: Store, tmp_path) -> None:
 
 
 def test_list_workspace_files_raises_on_bad_ref(store: Store) -> None:
-    from vcs_core._errors import RefResolutionError
+    from vcs_core import RefResolutionError
 
     with pytest.raises(RefResolutionError):
         store.list_workspace_files("nonexistent-ref")

@@ -1,3 +1,4 @@
+# under-test: vcs_core._world_substrate_adapters
 """B4b slice 2 (W1/W2): driver-side hybrid trace validation + the evidence-class pin.
 
 The 5-field floor stays a floor (payloads without `events` are untouched); hybrid

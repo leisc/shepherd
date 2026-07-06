@@ -5,9 +5,9 @@ import sqlite3
 from pathlib import Path
 
 import pytest
+from vcs_core import build_builtin_substrate_context
 from vcs_core._dirty_flag import read_dirty_flag
 from vcs_core._materialization_run import read_materialization_run
-from vcs_core._substrate_runtime import build_builtin_substrate_context
 from vcs_core.materialization import MaterializationPreflightError
 from vcs_core.sqlite_substrate import SQLiteSubstrate
 from vcs_core.store import Store

@@ -21,12 +21,14 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING, Any, Protocol, runtime_checkable
 
+from vcs_core._errors import VcsCoreError
+
 if TYPE_CHECKING:
     import subprocess
     from collections.abc import Sequence
 
 
-class SandboxError(Exception):
+class SandboxError(VcsCoreError):
     """A jailed run failed for a non-policy reason (launch/runner error)."""
 
 

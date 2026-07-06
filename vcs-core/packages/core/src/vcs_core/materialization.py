@@ -5,6 +5,7 @@ from __future__ import annotations
 from dataclasses import dataclass
 from typing import TYPE_CHECKING, Literal, Protocol, runtime_checkable
 
+from vcs_core._errors import VcsCoreError
 from vcs_core._substrate_runtime import InternalMaterializerProvider
 from vcs_core._upstream import PreflightResult
 from vcs_core.types import CommitInfo, DiffSummary, FileChange, MaterializationPhase, MaterializationPlan, Status
@@ -83,7 +84,7 @@ class MaterializationPreflightBlocker:
         )
 
 
-class MaterializationPreflightError(RuntimeError):
+class MaterializationPreflightError(VcsCoreError, RuntimeError):
     """Expected materialization preflight blocker distinct from planner contract bugs."""
 
     def __init__(self, blockers: tuple[MaterializationPreflightBlocker, ...]) -> None:

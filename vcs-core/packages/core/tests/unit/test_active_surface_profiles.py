@@ -1,3 +1,4 @@
+# under-test: vcs_core._world_transition_coordinator
 """Tests for ActiveSurface profiles used by Shepherd integration."""
 
 from __future__ import annotations

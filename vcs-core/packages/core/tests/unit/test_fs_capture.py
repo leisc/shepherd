@@ -1,3 +1,4 @@
+# under-test: vcs_core._fs_capture
 """Tests for filesystem preload shim build helpers."""
 
 from __future__ import annotations

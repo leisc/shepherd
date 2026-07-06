@@ -1,3 +1,4 @@
+# under-test: vcs_core._authority
 from __future__ import annotations
 
 import math

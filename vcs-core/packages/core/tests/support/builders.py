@@ -5,7 +5,7 @@ from __future__ import annotations
 from pathlib import Path
 from typing import Any
 
-from vcs_core._substrate_runtime import build_builtin_substrate_context
+from vcs_core import build_builtin_substrate_context
 from vcs_core.store import Store
 from vcs_core.substrates import DeclarativeFilesystemSubstrate, FilesystemSubstrate, MarkerSubstrate
 from vcs_core.vcscore import VcsCore

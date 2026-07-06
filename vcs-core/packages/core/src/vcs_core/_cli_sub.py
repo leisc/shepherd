@@ -72,7 +72,7 @@ class SubstrateProjectionRoot(click.Group):
         if record is None:
             return None
         if record.implementation_kind != "driver":
-            return _DiagnosticCommand(
+            return _DiagnosticCommand(  # type: ignore[unreachable]  # future-proof: implementation_kind is Literal["driver"] today
                 name=cmd_name,
                 message=(
                     f"Binding '{cmd_name}' is not a driver binding, so it is not projected under "

@@ -8,7 +8,8 @@ import sys
 from pathlib import Path
 
 import pytest
-from vcs_core._errors import (
+from vcs_core import (
+    WORLD_TRANSITION_SCHEMA,
     ActivationError,
     DirtyPushError,
     InterruptedLifecycleError,
@@ -18,16 +19,16 @@ from vcs_core._errors import (
     OpenScopeError,
     OrphanedOperationsError,
     WorkspaceAuthorityRecoveryRequiredError,
+    WorldSnapshot,
+    build_builtin_substrate_context,
 )
 from vcs_core._lifecycle_run import read_lifecycle_run
 from vcs_core._lock import release_session_lock
-from vcs_core._substrate_runtime import build_builtin_substrate_context
 from vcs_core._workspace_authority import WorkspaceAuthorityPending, write_pending_workspace_authority
 from vcs_core._world_refs import encode_ref_component
-from vcs_core._world_storage_manager import WorldStorageManager
-from vcs_core._world_types import WORLD_TRANSITION_SCHEMA, WorldSnapshot
 from vcs_core.store import Store
 from vcs_core.substrates import FilesystemSubstrate, MarkerSubstrate
+from vcs_core.testing import WorldStorageManager
 from vcs_core.types import EffectRecord, ScopeInfo
 from vcs_core.vcscore import VcsCore
 
@@ -186,8 +187,8 @@ def _abandon_session_with_open_ground_operation(
 
 
 def test_recover_dirty_push(workspace: Path) -> None:
-    from vcs_core._dirty_flag import write_dirty_flag
     from vcs_core.store import Store
+    from vcs_core.testing import write_dirty_flag
 
     repo_path = str(workspace / ".vcscore")
     Store(repo_path)
@@ -203,7 +204,7 @@ def test_recover_dirty_push(workspace: Path) -> None:
 
 
 def test_recover_dirty_push_verify_raises(workspace: Path) -> None:
-    from vcs_core._dirty_flag import write_dirty_flag
+    from vcs_core.testing import write_dirty_flag
 
     repo_path = str(workspace / ".vcscore")
     m = VcsCore(str(workspace))
@@ -218,8 +219,8 @@ def test_recover_dirty_push_verify_raises(workspace: Path) -> None:
 
 
 def test_recover_dirty_push_force(workspace: Path) -> None:
-    from vcs_core._dirty_flag import write_dirty_flag
     from vcs_core.store import Store
+    from vcs_core.testing import write_dirty_flag
 
     repo_path = str(workspace / ".vcscore")
     Store(repo_path)
@@ -323,7 +324,7 @@ def test_recover_materialization_verify_clears_stale_run_only(workspace: Path) -
 
 
 def test_recover_materialization_verify_rejects_corrupt_run_and_preserves_state(workspace: Path) -> None:
-    from vcs_core._dirty_flag import write_dirty_flag
+    from vcs_core.testing import write_dirty_flag
 
     repo_path = workspace / ".vcscore"
     m = VcsCore(str(workspace))
@@ -376,7 +377,7 @@ def test_direct_materialization_recovery_fails_while_another_session_is_active(w
 
 
 def test_resumable_activation_rehydrates_pending(workspace: Path) -> None:
-    from vcs_core._substrate_runtime import build_builtin_substrate_context
+    from vcs_core import build_builtin_substrate_context
     from vcs_core.store import Store
     from vcs_core.substrates import DeclarativeFilesystemSubstrate, MarkerSubstrate
 
@@ -408,8 +409,8 @@ def test_resumable_activation_rehydrates_pending(workspace: Path) -> None:
 
 
 def test_activate_recover_repair(workspace: Path) -> None:
-    from vcs_core._dirty_flag import write_dirty_flag
-    from vcs_core._errors import DirtyPushError
+    from vcs_core import DirtyPushError
+    from vcs_core.testing import write_dirty_flag
 
     repo_path = str(workspace / ".vcscore")
     m1 = VcsCore(str(workspace))
@@ -431,7 +432,7 @@ def test_activate_recover_repair(workspace: Path) -> None:
 
 
 def test_activate_recover_force(workspace: Path) -> None:
-    from vcs_core._dirty_flag import write_dirty_flag
+    from vcs_core.testing import write_dirty_flag
 
     m1 = VcsCore(str(workspace))
     m1.activate()
@@ -571,7 +572,7 @@ def test_discard_failure_keeps_scope_live_and_unarchived(workspace: Path) -> Non
 
 
 def test_activate_blocks_and_resumes_interrupted_merge(workspace: Path) -> None:
-    from vcs_core._substrate_runtime import build_builtin_substrate_context
+    from vcs_core import build_builtin_substrate_context
 
     repo_path = str(workspace / ".vcscore")
     backend = MockOverlayBackend()
@@ -638,7 +639,7 @@ def test_activate_blocks_and_resumes_interrupted_merge(workspace: Path) -> None:
 
 
 def test_recover_lifecycle_resumes_partial_discard(workspace: Path) -> None:
-    from vcs_core._substrate_runtime import build_builtin_substrate_context
+    from vcs_core import build_builtin_substrate_context
 
     repo_path = str(workspace / ".vcscore")
     backend = MockOverlayBackend()
@@ -1622,7 +1623,7 @@ def test_in_session_stale_nested_child_discards_then_reforks_and_merges(
 
 
 def test_deactivate_calls_substrate_deactivate(workspace: Path) -> None:
-    from vcs_core._substrate_runtime import build_builtin_substrate_context
+    from vcs_core import build_builtin_substrate_context
     from vcs_core.store import Store
     from vcs_core.substrates import MarkerSubstrate
 
@@ -1711,7 +1712,7 @@ def test_deactivate_logs_open_scopes(workspace: Path, caplog) -> None:
 
 
 def test_recover_verify_raises_not_implemented(workspace: Path) -> None:
-    from vcs_core._dirty_flag import write_dirty_flag
+    from vcs_core.testing import write_dirty_flag
 
     m = VcsCore(str(workspace))
     m.activate()

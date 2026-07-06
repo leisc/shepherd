@@ -10,17 +10,19 @@ from __future__ import annotations
 from dataclasses import dataclass
 from typing import TYPE_CHECKING, Any, Protocol, cast, runtime_checkable
 
+from vcs_core._errors import VcsCoreError
+
 if TYPE_CHECKING:
     from collections.abc import Callable, Mapping
 
     from vcs_core.spi import DriverContext
 
 
-class UnhandledAsk(LookupError):  # noqa: N818
+class UnhandledAsk(VcsCoreError, LookupError):  # noqa: N818
     """No handler in the composed stack handles a performed effect."""
 
 
-class TaskIdResolutionError(RuntimeError):
+class TaskIdResolutionError(VcsCoreError, RuntimeError):
     """Raised when a Tier-A ``task_id`` cannot resolve to a callable."""
 
 

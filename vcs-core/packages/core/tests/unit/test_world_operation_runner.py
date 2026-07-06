@@ -1,15 +1,21 @@
+# under-test: vcs_core._world_operation_runner
 """Unit tests for the private v2 world operation runner."""
 
 from __future__ import annotations
 
 import pytest
-from vcs_core._errors import InvalidRepositoryStateError
-from vcs_core._world_operation_builder import CandidateSelection, OperationFinalBuilder
+from vcs_core import WORLD_TRANSITION_SCHEMA, InvalidRepositoryStateError, WorldSnapshot
 from vcs_core._world_operation_protocol import validate_operation_status_fields
 from vcs_core._world_operation_runner import WorldOperationRunner
 from vcs_core._world_recovery import complete_committed_operation
-from vcs_core._world_storage_manager import DEFAULT_GROUND_REF, SubstrateStoreSpec, WorldStorageManager
-from vcs_core._world_types import WORLD_TRANSITION_SCHEMA, SubstrateStoreIdentity, WorldSnapshot
+from vcs_core.spi import SubstrateStoreIdentity
+from vcs_core.testing import (
+    DEFAULT_GROUND_REF,
+    CandidateSelection,
+    OperationFinalBuilder,
+    SubstrateStoreSpec,
+    WorldStorageManager,
+)
 
 from .world_vectors_v2_helpers import (
     attach_selection_evidence_ref,

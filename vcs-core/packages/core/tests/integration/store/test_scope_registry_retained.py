@@ -23,6 +23,7 @@ from typing import get_args
 
 import pytest
 from click.testing import CliRunner
+from vcs_core import WORLD_TRANSITION_SCHEMA, InvalidRepositoryStateError, WorldSnapshot
 from vcs_core._app import (
     AppCommandBlocked,
     AppOpenMode,
@@ -30,7 +31,6 @@ from vcs_core._app import (
     VcsCoreApp,
     _build_scope_index,
 )
-from vcs_core._errors import InvalidRepositoryStateError
 from vcs_core._projection_store import (
     REF_OWNING_SCOPE_STATUSES,
     RUNTIME_OPEN_SCOPE_STATUSES,
@@ -46,7 +46,6 @@ from vcs_core._recovery_inventory import (
     recovery_inventory_snapshot_for_store,
     scope_ref_recovery_classification,
 )
-from vcs_core._world_types import WORLD_TRANSITION_SCHEMA, WorldSnapshot
 from vcs_core.cli import main
 from vcs_core.git_store import build_tree, create_signature
 from vcs_core.store import Store

@@ -16,6 +16,7 @@ from vcs_core._admission.identifiers import ParseError, parse_optional_scope_nam
 from vcs_core._app import AppCommandBlocked, AppError, VcsCoreApp, app_error_message
 from vcs_core._app_blockers import AppBlocker
 from vcs_core._capture_reducer import ordered_capture_events
+from vcs_core._errors import VcsCoreError
 from vcs_core._managed_exec_process import (
     StreamItem,
     launch_process,
@@ -67,11 +68,14 @@ class ManagedExecutionHost(Protocol):
     _current_scope_name: str
     _managed_execs: dict[str, ManagedExecState]
     _daemon_instance_id: str
+    _hook_frontier: Any
+    _hook_accepted_seq: int
+    _hook_processed_seq: int
 
     def _dispatch(self, method: str, params: JsonObject) -> JsonObject: ...
 
 
-class ManagedExecUsageError(ValueError):
+class ManagedExecUsageError(VcsCoreError, ValueError):
     """CLI usage error resolved by the daemon after request admission."""
 
 

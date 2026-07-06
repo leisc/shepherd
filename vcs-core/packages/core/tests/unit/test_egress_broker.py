@@ -1,3 +1,4 @@
+# under-test: vcs_core._egress_broker
 """The egress broker MVP — the decision function's pinned evaluation order + the proxy.
 
 The decision tests are pure and cross-platform: they pin the

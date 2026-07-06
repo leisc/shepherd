@@ -4,7 +4,7 @@ from __future__ import annotations
 
 import re
 from dataclasses import dataclass
-from typing import Any
+from typing import Any, cast
 
 from vcs_core._substrate_driver import KeyedJsonPut, KeyedJsonTreeDraft
 
@@ -90,7 +90,7 @@ class KeyedJsonTreeStore:
         reader = getattr(mg, "read_selected_binding_json_entry", None)
         if not callable(reader):
             return None
-        return reader(binding, self.entry_path_for_key(key), scope=scope)
+        return cast("dict[str, object] | None", reader(binding, self.entry_path_for_key(key), scope=scope))
 
     def list_selected(self, mg: Any, binding: str, *, scope: Any = None) -> tuple[dict[str, object], ...]:
         reader = getattr(mg, "read_selected_binding_json_entries", None)

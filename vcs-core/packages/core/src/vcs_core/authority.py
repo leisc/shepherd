@@ -5,6 +5,8 @@ from __future__ import annotations
 from dataclasses import dataclass, field
 from typing import Literal
 
+from vcs_core._errors import VcsCoreError
+
 AuthorityRegime = Literal["complete", "partial", "none"]
 InterceptionTier = Literal["container", "python", "recording"]
 AuthorityLevel = Literal["authoritative", "best-effort", "cooperative"]
@@ -51,7 +53,7 @@ class SubstrateAuthority:
     reason: str
 
 
-class AuthorityValidationError(ValueError):
+class AuthorityValidationError(VcsCoreError, ValueError):
     """Raised when a substrate reports an invalid authority payload."""
 
 

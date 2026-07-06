@@ -1,3 +1,4 @@
+# under-test: vcs_core._patch_manager
 """Unit tests for PatchManager install/uninstall mechanics.
 
 Focus is the contract, not effect recording:
@@ -15,7 +16,7 @@ import uuid
 from pathlib import Path
 
 import pytest
-from vcs_core._errors import UnresolvedPatchPathError
+from vcs_core import UnresolvedPatchPathError
 from vcs_core._patch_manager import PatchManager
 from vcs_core._patch_paths import PatchPathCandidate
 from vcs_core._substrate_runtime import PerformedEventSpec, PythonPatch

@@ -173,7 +173,7 @@ def load_driver_substrate_schema_for_cli(name: str, *, workspace: str) -> Driver
     if registration is None:
         return None
     if registration.implementation_kind != "driver":
-        return None
+        return None  # type: ignore[unreachable]  # future-proof: implementation_kind is Literal["driver"] today
 
     try:
         module = importlib.import_module(registration.module_name)

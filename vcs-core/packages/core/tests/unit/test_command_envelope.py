@@ -1,3 +1,4 @@
+# under-test: vcs_core._command_envelope
 from __future__ import annotations
 
 import pytest

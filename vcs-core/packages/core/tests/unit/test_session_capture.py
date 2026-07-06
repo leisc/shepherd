@@ -5,8 +5,8 @@ from __future__ import annotations
 from pathlib import Path
 
 import pytest
-from vcs_core._ipc import SessionInfo
 from vcs_core.session_capture import CapturedExecOutcome, CaptureSession, SessionCaptureError, start_capture_session
+from vcs_core.testing import SessionInfo
 
 
 def _session_info(workspace: Path, *, socket_path: str = "/tmp/mg.sock") -> SessionInfo:

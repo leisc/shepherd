@@ -1,3 +1,4 @@
+# under-test: vcs_core._query_inventory
 """Conformance for the `Health` discriminated union.
 
 Each variant serializes to the flat shape `health_to_json` produces, and the

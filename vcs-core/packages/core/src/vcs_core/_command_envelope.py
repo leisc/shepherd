@@ -5,13 +5,14 @@ from __future__ import annotations
 from dataclasses import dataclass
 from typing import TYPE_CHECKING, Literal
 
+from vcs_core._errors import VcsCoreError
 from vcs_core._execution_capability import NON_REVERSIBLE_RUN_FLAG
 
 if TYPE_CHECKING:
     from collections.abc import Callable, Mapping
 
 
-class CommandEnvelopeError(ValueError):
+class CommandEnvelopeError(VcsCoreError, ValueError):
     """Raised when framework-owned command controls are malformed."""
 
 

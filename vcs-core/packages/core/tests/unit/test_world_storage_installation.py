@@ -1,3 +1,4 @@
+# under-test: vcs_core._world_storage_installation
 """Tests for production v2 world-storage installation helpers."""
 
 from __future__ import annotations
@@ -5,7 +6,7 @@ from __future__ import annotations
 import json
 
 import pytest
-from vcs_core._errors import InvalidRepositoryStateError
+from vcs_core import InvalidRepositoryStateError
 from vcs_core._world_storage_installation import (
     DEFAULT_SHEPHERD_TASK_ARTIFACTS_STORE_ID,
     DEFAULT_WORKSPACE_STORE_ID,
@@ -15,9 +16,9 @@ from vcs_core._world_storage_installation import (
     open_existing_default_world_storage,
     open_or_init_default_world_storage,
 )
-from vcs_core._world_storage_manager import SubstrateStoreSpec, WorldStorageManager
-from vcs_core._world_types import SubstrateStoreIdentity
+from vcs_core.spi import SubstrateStoreIdentity
 from vcs_core.store import Store
+from vcs_core.testing import SubstrateStoreSpec, WorldStorageManager
 from vcs_core.vcscore import VcsCore
 
 

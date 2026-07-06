@@ -1,0 +1,494 @@
+{
+  "ActivationError": {
+    "bases": [
+      "VcsCoreError"
+    ],
+    "module": "vcs_core._errors"
+  },
+  "AppCommandBlocked": {
+    "bases": [
+      "AppError"
+    ],
+    "module": "vcs_core._app"
+  },
+  "AppCommandFailed": {
+    "bases": [
+      "AppError"
+    ],
+    "module": "vcs_core._app"
+  },
+  "AppError": {
+    "bases": [
+      "VcsCoreError"
+    ],
+    "module": "vcs_core._app"
+  },
+  "AppRepositoryError": {
+    "bases": [
+      "AppError"
+    ],
+    "module": "vcs_core._app"
+  },
+  "AppScopeNotFound": {
+    "bases": [
+      "AppError"
+    ],
+    "module": "vcs_core._app"
+  },
+  "AppScopeResolutionError": {
+    "bases": [
+      "AppError"
+    ],
+    "module": "vcs_core._app"
+  },
+  "AppScopeTerminalState": {
+    "bases": [
+      "AppError"
+    ],
+    "module": "vcs_core._app"
+  },
+  "AuthorityBindingRootsError": {
+    "bases": [
+      "VcsCoreError",
+      "ValueError"
+    ],
+    "module": "vcs_core._authority"
+  },
+  "AuthorityDecisionError": {
+    "bases": [
+      "VcsCoreError",
+      "ValueError"
+    ],
+    "module": "vcs_core._authority"
+  },
+  "AuthorityMergeDriftError": {
+    "bases": [
+      "VcsCoreError",
+      "ValueError"
+    ],
+    "module": "vcs_core._authority"
+  },
+  "AuthorityValidationError": {
+    "bases": [
+      "VcsCoreError",
+      "ValueError"
+    ],
+    "module": "vcs_core.authority"
+  },
+  "BindingContractError": {
+    "bases": [
+      "VcsCoreError",
+      "ValueError"
+    ],
+    "module": "vcs_core._binding_contracts"
+  },
+  "CapabilityContractViolation": {
+    "bases": [
+      "SubstrateContractError"
+    ],
+    "module": "vcs_core._substrate_driver"
+  },
+  "ClaimConflictError": {
+    "bases": [
+      "VcsCoreError",
+      "ValueError"
+    ],
+    "module": "vcs_core._claims"
+  },
+  "CommandAdmissionError": {
+    "bases": [
+      "VcsCoreError",
+      "ValueError"
+    ],
+    "module": "vcs_core._command_admission"
+  },
+  "CommandContractError": {
+    "bases": [
+      "VcsCoreError",
+      "ValueError"
+    ],
+    "module": "vcs_core._command_contract"
+  },
+  "CommandEnvelopeError": {
+    "bases": [
+      "VcsCoreError",
+      "ValueError"
+    ],
+    "module": "vcs_core._command_envelope"
+  },
+  "CommandProjectionError": {
+    "bases": [
+      "VcsCoreError",
+      "ValueError"
+    ],
+    "module": "vcs_core._command_projection"
+  },
+  "CommandValueError": {
+    "bases": [
+      "VcsCoreError",
+      "ValueError"
+    ],
+    "module": "vcs_core._command_values"
+  },
+  "CommandValueRenderError": {
+    "bases": [
+      "VcsCoreError",
+      "RuntimeError"
+    ],
+    "module": "vcs_core._cli_command_effects"
+  },
+  "CommonsShadowConflictError": {
+    "bases": [
+      "VcsCoreError",
+      "RuntimeError"
+    ],
+    "module": "vcs_core.commons_recording"
+  },
+  "CommonsShadowRecoveryError": {
+    "bases": [
+      "VcsCoreError",
+      "RuntimeError"
+    ],
+    "module": "vcs_core.commons_recording"
+  },
+  "CommonsShadowUnsupportedError": {
+    "bases": [
+      "VcsCoreError",
+      "RuntimeError"
+    ],
+    "module": "vcs_core.commons_recording"
+  },
+  "DirtyPushError": {
+    "bases": [
+      "ActivationError"
+    ],
+    "module": "vcs_core._errors"
+  },
+  "DriverAuthorityRequiredError": {
+    "bases": [
+      "SubstrateContractError"
+    ],
+    "module": "vcs_core._substrate_driver"
+  },
+  "DriverSchemaValidationError": {
+    "bases": [
+      "VcsCoreError",
+      "ValueError"
+    ],
+    "module": "vcs_core._driver_schema_validation"
+  },
+  "EvidenceKindReconciliationError": {
+    "bases": [
+      "SubstrateContractError"
+    ],
+    "module": "vcs_core._substrate_driver"
+  },
+  "ExecutionAuthorityRequired": {
+    "bases": [
+      "VcsCoreError",
+      "RuntimeError"
+    ],
+    "module": "vcs_core._execution_capability"
+  },
+  "ExternalWorkspaceStateError": {
+    "bases": [
+      "VcsCoreError",
+      "RuntimeError"
+    ],
+    "module": "vcs_core._workspace_external_state"
+  },
+  "IngressParamError": {
+    "bases": [
+      "VcsCoreError",
+      "ValueError"
+    ],
+    "module": "vcs_core._ingress_params"
+  },
+  "InterruptedLifecycleError": {
+    "bases": [
+      "ActivationError"
+    ],
+    "module": "vcs_core._errors"
+  },
+  "InvalidIdentityError": {
+    "bases": [
+      "ActivationError"
+    ],
+    "module": "vcs_core._errors"
+  },
+  "InvalidRepositoryStateError": {
+    "bases": [
+      "VcsCoreError",
+      "RuntimeError"
+    ],
+    "module": "vcs_core._errors"
+  },
+  "InventorySelectorError": {
+    "bases": [
+      "VcsCoreError",
+      "ValueError"
+    ],
+    "module": "vcs_core._query_selectors"
+  },
+  "JailNotEstablished": {
+    "bases": [
+      "SandboxError"
+    ],
+    "module": "vcs_core._containment"
+  },
+  "LifecycleRecoveryRequiredError": {
+    "bases": [
+      "VcsCoreError"
+    ],
+    "module": "vcs_core._errors"
+  },
+  "ManagedExecUsageError": {
+    "bases": [
+      "VcsCoreError",
+      "ValueError"
+    ],
+    "module": "vcs_core._managed_exec_service"
+  },
+  "MaterializationPreflightError": {
+    "bases": [
+      "VcsCoreError",
+      "RuntimeError"
+    ],
+    "module": "vcs_core.materialization"
+  },
+  "MergePreconditionError": {
+    "bases": [
+      "VcsCoreError"
+    ],
+    "module": "vcs_core._errors"
+  },
+  "OpenScopeError": {
+    "bases": [
+      "VcsCoreError"
+    ],
+    "module": "vcs_core._errors"
+  },
+  "OrphanedOperationsError": {
+    "bases": [
+      "VcsCoreError"
+    ],
+    "module": "vcs_core._errors"
+  },
+  "OverlayDirtyError": {
+    "bases": [
+      "VcsCoreError"
+    ],
+    "module": "vcs_core._errors"
+  },
+  "ParentWorkingTreeDivergedError": {
+    "bases": [
+      "MergePreconditionError"
+    ],
+    "module": "vcs_core._errors"
+  },
+  "ParseError": {
+    "bases": [
+      "VcsCoreError",
+      "ValueError"
+    ],
+    "module": "vcs_core._admission.identifiers"
+  },
+  "PerformedEventAdmissionError": {
+    "bases": [
+      "VcsCoreError",
+      "ValueError"
+    ],
+    "module": "vcs_core._performed_event_admission"
+  },
+  "PermissionPlanEvidenceError": {
+    "bases": [
+      "VcsCoreError",
+      "ValueError"
+    ],
+    "module": "vcs_core._permission_plan_evidence"
+  },
+  "ReadOnlyCarrierError": {
+    "bases": [
+      "VcsCoreError"
+    ],
+    "module": "vcs_core._errors"
+  },
+  "RefResolutionError": {
+    "bases": [
+      "VcsCoreError",
+      "ValueError"
+    ],
+    "module": "vcs_core._errors"
+  },
+  "SandboxDenied": {
+    "bases": [
+      "SandboxError"
+    ],
+    "module": "vcs_core._containment"
+  },
+  "SandboxError": {
+    "bases": [
+      "VcsCoreError"
+    ],
+    "module": "vcs_core._containment"
+  },
+  "SchemaValidationError": {
+    "bases": [
+      "VcsCoreError",
+      "ValueError"
+    ],
+    "module": "vcs_core._schema_errors"
+  },
+  "ScopeAdmissionError": {
+    "bases": [
+      "VcsCoreError",
+      "ValueError"
+    ],
+    "module": "vcs_core._errors"
+  },
+  "SessionCaptureError": {
+    "bases": [
+      "VcsCoreError",
+      "RuntimeError"
+    ],
+    "module": "vcs_core.session_capture"
+  },
+  "SessionCliError": {
+    "bases": [
+      "VcsCoreError",
+      "RuntimeError"
+    ],
+    "module": "vcs_core._cli_session_runtime"
+  },
+  "SessionIpcError": {
+    "bases": [
+      "VcsCoreError",
+      "RuntimeError"
+    ],
+    "module": "vcs_core._cli_ipc"
+  },
+  "SiblingGroupRecoveryRequiredError": {
+    "bases": [
+      "VcsCoreError"
+    ],
+    "module": "vcs_core._errors"
+  },
+  "StaleScopeError": {
+    "bases": [
+      "VcsCoreError"
+    ],
+    "module": "vcs_core._errors"
+  },
+  "SubstrateCommandError": {
+    "bases": [
+      "VcsCoreError"
+    ],
+    "module": "vcs_core._errors"
+  },
+  "SubstrateContractError": {
+    "bases": [
+      "InvalidRepositoryStateError"
+    ],
+    "module": "vcs_core._substrate_driver"
+  },
+  "SubstrateNotBoundError": {
+    "bases": [
+      "VcsCoreError"
+    ],
+    "module": "vcs_core._errors"
+  },
+  "SubstrateResolutionError": {
+    "bases": [
+      "VcsCoreError"
+    ],
+    "module": "vcs_core.discovery"
+  },
+  "SurfacePolicyError": {
+    "bases": [
+      "SubstrateContractError"
+    ],
+    "module": "vcs_core._substrate_driver"
+  },
+  "TaskIdResolutionError": {
+    "bases": [
+      "VcsCoreError",
+      "RuntimeError"
+    ],
+    "module": "vcs_core._runtime_substrate_helpers"
+  },
+  "UnhandledAsk": {
+    "bases": [
+      "VcsCoreError",
+      "LookupError"
+    ],
+    "module": "vcs_core._runtime_substrate_helpers"
+  },
+  "UnknownForkHintError": {
+    "bases": [
+      "VcsCoreError",
+      "ValueError"
+    ],
+    "module": "vcs_core._errors"
+  },
+  "UnresolvedPatchPathError": {
+    "bases": [
+      "VcsCoreError"
+    ],
+    "module": "vcs_core._errors"
+  },
+  "UnscopedMutationError": {
+    "bases": [
+      "VcsCoreError"
+    ],
+    "module": "vcs_core._errors"
+  },
+  "UnsupportedConfinementSpecError": {
+    "bases": [
+      "VcsCoreError",
+      "ValueError"
+    ],
+    "module": "vcs_core._execution_capability"
+  },
+  "UnsupportedOverlayEntryError": {
+    "bases": [
+      "VcsCoreError"
+    ],
+    "module": "vcs_core._errors"
+  },
+  "UnsupportedRequestError": {
+    "bases": [
+      "SubstrateContractError"
+    ],
+    "module": "vcs_core._substrate_driver"
+  },
+  "VcsCoreError": {
+    "bases": [
+      "Exception"
+    ],
+    "module": "vcs_core._errors"
+  },
+  "VerifyFailedError": {
+    "bases": [
+      "VcsCoreError"
+    ],
+    "module": "vcs_core._errors"
+  },
+  "WorkspaceAuthorityRecoveryRequiredError": {
+    "bases": [
+      "VcsCoreError"
+    ],
+    "module": "vcs_core._errors"
+  },
+  "WorldQuiescenceError": {
+    "bases": [
+      "InvalidRepositoryStateError"
+    ],
+    "module": "vcs_core._errors"
+  },
+  "_ManagedExecOutputClosedError": {
+    "bases": [
+      "VcsCoreError"
+    ],
+    "module": "vcs_core._cli_session_runtime"
+  }
+}

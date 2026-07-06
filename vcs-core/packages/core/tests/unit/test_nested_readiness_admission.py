@@ -1,3 +1,4 @@
+# under-test: vcs_core._query_readiness
 from __future__ import annotations
 
 from typing import TYPE_CHECKING

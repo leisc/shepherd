@@ -15,17 +15,8 @@ from typing import Any
 
 import pytest
 from vcs_core import VcsCore, build_builtin_substrate_context
-from vcs_core._substrate_driver import (
-    BaseSubstrateDriver,
-    CapabilitySet,
-    CommandRequest,
-    CommandSpec,
-    DriverContext,
-    DriverIngressResult,
-    DriverSchema,
-    ParamSpec,
-    TransitionDraft,
-)
+from vcs_core.runtime_api import CommandRequest, DriverContext, DriverIngressResult
+from vcs_core.spi import BaseSubstrateDriver, CapabilitySet, CommandSpec, DriverSchema, ParamSpec, TransitionDraft
 from vcs_core.store import Store
 from vcs_core.substrates import DeclarativeFilesystemSubstrate, MarkerSubstrate
 

@@ -1,3 +1,4 @@
+# under-test: vcs_core._workspace_capture_manifest
 """Tests for scalar capture reduction to workspace-state manifest bridging."""
 
 from __future__ import annotations
@@ -6,7 +7,7 @@ import hashlib
 from pathlib import Path
 
 import pytest
-from vcs_core import Store
+from vcs_core import Store, canonical_digest
 from vcs_core._workspace_capture_manifest import (
     WORKSPACE_CAPTURE_REDUCER_VERSION,
     workspace_capture_reduction_from_effects,
@@ -14,7 +15,6 @@ from vcs_core._workspace_capture_manifest import (
     workspace_state_payload_from_store,
 )
 from vcs_core._world_substrate_adapters import WORKSPACE_REVISION_SCHEMA, WORKSPACE_STATE_MANIFEST_SCHEMA
-from vcs_core._world_types import canonical_digest
 from vcs_core.types import EffectRecord, ScopeInfo
 
 

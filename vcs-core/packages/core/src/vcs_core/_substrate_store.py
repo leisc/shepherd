@@ -1323,7 +1323,10 @@ def _collect_tree_blobs(
     rows: list[tuple[str, bytes]],
 ) -> None:
     for entry in tree:
-        path = f"{base}/{entry.name}" if base else entry.name
+        name = entry.name
+        if name is None:  # pragma: no cover - pygit2 tree entries always carry a name
+            continue
+        path = f"{base}/{name}" if base else name
         obj = repo[entry.id]
         if isinstance(obj, pygit2.Blob):
             rows.append((path, bytes(obj.data)))

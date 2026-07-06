@@ -27,7 +27,7 @@ from pathlib import Path
 
 from vcs_core.vcscore import VcsCore
 
-from tests.support.builders import make_marker_filesystem_vcscore
+from ...support.builders import make_marker_filesystem_vcscore
 
 
 def _content_digest(content: bytes) -> str:

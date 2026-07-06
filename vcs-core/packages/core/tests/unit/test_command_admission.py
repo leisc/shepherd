@@ -1,3 +1,4 @@
+# under-test: vcs_core._command_admission
 from __future__ import annotations
 
 from collections.abc import Mapping

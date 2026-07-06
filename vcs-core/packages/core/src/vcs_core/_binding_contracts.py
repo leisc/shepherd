@@ -9,6 +9,7 @@ from typing import TYPE_CHECKING, Literal
 from vcs_core._binding_surface import BindingSurface, BindingSurfaceRecord
 from vcs_core._command_contract import CommandContract, compile_command_contract
 from vcs_core._driver_schema_validation import DriverSchemaValidationError, validate_driver_schema
+from vcs_core._errors import VcsCoreError
 from vcs_core._ingress_params import IngressParamContract, IngressParamError, compile_ingress_params
 from vcs_core.spi import DriverSchema, SubstrateDriver
 
@@ -19,7 +20,7 @@ if TYPE_CHECKING:
     from vcs_core.types import BoundSubstrate
 
 
-class BindingContractError(ValueError):
+class BindingContractError(VcsCoreError, ValueError):
     """Raised when a live binding cannot form a valid driver contract."""
 
 

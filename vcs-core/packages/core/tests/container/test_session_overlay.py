@@ -1,3 +1,4 @@
+# under-test: vcs_core._session
 """Overlay-backed session lifecycle tests."""
 
 from __future__ import annotations

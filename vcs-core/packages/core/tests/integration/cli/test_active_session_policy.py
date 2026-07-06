@@ -8,8 +8,8 @@ from pathlib import Path
 
 import pytest
 from click.testing import CliRunner
-from vcs_core._ipc import SessionInfo
 from vcs_core.cli import main
+from vcs_core.testing import SessionInfo
 
 from ...support.cli import init_repo as _init
 

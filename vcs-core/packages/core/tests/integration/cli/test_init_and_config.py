@@ -11,18 +11,16 @@ from pathlib import Path
 
 import pygit2
 from click.testing import CliRunner
-from vcs_core._dirty_flag import write_dirty_flag
+from vcs_core import canonical_bytes
 from vcs_core._lifecycle_run import LifecycleRun, LifecycleScopeState, read_lifecycle_run, write_lifecycle_run
 from vcs_core._projection_store import SCOPE_REGISTRY_CURRENT_REF
 from vcs_core._workspace_authority import WorkspaceAuthorityPending, write_pending_workspace_authority
 from vcs_core._world_operation_journal import OPERATION_JOURNAL_PATH, OPERATION_JOURNAL_SCHEMA
-from vcs_core._world_refs import operation_journal_ref
 from vcs_core._world_storage_installation import open_existing_default_world_storage, open_or_init_default_world_storage
-from vcs_core._world_storage_manager import DEFAULT_GROUND_REF, WorldStorageManager
-from vcs_core._world_types import canonical_bytes
 from vcs_core.cli import main
 from vcs_core.git_store import create_commit_with_recovery, insert_tree_entry
 from vcs_core.store import Store
+from vcs_core.testing import DEFAULT_GROUND_REF, WorldStorageManager, operation_journal_ref, write_dirty_flag
 
 from ...support.cli import init_repo as _init
 

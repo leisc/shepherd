@@ -1,9 +1,10 @@
+# under-test: vcs_core._fork_hints
 """PD2a: typed ``ForkHints`` + reject-unknown-keys at the ``branch()`` boundary."""
 
 from __future__ import annotations
 
 import pytest
-from vcs_core._errors import UnknownForkHintError
+from vcs_core import UnknownForkHintError
 from vcs_core._fork_hints import (
     ACCEPTED_BRANCH_HINT_KEYS,
     ACCEPTED_FORK_HINT_KEYS,

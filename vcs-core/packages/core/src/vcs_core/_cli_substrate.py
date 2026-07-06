@@ -313,7 +313,7 @@ def substrate_show(name: str) -> None:
     click.echo(f"  Depends on:        {', '.join(manifest.depends_on) or '(none)'}")
 
     if registration.implementation_kind != "driver":
-        click.echo(f"Error: substrate '{name}' is not driver-kind.")
+        click.echo(f"Error: substrate '{name}' is not driver-kind.")  # type: ignore[unreachable]  # future-proof: implementation_kind is Literal["driver"] today
         return
 
     schema = load_driver_substrate_schema_for_cli(name, workspace=".")

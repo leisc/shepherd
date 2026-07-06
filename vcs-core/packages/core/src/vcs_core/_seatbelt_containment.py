@@ -70,7 +70,7 @@ class SeatbeltContainmentBackend:
     def available(self) -> tuple[bool, str]:
         if sys.platform != "darwin":
             return (False, "Seatbelt is macOS-only")
-        if not Path("/usr/bin/sandbox-exec").exists():
+        if not Path("/usr/bin/sandbox-exec").exists():  # type: ignore[unreachable]  # darwin-only; unreachable under the linux mypy pin
             return (False, "/usr/bin/sandbox-exec not found")
         return (True, "sandbox-exec present")
 
@@ -102,8 +102,8 @@ class SeatbeltContainmentBackend:
         outside the granted roots passes a liveness-only check yet violates the grant. So the
         probe is deny-closed and per-root:
 
-          1. liveness — an out-of-WORKSPACE write (parent dir) MUST be denied → a jail exists;
-          2. per-root — a write beneath EACH declared writable root MUST be allowed, else the
+          1. liveness   — an out-of-WORKSPACE write (parent dir) MUST be denied → a jail exists;
+          2. per-root   — a write beneath EACH declared writable root MUST be allowed, else the
                           profile is too strict and a legit body's writes would spuriously fail;
           3. deny-closed — if WORKDIR itself is not covered by a writable root, an in-WORKDIR
                           write outside every root MUST be denied (the ReadOnly / unbound-path

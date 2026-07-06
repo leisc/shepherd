@@ -1,3 +1,4 @@
+# under-test: vcs_core._command_contract
 from __future__ import annotations
 
 import math

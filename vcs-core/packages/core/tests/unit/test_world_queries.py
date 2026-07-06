@@ -1,12 +1,19 @@
+# under-test: vcs_core._world_queries
 """Unit tests for private v2 world query summaries."""
 
 from __future__ import annotations
 
-from vcs_core._world_operation_builder import CandidateSelection, OperationFinalBuilder
+from vcs_core import WORLD_TRANSITION_SCHEMA, WorldSnapshot
 from vcs_core._world_operation_runner import WorldOperationRunner
 from vcs_core._world_queries import summarize_world
-from vcs_core._world_storage_manager import DEFAULT_GROUND_REF, SubstrateStoreSpec, WorldStorageManager
-from vcs_core._world_types import WORLD_TRANSITION_SCHEMA, SubstrateStoreIdentity, WorldSnapshot
+from vcs_core.spi import SubstrateStoreIdentity
+from vcs_core.testing import (
+    DEFAULT_GROUND_REF,
+    CandidateSelection,
+    OperationFinalBuilder,
+    SubstrateStoreSpec,
+    WorldStorageManager,
+)
 
 from .world_vectors_v2_helpers import (
     attach_selection_evidence_ref,

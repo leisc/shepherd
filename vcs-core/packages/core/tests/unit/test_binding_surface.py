@@ -1,3 +1,4 @@
+# under-test: vcs_core._binding_surface
 """Tests for the metadata-first binding surface read model."""
 
 from __future__ import annotations

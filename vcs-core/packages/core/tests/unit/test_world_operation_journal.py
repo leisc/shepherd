@@ -1,26 +1,26 @@
+# under-test: vcs_core._world_operation_journal
 """Unit tests for private v2 world operation journals."""
 
 from __future__ import annotations
 
 import pygit2
 import pytest
-from vcs_core._errors import InvalidRepositoryStateError
-from vcs_core._ref_txn import UpdateRefStdinResult
-from vcs_core._transition_kernel_records import CandidateCommitRecord, CandidateOutcomeRecord
-from vcs_core._world_operation_builder import PreparedCandidateTupleRecord, PreparedWorldOperation
-from vcs_core._world_operation_journal import OPERATION_JOURNAL_PATH, OPERATION_JOURNAL_SCHEMA
-from vcs_core._world_refs import operation_journal_ref, world_open_operation_journal_index_ref
-from vcs_core._world_storage_manager import DEFAULT_GROUND_REF, SubstrateStoreSpec, WorldStorageManager
-from vcs_core._world_types import (
+from vcs_core import (
     WORLD_TRANSITION_SCHEMA,
-    OperationFinalRecord,
-    SubstrateHead,
-    SubstrateStoreIdentity,
+    InvalidRepositoryStateError,
     WorldSnapshot,
     canonical_bytes,
     canonical_digest,
 )
+from vcs_core._ref_txn import UpdateRefStdinResult
+from vcs_core._transition_kernel_records import CandidateCommitRecord, CandidateOutcomeRecord
+from vcs_core._world_operation_builder import PreparedCandidateTupleRecord, PreparedWorldOperation
+from vcs_core._world_operation_journal import OPERATION_JOURNAL_PATH, OPERATION_JOURNAL_SCHEMA
+from vcs_core._world_refs import world_open_operation_journal_index_ref
+from vcs_core._world_types import OperationFinalRecord, SubstrateHead
 from vcs_core.git_store import create_commit_with_recovery, insert_tree_entry
+from vcs_core.spi import SubstrateStoreIdentity
+from vcs_core.testing import DEFAULT_GROUND_REF, SubstrateStoreSpec, WorldStorageManager, operation_journal_ref
 
 from .world_vectors_v2_helpers import (
     attach_selection_evidence_ref,

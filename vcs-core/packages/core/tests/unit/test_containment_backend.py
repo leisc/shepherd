@@ -1,3 +1,4 @@
+# under-test: vcs_core._seatbelt_containment
 """B2a — the core `ContainmentBackend` (Seatbelt) lifted move-not-build from the skeleton.
 
 Backend-level unit coverage of the macOS native syscall-deny jail (the device-level

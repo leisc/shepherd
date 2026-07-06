@@ -69,7 +69,7 @@ def _resolved_binding(schema: DriverSchema, *, binding_name: str) -> object:
 def test_exec_uses_session_ipc_when_available(tmp_path: Path, monkeypatch) -> None:  # type: ignore[no-untyped-def]
     import time
 
-    from vcs_core._ipc import SessionInfo
+    from vcs_core.testing import SessionInfo
 
     runner = CliRunner()
     _init(runner, tmp_path)
@@ -115,7 +115,7 @@ def test_exec_non_reversible_run_uses_structural_session_option(
 ) -> None:  # type: ignore[no-untyped-def]
     import time
 
-    from vcs_core._ipc import SessionInfo
+    from vcs_core.testing import SessionInfo
 
     runner = CliRunner()
     _init(runner, tmp_path)
@@ -258,7 +258,7 @@ def test_exec_ipc_params_nests_user_params_that_share_routing_names(monkeypatch)
 def test_exec_object_param_sends_json_object_over_session_ipc(tmp_path: Path, monkeypatch) -> None:  # type: ignore[no-untyped-def]
     import time
 
-    from vcs_core._ipc import SessionInfo
+    from vcs_core.testing import SessionInfo
 
     runner = CliRunner()
     _init(runner, tmp_path)
@@ -307,7 +307,7 @@ def test_exec_object_param_sends_json_object_over_session_ipc(tmp_path: Path, mo
 def test_exec_filesystem_write_rejects_plain_text_bytes_over_session_ipc(tmp_path: Path, monkeypatch) -> None:  # type: ignore[no-untyped-def]
     import time
 
-    from vcs_core._ipc import SessionInfo
+    from vcs_core.testing import SessionInfo
 
     runner = CliRunner()
     _init(runner, tmp_path)
@@ -344,7 +344,7 @@ def test_exec_filesystem_write_rejects_plain_text_bytes_over_session_ipc(tmp_pat
 def test_exec_filesystem_write_sends_explicit_file_bytes_over_session_ipc(tmp_path: Path, monkeypatch) -> None:  # type: ignore[no-untyped-def]
     import time
 
-    from vcs_core._ipc import SessionInfo
+    from vcs_core.testing import SessionInfo
 
     runner = CliRunner()
     _init(runner, tmp_path)
@@ -395,7 +395,7 @@ def test_exec_filesystem_write_sends_explicit_file_bytes_over_session_ipc(tmp_pa
 def test_exec_reports_non_finite_cli_json_without_traceback(tmp_path: Path, monkeypatch) -> None:  # type: ignore[no-untyped-def]
     import time
 
-    from vcs_core._ipc import SessionInfo
+    from vcs_core.testing import SessionInfo
 
     runner = CliRunner()
     _init(runner, tmp_path)
@@ -432,7 +432,7 @@ def test_exec_reports_non_finite_cli_json_without_traceback(tmp_path: Path, monk
 def test_exec_renders_command_value_from_session_ipc(tmp_path: Path, monkeypatch) -> None:  # type: ignore[no-untyped-def]
     import time
 
-    from vcs_core._ipc import SessionInfo
+    from vcs_core.testing import SessionInfo
 
     runner = CliRunner()
     _init(runner, tmp_path)
@@ -469,7 +469,7 @@ def test_exec_renders_command_value_from_session_ipc(tmp_path: Path, monkeypatch
 def test_exec_json_renders_session_ipc_machine_payload(tmp_path: Path, monkeypatch) -> None:  # type: ignore[no-untyped-def]
     import time
 
-    from vcs_core._ipc import SessionInfo
+    from vcs_core.testing import SessionInfo
     from vcs_core.types import DRIVER_INGRESS_RESULT_VALUE_SCHEMA
 
     runner = CliRunner()
@@ -581,7 +581,8 @@ def test_exec_renders_command_value_in_stateless_cli(monkeypatch) -> None:  # ty
 
 
 def test_exec_renders_driver_ingress_result_in_stateless_cli(monkeypatch) -> None:  # type: ignore[no-untyped-def]
-    from vcs_core._substrate_driver import Diagnostic, DriverIngressResult, TransitionDraft
+    from vcs_core.runtime_api import DriverIngressResult
+    from vcs_core.spi import Diagnostic, TransitionDraft
     from vcs_core.types import DRIVER_INGRESS_RESULT_VALUE_SCHEMA
 
     runner = CliRunner()
@@ -735,7 +736,7 @@ def test_exec_reports_unrenderable_command_value_in_stateless_cli(monkeypatch) -
 def test_exec_uses_current_session_scope_after_switch(tmp_path: Path, monkeypatch) -> None:  # type: ignore[no-untyped-def]
     import time
 
-    from vcs_core._ipc import SessionInfo
+    from vcs_core.testing import SessionInfo
 
     runner = CliRunner()
     _init(runner, tmp_path)
@@ -783,7 +784,7 @@ def test_exec_uses_current_session_scope_after_switch(tmp_path: Path, monkeypatc
 def test_switch_missing_scope_renders_app_error_once(tmp_path: Path, monkeypatch) -> None:  # type: ignore[no-untyped-def]
     import time
 
-    from vcs_core._ipc import SessionInfo
+    from vcs_core.testing import SessionInfo
 
     runner = CliRunner()
     _init(runner, tmp_path)
@@ -812,7 +813,7 @@ def test_switch_missing_scope_renders_app_error_once(tmp_path: Path, monkeypatch
 def test_delegated_scope_lifecycle_error_is_not_double_prefixed(tmp_path: Path, monkeypatch) -> None:  # type: ignore[no-untyped-def]
     import time
 
-    from vcs_core._ipc import SessionInfo
+    from vcs_core.testing import SessionInfo
 
     runner = CliRunner()
     _init(runner, tmp_path)
@@ -841,7 +842,7 @@ def test_delegated_scope_lifecycle_error_is_not_double_prefixed(tmp_path: Path, 
 def test_operations_uses_session_ipc_with_current_scope_default(tmp_path: Path, monkeypatch) -> None:  # type: ignore[no-untyped-def]
     import time
 
-    from vcs_core._ipc import SessionInfo
+    from vcs_core.testing import SessionInfo
 
     runner = CliRunner()
     _init(runner, tmp_path)
@@ -905,7 +906,7 @@ def test_operations_uses_session_ipc_with_current_scope_default(tmp_path: Path, 
 def test_operations_archived_uses_repo_wide_session_ipc_default(tmp_path: Path, monkeypatch) -> None:  # type: ignore[no-untyped-def]
     import time
 
-    from vcs_core._ipc import SessionInfo
+    from vcs_core.testing import SessionInfo
 
     runner = CliRunner()
     _init(runner, tmp_path)
@@ -968,7 +969,7 @@ def test_operations_archived_uses_repo_wide_session_ipc_default(tmp_path: Path, 
 def test_operation_show_uses_session_ipc(tmp_path: Path, monkeypatch) -> None:  # type: ignore[no-untyped-def]
     import time
 
-    from vcs_core._ipc import SessionInfo
+    from vcs_core.testing import SessionInfo
 
     runner = CliRunner()
     _init(runner, tmp_path)
@@ -1038,7 +1039,7 @@ def test_operation_show_uses_session_ipc(tmp_path: Path, monkeypatch) -> None:  
 def test_recovery_uses_session_ipc(tmp_path: Path, monkeypatch) -> None:  # type: ignore[no-untyped-def]
     import time
 
-    from vcs_core._ipc import SessionInfo
+    from vcs_core.testing import SessionInfo
 
     runner = CliRunner()
     _init(runner, tmp_path)
@@ -1082,7 +1083,7 @@ def test_recovery_uses_session_ipc(tmp_path: Path, monkeypatch) -> None:  # type
 def test_operations_session_ipc_uses_fixed_envelope_for_all_mode(tmp_path: Path, monkeypatch) -> None:  # type: ignore[no-untyped-def]
     import time
 
-    from vcs_core._ipc import SessionInfo
+    from vcs_core.testing import SessionInfo
 
     runner = CliRunner()
     _init(runner, tmp_path)
@@ -1152,7 +1153,7 @@ def test_operations_session_ipc_uses_fixed_envelope_for_all_mode(tmp_path: Path,
 def test_exec_errors_when_session_daemon_is_unreachable(tmp_path: Path, monkeypatch) -> None:  # type: ignore[no-untyped-def]
     import time
 
-    from vcs_core._ipc import SessionInfo
+    from vcs_core.testing import SessionInfo
 
     runner = CliRunner()
     _init(runner, tmp_path)

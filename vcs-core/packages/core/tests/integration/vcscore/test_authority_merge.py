@@ -1,3 +1,4 @@
+# under-test: vcs_core._authority
 from __future__ import annotations
 
 from pathlib import Path
@@ -5,7 +6,7 @@ from typing import Any
 
 import pytest
 import vcs_core._vcscore_lifecycle as lifecycle
-from vcs_core import VcsCore
+from vcs_core import InvalidRepositoryStateError, VcsCore, WorkspaceAuthorityRecoveryRequiredError
 from vcs_core._authority import (
     AuthorityDecision,
     AuthzMatchView,
@@ -14,7 +15,6 @@ from vcs_core._authority import (
     read_pending_authority_settlement,
 )
 from vcs_core._command_admission import CommandAdmissionError
-from vcs_core._errors import InvalidRepositoryStateError, WorkspaceAuthorityRecoveryRequiredError
 from vcs_core._permission_plan_evidence import permission_plan_digest
 from vcs_core._workspace_authority import (
     WorkspaceAuthorityPending,
@@ -927,7 +927,7 @@ class _GitControlPlaneAdmissionProvider:
         del command, scope
         path = params.get("path")
         if isinstance(path, str) and (path == ".git" or path.startswith(".git/")):
-            raise CommandAdmissionError("raw.git control-plane is not ordinary workspace authority")
+            raise CommandAdmissionError("raw .git control-plane is not ordinary workspace authority")
 
 
 def test_registered_command_admission_provider_refuses_git_control_plane_before_capture(tmp_path: Path) -> None:

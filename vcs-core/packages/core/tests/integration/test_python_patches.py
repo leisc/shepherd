@@ -9,10 +9,9 @@ from contextlib import contextmanager, suppress
 from pathlib import Path
 
 import pytest
+from vcs_core import UnscopedMutationError, build_builtin_substrate_context
 from vcs_core._active_surface_profiles import read_only_filesystem_surface
-from vcs_core._errors import UnscopedMutationError
-from vcs_core._substrate_driver import SurfacePolicyError
-from vcs_core._substrate_runtime import build_builtin_substrate_context
+from vcs_core.spi import SurfacePolicyError
 from vcs_core.types import ScopeInfo
 from vcs_core.vcscore import VcsCore
 

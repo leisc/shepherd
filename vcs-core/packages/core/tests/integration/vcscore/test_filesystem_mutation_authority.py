@@ -9,7 +9,7 @@ from collections.abc import Callable
 from pathlib import Path
 
 import pytest
-from vcs_core._errors import SiblingGroupRecoveryRequiredError
+from vcs_core import SiblingGroupRecoveryRequiredError
 from vcs_core._sibling_groups import (
     CarrierLeaseRecord,
     SiblingGroupRecord,

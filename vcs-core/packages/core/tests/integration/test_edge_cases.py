@@ -11,11 +11,11 @@ from __future__ import annotations
 from typing import TYPE_CHECKING
 
 import pytest
-from vcs_core._errors import (
+from vcs_core import (
     ActivationError,
     StaleScopeError,
+    build_builtin_substrate_context,
 )
-from vcs_core._substrate_runtime import build_builtin_substrate_context
 from vcs_core.scope_stack import ScopeStack
 from vcs_core.store import Store
 from vcs_core.substrates import DeclarativeFilesystemSubstrate

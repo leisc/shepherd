@@ -1,3 +1,4 @@
+# under-test: vcs_core._capture_authority
 """Capture authority state-machine tests."""
 
 from __future__ import annotations

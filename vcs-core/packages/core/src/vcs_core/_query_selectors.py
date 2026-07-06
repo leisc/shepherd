@@ -5,13 +5,15 @@ from __future__ import annotations
 from dataclasses import dataclass
 from typing import TYPE_CHECKING
 
+from vcs_core._errors import VcsCoreError
+
 if TYPE_CHECKING:
     from collections.abc import Callable
 
     from vcs_core._query_inventory import InventoryItem, InventorySnapshot
 
 
-class InventorySelectorError(ValueError):
+class InventorySelectorError(VcsCoreError, ValueError):
     """Raised when an inventory selector cannot be parsed or evaluated."""
 
 

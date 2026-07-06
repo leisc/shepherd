@@ -1,12 +1,13 @@
+# under-test: vcs_core._materialization_recovery
 from __future__ import annotations
 
 from pathlib import Path
 
-from vcs_core._dirty_flag import write_dirty_flag
 from vcs_core._materialization_recovery import probe_materialization_recovery_state
 from vcs_core._materialization_run import MaterializationRun, clear_materialization_run, write_materialization_run
 from vcs_core._recovery_inventory import recovery_inventory_snapshot_for_store
 from vcs_core.store import Store
+from vcs_core.testing import write_dirty_flag
 
 
 def test_materialization_recovery_probe_reports_corrupt_dirty_flag(tmp_path: Path) -> None:

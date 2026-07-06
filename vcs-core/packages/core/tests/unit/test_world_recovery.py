@@ -1,17 +1,13 @@
+# under-test: vcs_core._world_recovery
 """Unit tests for conservative private v2 world recovery helpers."""
 
 from __future__ import annotations
 
 import pygit2
 import pytest
-from vcs_core._errors import InvalidRepositoryStateError
+from vcs_core import WORLD_TRANSITION_SCHEMA, InvalidRepositoryStateError, WorldSnapshot
 from vcs_core._transition_kernel_records import CandidateCommitRecord, CandidateOutcomeRecord
-from vcs_core._world_operation_builder import (
-    CandidateSelection,
-    OperationFinalBuilder,
-    PreparedCandidateTupleRecord,
-    PreparedWorldOperation,
-)
+from vcs_core._world_operation_builder import PreparedCandidateTupleRecord, PreparedWorldOperation
 from vcs_core._world_publication_plan import PublicationPlan
 from vcs_core._world_recovery import (
     _commit_finalized_world,
@@ -22,13 +18,16 @@ from vcs_core._world_recovery import (
     complete_journaled_operation,
     reconcile_open_operation_journal_index,
 )
-from vcs_core._world_refs import operation_journal_ref, world_publication_lease_prefix
-from vcs_core._world_storage_manager import DEFAULT_GROUND_REF, SubstrateStoreSpec, WorldStorageManager
-from vcs_core._world_types import (
-    WORLD_TRANSITION_SCHEMA,
-    OperationFinalRecord,
-    SubstrateStoreIdentity,
-    WorldSnapshot,
+from vcs_core._world_refs import world_publication_lease_prefix
+from vcs_core._world_types import OperationFinalRecord
+from vcs_core.spi import SubstrateStoreIdentity
+from vcs_core.testing import (
+    DEFAULT_GROUND_REF,
+    CandidateSelection,
+    OperationFinalBuilder,
+    SubstrateStoreSpec,
+    WorldStorageManager,
+    operation_journal_ref,
 )
 
 from .world_vectors_v2_helpers import (
@@ -370,7 +369,7 @@ def test_recovery_cleans_stale_publication_lease_after_successful_publish(tmp_pa
     )
 
     with monkeypatch.context() as patched:
-        patched.setattr(manager, "_release_publication_leases", lambda _refs, *, world_oid: None)
+        patched.setattr(manager._pubret, "_release_publication_leases", lambda _refs, *, world_oid: None)
         assert manager.advance_world_ref(ref=DEFAULT_GROUND_REF, world_oid=world_oid, input_world_oid=p0)
 
     assert any(ref.startswith(world_publication_lease_prefix() + "/") for ref in manager.world_store.repo.references)
@@ -615,16 +614,21 @@ def test_recovery_replays_journaled_publication_plan(tmp_path, monkeypatch) -> N
         allow_same_resource_alias=True,
     )
     manager.record_operation_publishing("op-plan-replay", world_oid=world_oid, publication_plan=publication_plan)
-    original_prepare = manager.prepare_publication
+    # V2.2c: prepare_publication moved to the controller; patch it there (the WSM shim would be
+    # bypassed by the moved caller). The `intercepted` flag makes a vacuous patch loud (rule 9).
+    original_prepare = manager._pubret.prepare_publication
+    intercepted: list[bool] = []
 
     def assert_journaled_plan(plan):
+        intercepted.append(True)
         assert plan.allow_same_resource_alias
         return original_prepare(plan)
 
-    monkeypatch.setattr(manager, "prepare_publication", assert_journaled_plan)
+    monkeypatch.setattr(manager._pubret, "prepare_publication", assert_journaled_plan)
 
     report = complete_committed_operation(manager, "op-plan-replay")
 
+    assert intercepted, "prepare_publication fault injection did not intercept (vacuous patch)"
     assert [action.code for action in report.actions] == ["operation_completed"]
     assert manager.read_operation_journal("op-plan-replay", family="closed").tip.payload["status"] == "closed"
 

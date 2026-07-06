@@ -1,11 +1,12 @@
+# under-test: vcs_core._world_relationships
 """Unit tests for private v2 world relationship validation."""
 
 from __future__ import annotations
 
-from vcs_core._transition_kernel_records import RelationshipRequirement
+from vcs_core import WorldSnapshot
 from vcs_core._world_relationships import validate_relationships
-from vcs_core._world_storage_manager import SubstrateStoreSpec, WorldStorageManager
-from vcs_core._world_types import SubstrateStoreIdentity, WorldSnapshot
+from vcs_core.spi import RelationshipRequirement, SubstrateStoreIdentity
+from vcs_core.testing import SubstrateStoreSpec, WorldStorageManager
 
 
 def _manager(tmp_path) -> WorldStorageManager:

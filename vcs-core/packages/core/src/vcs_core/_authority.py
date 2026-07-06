@@ -17,7 +17,7 @@ from dataclasses import asdict, dataclass, replace
 from pathlib import Path, PurePosixPath
 from typing import TYPE_CHECKING, Any, Literal, Protocol, cast
 
-from vcs_core._errors import InvalidRepositoryStateError
+from vcs_core._errors import InvalidRepositoryStateError, VcsCoreError
 from vcs_core._permission_plan_evidence import (
     PermissionPlanEvidenceError,
     normalize_permission_plan_descriptor,
@@ -55,15 +55,15 @@ AuthorityCommitOutcome = Literal[
 ]
 
 
-class AuthorityDecisionError(ValueError):
+class AuthorityDecisionError(VcsCoreError, ValueError):
     """Raised when an authority decision provider returns an invalid decision."""
 
 
-class AuthorityMergeDriftError(ValueError):
+class AuthorityMergeDriftError(VcsCoreError, ValueError):
     """Raised internally when a prepared candidate cohort no longer matches."""
 
 
-class AuthorityBindingRootsError(ValueError):
+class AuthorityBindingRootsError(VcsCoreError, ValueError):
     """Raised when a supplied GitRepo binding map cannot be used safely."""
 
     def __init__(self, reason_code: str, message: str) -> None:

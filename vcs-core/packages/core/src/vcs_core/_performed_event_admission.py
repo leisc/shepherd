@@ -7,6 +7,7 @@ from dataclasses import dataclass
 from types import MappingProxyType
 from typing import TYPE_CHECKING, Any, cast
 
+from vcs_core._errors import VcsCoreError
 from vcs_core._immutable_payload import immutable_payload_view
 from vcs_core._ingress_params import (
     IngressParamContract,
@@ -20,7 +21,7 @@ if TYPE_CHECKING:
     from vcs_core.types import ScopeInfo
 
 
-class PerformedEventAdmissionError(ValueError):
+class PerformedEventAdmissionError(VcsCoreError, ValueError):
     """Named validation error for framework-routed performed-event admission."""
 
 

@@ -18,7 +18,10 @@ from shepherd_kernel_v3_reference.spikes.branch_replay import (
 from shepherd_kernel_v3_reference.trace.machine import run_trace
 from shepherd_kernel_v3_reference.trace.records import ContinuationResume, ForkBranch, TerminalResumeResult
 
-pytestmark = pytest.mark.xfail(reason="K1b defers executable replay from legacy ContinuationImage")
+pytestmark = pytest.mark.xfail(
+    reason="K1b defers executable replay from legacy ContinuationImage",
+    strict=True,
+)
 
 
 def install(effect_kind: str, body, handler_id: str = "h.v1") -> StaticHandlerInstall:

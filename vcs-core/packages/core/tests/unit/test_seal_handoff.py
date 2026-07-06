@@ -1,3 +1,4 @@
+# under-test: vcs_core._seal_handoff
 """Unit coverage for durable seal handoff records."""
 
 from __future__ import annotations
@@ -7,12 +8,13 @@ from pathlib import Path
 from types import SimpleNamespace
 
 import pytest
-from vcs_core import Store
-from vcs_core._errors import InvalidRepositoryStateError
+from vcs_core import InvalidRepositoryStateError, Store
+from vcs_core._operation_journal_controller import OperationJournalController
 from vcs_core._seal_handoff import read_seal_handoff, seal_handoff_ref, write_seal_handoff
 from vcs_core._world_operation_builder import PreparedCandidateTupleRecord
-from vcs_core._world_storage_manager import SubstrateStoreSpec, WorldStorageManager
-from vcs_core._world_types import SubstrateHead, SubstrateStoreIdentity
+from vcs_core._world_types import SubstrateHead
+from vcs_core.spi import SubstrateStoreIdentity
+from vcs_core.testing import SubstrateStoreSpec, WorldStorageManager
 from vcs_core.types import ScopeInfo, SealCandidateHandoff
 
 from .world_vectors_v2_helpers import create_prepared_candidate
@@ -107,7 +109,7 @@ def test_candidate_tuple_for_selected_head_matches_full_substrate_identity() -> 
     )
 
     assert (
-        WorldStorageManager._candidate_tuple_for_selected_head(
+        OperationJournalController._candidate_tuple_for_selected_head(
             manager,
             operation_id="op-selector",
             producer_operation_id="op-child",

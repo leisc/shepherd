@@ -12,6 +12,7 @@ from typing import Literal
 import pygit2
 
 from vcs_core._pygit2_helpers import require_blob, require_object, require_tree
+from vcs_core._workspace_paths import normalize_workspace_relative_path
 from vcs_core.types import posix_to_git_mode
 
 ExternalSource = Literal["git-head", "worktree"]
@@ -74,9 +75,7 @@ class ExactPhysicalState:
 
 
 def validate_relative_path(path: str) -> str:
-    pure = PurePosixPath(path)
-    if not path or pure.is_absolute() or ".." in pure.parts:
-        raise ValueError(f"Invalid workspace-relative path: {path!r}")
+    pure = normalize_workspace_relative_path(path)
     if any(part in _CONTROL_DIRS for part in pure.parts):
         raise ValueError(f"Refusing to adopt control-plane path: {path!r}")
     return pure.as_posix()

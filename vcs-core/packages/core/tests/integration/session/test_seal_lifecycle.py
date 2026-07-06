@@ -1,3 +1,4 @@
+# under-test: vcs_core._retained_output_selection
 """Capability-C seal lifecycle integration tests."""
 
 from __future__ import annotations
@@ -13,9 +14,14 @@ import pytest
 import vcs_core._retained_output_selection as selection_module
 import vcs_core._vcscore_lifecycle as lifecycle
 import vcs_core._vcscore_seal as seal_module
-from vcs_core import Store, VcsCore, build_builtin_substrate_context
-from vcs_core._authority import AuthorityDecision, read_pending_authority_settlement
-from vcs_core._errors import InvalidRepositoryStateError, SiblingGroupRecoveryRequiredError
+from vcs_core import (
+    InvalidRepositoryStateError,
+    SiblingGroupRecoveryRequiredError,
+    Store,
+    VcsCore,
+    build_builtin_substrate_context,
+)
+from vcs_core._authority import read_pending_authority_settlement
 from vcs_core._permission_plan_evidence import permission_plan_digest
 from vcs_core._projection_store import SCOPE_REGISTRY_CURRENT_REF, SEAL_AND_SELECT_ENV
 from vcs_core._retained_output_settlement import (
@@ -33,8 +39,9 @@ from vcs_core._sibling_groups import (
 )
 from vcs_core._substrate_tree_read import read_substrate_workspace_file
 from vcs_core._world_refs import candidate_ref
-from vcs_core._world_substrate_adapters import TaskTraceSubstrateDriver
 from vcs_core.git_store import build_tree, create_commit_with_recovery, create_or_update_reference, create_signature
+from vcs_core.runtime_api import AuthorityDecision
+from vcs_core.runtime_substrate import TaskTraceSubstrateDriver
 from vcs_core.substrates import FilesystemSubstrate, MarkerSubstrate
 from vcs_core.types import RetainedOutputSettlement
 
@@ -2703,17 +2710,20 @@ def test_interrupted_seal_recovers_when_handoff_write_failed(
     mg = _make_mg(workspace)
     try:
         _parent, child = _produce_child_workspace_output(mg)
-        original_write = seal_module.write_prepared_seal_handoff
+        # V3.1: write_prepared_seal_handoff moved onto SealController; patch the class method
+        # (owner._seal.write_prepared_seal_handoff dispatches to it). The pytest.raises below is
+        # the interception proof — if the patch missed, no RuntimeError is raised and it fails.
+        original_write = seal_module.SealController.write_prepared_seal_handoff
         failed = False
 
-        def fail_once_write(*args: object, **kwargs: object) -> object:
+        def fail_once_write(self: object, *args: object, **kwargs: object) -> object:
             nonlocal failed
             if not failed:
                 failed = True
                 raise RuntimeError("simulated crash before seal handoff write")
-            return original_write(*args, **kwargs)
+            return original_write(self, *args, **kwargs)
 
-        monkeypatch.setattr(seal_module, "write_prepared_seal_handoff", fail_once_write)
+        monkeypatch.setattr(seal_module.SealController, "write_prepared_seal_handoff", fail_once_write)
         with pytest.raises(RuntimeError, match="simulated crash before seal handoff write"):
             mg.seal(child)
 

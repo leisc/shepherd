@@ -1,9 +1,10 @@
+# under-test: vcs_core._world_operation_builder
 """Unit tests for production operation-final construction."""
 
 from __future__ import annotations
 
 import pytest
-from vcs_core._errors import InvalidRepositoryStateError
+from vcs_core import WORLD_TRANSITION_SCHEMA, InvalidRepositoryStateError, WorldSnapshot
 from vcs_core._transition_kernel_records import CandidateCommitRecord, RetentionPolicyRequirement
 from vcs_core._world_operation_builder import (
     CandidateSelection,
@@ -13,8 +14,8 @@ from vcs_core._world_operation_builder import (
     PreparedWorldOperation,
     SelectionRequirementPlan,
 )
-from vcs_core._world_storage_manager import DEFAULT_GROUND_REF, SubstrateStoreSpec, WorldStorageManager
-from vcs_core._world_types import WORLD_TRANSITION_SCHEMA, SubstrateStoreIdentity, WorldSnapshot
+from vcs_core.spi import SubstrateStoreIdentity
+from vcs_core.testing import DEFAULT_GROUND_REF, SubstrateStoreSpec, WorldStorageManager
 
 
 def _manager(tmp_path) -> WorldStorageManager:

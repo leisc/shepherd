@@ -1,3 +1,4 @@
+# under-test: vcs_core._substrate_tree_read
 """Tranche 3 tests: materialization reads from the substrate workspace tree.
 
 Tree-backed substrate revisions embed the workspace bytes as a Git tree at
@@ -249,7 +250,7 @@ def test_filesystem_substrate_prefers_byte_source_over_scalar_ground(tmp_path) -
 
     from vcs_core._substrate_runtime import RuntimeBoundSubstrate
 
-    from tests.support.builders import make_marker_filesystem_vcscore
+    from ..support.builders import make_marker_filesystem_vcscore
 
     workspace = tmp_path / "workspace"
     workspace.mkdir()
@@ -316,7 +317,7 @@ def test_materialization_warns_on_tree_backed_substrate_miss(tmp_path, caplog, m
 
     from vcs_core.substrates import STRICT_TREE_BACKED_MATERIALIZATION_ENV
 
-    from tests.support.builders import make_marker_filesystem_vcscore
+    from ..support.builders import make_marker_filesystem_vcscore
 
     # Pin default mode for this test: it specifically asserts the warning
     # path. Strict mode promotes the warning into a raise (covered separately
@@ -358,7 +359,7 @@ def test_materialization_does_not_warn_for_digest_only_ground(tmp_path, caplog) 
     """
     import logging
 
-    from tests.support.builders import make_marker_filesystem_vcscore
+    from ..support.builders import make_marker_filesystem_vcscore
 
     workspace = tmp_path / "workspace"
     workspace.mkdir()
@@ -430,10 +431,10 @@ def test_strict_mode_raises_on_tree_backed_substrate_miss(tmp_path, monkeypatch)
     This is the Phase E pre-removal gate: CI runs under strict mode so any
     drift that would have produced a warning becomes a hard failure.
     """
-    from vcs_core._errors import InvalidRepositoryStateError
+    from vcs_core import InvalidRepositoryStateError
     from vcs_core.substrates import STRICT_TREE_BACKED_MATERIALIZATION_ENV
 
-    from tests.support.builders import make_marker_filesystem_vcscore
+    from ..support.builders import make_marker_filesystem_vcscore
 
     monkeypatch.setenv(STRICT_TREE_BACKED_MATERIALIZATION_ENV, "true")
 
@@ -464,7 +465,7 @@ def test_strict_mode_silent_when_byte_source_serves(tmp_path, monkeypatch, caplo
 
     from vcs_core.substrates import STRICT_TREE_BACKED_MATERIALIZATION_ENV
 
-    from tests.support.builders import make_marker_filesystem_vcscore
+    from ..support.builders import make_marker_filesystem_vcscore
 
     monkeypatch.setenv(STRICT_TREE_BACKED_MATERIALIZATION_ENV, "1")
 
@@ -498,7 +499,7 @@ def test_strict_mode_does_not_raise_for_digest_only_ground(tmp_path, monkeypatch
     must not raise even under strict mode."""
     from vcs_core.substrates import STRICT_TREE_BACKED_MATERIALIZATION_ENV
 
-    from tests.support.builders import make_marker_filesystem_vcscore
+    from ..support.builders import make_marker_filesystem_vcscore
 
     monkeypatch.setenv(STRICT_TREE_BACKED_MATERIALIZATION_ENV, "true")
 
@@ -531,7 +532,7 @@ def test_scalar_fallback_counter_does_not_increment_when_byte_source_serves(tmp_
         scalar_fallback_invocations,
     )
 
-    from tests.support.builders import make_marker_filesystem_vcscore
+    from ..support.builders import make_marker_filesystem_vcscore
 
     monkeypatch.delenv(STRICT_TREE_BACKED_MATERIALIZATION_ENV, raising=False)
     reset_scalar_fallback_invocations()
@@ -577,7 +578,7 @@ def test_scalar_fallback_counter_increments_on_tree_backed_drift(tmp_path, monke
         scalar_fallback_invocations,
     )
 
-    from tests.support.builders import make_marker_filesystem_vcscore
+    from ..support.builders import make_marker_filesystem_vcscore
 
     monkeypatch.delenv(STRICT_TREE_BACKED_MATERIALIZATION_ENV, raising=False)
     reset_scalar_fallback_invocations()
@@ -601,14 +602,14 @@ def test_scalar_fallback_counter_increments_on_tree_backed_drift(tmp_path, monke
 def test_scalar_fallback_counter_does_not_increment_when_strict_mode_raises(tmp_path, monkeypatch) -> None:
     """Strict mode raises before the bump call, so the counter stays at 0
     even though the materializer reached the fallback branch."""
-    from vcs_core._errors import InvalidRepositoryStateError
+    from vcs_core import InvalidRepositoryStateError
     from vcs_core.substrates import (
         STRICT_TREE_BACKED_MATERIALIZATION_ENV,
         reset_scalar_fallback_invocations,
         scalar_fallback_invocations,
     )
 
-    from tests.support.builders import make_marker_filesystem_vcscore
+    from ..support.builders import make_marker_filesystem_vcscore
 
     monkeypatch.setenv(STRICT_TREE_BACKED_MATERIALIZATION_ENV, "true")
     reset_scalar_fallback_invocations()

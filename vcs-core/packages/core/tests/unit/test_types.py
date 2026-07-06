@@ -129,15 +129,16 @@ def test_normalize_command_value_handles_nested_transport_shapes() -> None:
 
 
 def test_normalize_command_value_handles_populated_driver_ingress_result() -> None:
-    from vcs_core._substrate_driver import (
+    from vcs_core.runtime_api import DriverIngressResult
+    from vcs_core.spi import (
         Diagnostic,
-        DriverIngressResult,
         DriverSelectionRequirementDraft,
         ObservationDraft,
+        PayloadDescriptorClaim,
+        RelationshipRequirement,
         RetentionHint,
         TransitionDraft,
     )
-    from vcs_core._transition_kernel_records import PayloadDescriptorClaim, RelationshipRequirement
 
     descriptor = PayloadDescriptorClaim.for_json_payload({"schema": "test/payload/v1", "value": "ok"})
     retention = RetentionHint(kind="revision", target="refs/test/head", digest="sha256:abc", mandatory=True)

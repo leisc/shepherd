@@ -4,8 +4,9 @@ import subprocess
 import sys
 from typing import TYPE_CHECKING
 
+from vcs_core import build_builtin_substrate_context
 from vcs_core._hooks import HookEvent
-from vcs_core._substrate_runtime import BuiltInRuntimeBinding, build_builtin_substrate_context
+from vcs_core._substrate_runtime import BuiltInRuntimeBinding
 from vcs_core.git_substrate import GitSubstrate
 from vcs_core.recording import RecordingPipeline
 from vcs_core.store import Store

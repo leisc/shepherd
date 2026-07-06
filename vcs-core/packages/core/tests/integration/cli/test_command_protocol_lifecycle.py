@@ -1,3 +1,4 @@
+# under-test: vcs_core._command_projection
 """End-to-end command protocol lifecycle regressions."""
 
 from __future__ import annotations

@@ -1,3 +1,4 @@
+# under-test: vcs_core._world_storage_manager
 """Guard: the prior-lineage retention preflight stays OFF the publish hot path.
 
 Trust-by-default (``260623-0640-plan.md``, Part A) removed

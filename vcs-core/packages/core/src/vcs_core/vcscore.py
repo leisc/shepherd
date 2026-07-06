@@ -55,7 +55,7 @@ if TYPE_CHECKING:
     from vcs_core.materialization import MaterializationAssessment
     from vcs_core.recording import NestedParentAuthorization
 
-from vcs_core import _vcscore_lifecycle, _vcscore_materialization, _vcscore_queries, _vcscore_runtime
+from vcs_core import _vcscore_lifecycle, _vcscore_runtime
 from vcs_core._authority_inventory import (
     authority_settlement_pending_labels,
     read_valid_authority_settlement_pending_records,
@@ -78,8 +78,12 @@ from vcs_core._operation_start_authority import begin_capture_diagnostic_operati
 from vcs_core._operation_tx import OpenOperationGuard
 from vcs_core._patch_manager import PatchManager
 from vcs_core._python_runtime_capture_adapter import PythonRuntimeCaptureAdapter
+from vcs_core._session_state import SessionState
 from vcs_core._substrate_driver import CaptureAdapter, CaptureAdapterRegistry, SubstrateDriver
 from vcs_core._substrate_runtime import BuiltInRuntimeBinding, RuntimeBoundSubstrate
+from vcs_core._vcscore_materialization import MaterializationController
+from vcs_core._vcscore_queries import QueryService, describe_operation_selector_match
+from vcs_core._vcscore_seal import SealController
 from vcs_core._workspace_authority import (
     WorkspaceAuthorityPending,
     clear_pending_workspace_authority,
@@ -240,6 +244,11 @@ class VcsCore:
         self._workspace = workspace
         self._repo_path = os.path.join(workspace, ".vcscore")  # noqa: PTH118 — _repo_path is consumed as str throughout
         self._store = store or Store(self._repo_path)
+        self._seal = SealController(
+            store=self._store,
+            world_storage=self._world_storage,
+            current_v2_world_oid=VcsCore._current_v2_world_oid,
+        )
         self._allow_activate_init = allow_activate_init
         self._pipeline = RecordingPipeline(self._store)
         self._carrier_scopes: dict[tuple[str, str, str], ScopeInfo] = {}
@@ -294,6 +303,25 @@ class VcsCore:
         # non-daemon VcsCore (the lease exclusion is then a no-op).
         self._active_daemon_instance_id: str | None = None
         self._active_scopes: dict[str, ScopeInfo] = {}
+        self._session = SessionState(
+            store=self._store,
+            active_scopes=self._active_scopes,
+            lock=self._lock,
+            pipeline=self._pipeline,
+            patch_manager=self._patch_manager,
+            repo_path=self._repo_path,
+            session_id=self._session_id,
+            world_storage=self._world_storage,
+        )
+        from vcs_core._recovery_inventory import recovery_inventory_snapshot
+
+        self._queries = QueryService(
+            state=self._session,
+            ground=lambda: self._ground,
+            scope_world_id=self._scope_world_id,
+            recovery_inventory=lambda: recovery_inventory_snapshot(self),
+        )
+        self._materialization = MaterializationController(self)
         self._scope_parents: dict[str, ScopeInfo] = {}
         self._restored_scopes: set[str] = set()
         self._merge_callbacks: list[Callable[[str], None]] = []
@@ -760,7 +788,7 @@ class VcsCore:
         return _vcscore_lifecycle.list_orphaned_scope_refs(self)
 
     def list_orphaned_operations(self) -> tuple[OperationSummary, ...]:
-        return _vcscore_queries.orphaned_operations(self)
+        return self._queries.orphaned_operations()
 
     # --- Lifecycle notifications ---
 
@@ -2051,7 +2079,7 @@ class VcsCore:
         no workspace binding, or metadata cannot be read.
         """
         from vcs_core._world_storage_installation import default_world_storage_exists
-        from vcs_core._world_storage_manager import DEFAULT_GROUND_REF
+        from vcs_core._world_storage_records import DEFAULT_GROUND_REF
 
         if self._world_storage_manager is None and not default_world_storage_exists(self._repo_path):
             return None
@@ -2222,19 +2250,19 @@ class VcsCore:
 
         Raises OpenScopeError if a child scope is still live.
         """
-        return _vcscore_materialization.push(self, dry_run=dry_run, up_to=up_to)
+        return self._materialization.push(dry_run=dry_run, up_to=up_to)
 
     def plan_push(self) -> MaterializationPlan:
         """Preview materialization after the same preflight used by push."""
-        return _vcscore_materialization.plan_push(self)
+        return self._materialization.plan_push()
 
     def assess_push(self) -> MaterializationAssessment:
         """Preview materialization and expected preflight blockers without recording reconcile state."""
-        return _vcscore_materialization.assess_push(self)
+        return self._materialization.assess_push()
 
     def reset_to_materialized(self) -> int:
         """Abandon unpushed work. Returns commits discarded."""
-        return _vcscore_materialization.reset_to_materialized(self)
+        return self._materialization.reset_to_materialized()
 
     def recover_dirty_push(self, mode: str = "repair") -> None:
         """Recover from a crashed push.
@@ -2250,7 +2278,7 @@ class VcsCore:
 
     def recover_materialization(self, mode: str = "repair") -> MaterializationRecoveryReport:
         """Recover dirty-push and materialization-run recovery state."""
-        return _vcscore_materialization.recover_materialization(self, mode=mode)
+        return self._materialization.recover_materialization(mode=mode)
 
     def _make_ground_scope(self) -> ScopeInfo:
         return ScopeInfo(
@@ -2269,13 +2297,13 @@ class VcsCore:
     # --- Query delegations ---
 
     def status(self) -> Status:
-        return _vcscore_queries.status(self)
+        return self._queries.status()
 
     def diff(self) -> DiffSummary:
-        return _vcscore_queries.diff(self)
+        return self._queries.diff()
 
     def log(self, ref: str | None = None, max_count: int = 50) -> list[CommitInfo]:
-        return _vcscore_queries.log(self, ref=ref, max_count=max_count)
+        return self._queries.log(ref=ref, max_count=max_count)
 
     def filter_effects(
         self,
@@ -2285,8 +2313,7 @@ class VcsCore:
         max_count: int = 100,
         scope: str | None = None,
     ) -> list[CommitInfo]:
-        return _vcscore_queries.filter_effects(
-            self,
+        return self._queries.filter_effects(
             effect_type=effect_type,
             substrate=substrate,
             ref=ref,
@@ -2296,7 +2323,7 @@ class VcsCore:
 
     def visible_operations(self, *, ref: str | None = None, max_count: int = 50) -> list[OperationSummary]:
         """Return operation summaries visible on the committed ref history."""
-        return _vcscore_queries.visible_operations(self, ref=ref, max_count=max_count)
+        return self._queries.visible_operations(ref=ref, max_count=max_count)
 
     def open_operations(
         self,
@@ -2305,7 +2332,7 @@ class VcsCore:
         session_id: str | None = None,
     ) -> list[OperationSummary]:
         """Return staged-operation summaries for currently open operation refs."""
-        return _vcscore_queries.open_operations(self, scope=scope, session_id=session_id)
+        return self._queries.open_operations(scope=scope, session_id=session_id)
 
     def world_oid(self, scope: ScopeInfo | None = None) -> str | None:
         """Durable v2 world-commit OID for ``scope`` (ground when ``None``).
@@ -2474,24 +2501,18 @@ class VcsCore:
 
     def retained_workspace_handle(self, scope: ScopeInfo | str) -> RetainedWorkspaceHandle:
         """Return a copyable read handle for a sealed retained workspace."""
-        from vcs_core._vcscore_seal import retained_workspace_handle
-
-        return retained_workspace_handle(self, scope)
+        return self._seal.retained_workspace_handle(scope)
 
     def retained_workspace_handoff(
         self,
         scope_or_handle: ScopeInfo | RetainedWorkspaceHandle | str,
     ) -> SealCandidateHandoff:
         """Return the validated durable handoff for a retained workspace."""
-        from vcs_core._vcscore_seal import retained_workspace_handoff
-
-        return retained_workspace_handoff(self, scope_or_handle)
+        return self._seal.retained_workspace_handoff(scope_or_handle)
 
     def read_retained_workspace_file(self, scope: ScopeInfo | str, path: str) -> tuple[bytes, int] | None:
         """Read one file from a retained workspace's durable tree-backed basis."""
-        from vcs_core._vcscore_seal import read_retained_workspace_file
-
-        return read_retained_workspace_file(self, scope, path)
+        return self._seal.read_retained_workspace_file(scope, path)
 
     def list_retained_outputs(
         self,
@@ -2596,8 +2617,7 @@ class VcsCore:
         operation_id: str | None = None,
     ) -> list[OperationSummary]:
         """Return archived-operation summaries, newest first."""
-        return _vcscore_queries.archived_operations(
-            self,
+        return self._queries.archived_operations(
             max_count=max_count,
             world_id=world_id,
             operation_id=operation_id,
@@ -2605,11 +2625,11 @@ class VcsCore:
 
     def operation_history(self, ref: str) -> OperationHistory:
         """Return the committed history carried by one operation ref."""
-        return _vcscore_queries.operation_history(self, ref)
+        return self._queries.operation_history(ref)
 
     def recovery_snapshot(self, *, archived_max_count: int = 50) -> RecoverySnapshot:
         """Return the current non-canonical recovery/debug state."""
-        return _vcscore_queries.recovery_snapshot(self, archived_max_count=archived_max_count)
+        return self._queries.recovery_snapshot(archived_max_count=archived_max_count)
 
     def recovery_inventory(self) -> InventorySnapshot:
         """Return private inventory for current recovery/debug state."""
@@ -2718,7 +2738,7 @@ class VcsCore:
         max_count: int = 200,
     ) -> OperationHistory:
         """Resolve one operation selector across visible, staged, and archived views."""
-        return _vcscore_queries.resolve_operation_history(self, selector, scope=scope, max_count=max_count)
+        return self._queries.resolve_operation_history(selector, scope=scope, max_count=max_count)
 
     def _operation_direct_matches(
         self,
@@ -2726,7 +2746,7 @@ class VcsCore:
         *,
         scope: ScopeInfo | None,
     ) -> list[OperationSummary]:
-        return _vcscore_queries.operation_direct_matches(self, selector, scope=scope)
+        return self._queries.operation_direct_matches(selector, scope=scope)
 
     def _operation_id_matches(
         self,
@@ -2734,14 +2754,14 @@ class VcsCore:
         *,
         scope: ScopeInfo | None,
     ) -> dict[str, OperationSummary]:
-        return _vcscore_queries.operation_id_matches(self, selector, scope=scope)
+        return self._queries.operation_id_matches(selector, scope=scope)
 
     def _read_operation_summary_history(self, summary: OperationSummary) -> OperationHistory:
-        return _vcscore_queries.read_operation_summary_history(self, summary)
+        return self._queries.read_operation_summary_history(summary)
 
     @staticmethod
     def _describe_operation_selector_match(summary: OperationSummary) -> str:
-        return _vcscore_queries.describe_operation_selector_match(summary)
+        return describe_operation_selector_match(summary)
 
     def rebase(self, source: ScopeInfo, onto: ScopeInfo) -> RebaseResult:
         return self._store.rebase(source, onto.ref)

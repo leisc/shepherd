@@ -1,3 +1,4 @@
+# under-test: vcs_core._fuse_overlay
 """The read-only carrier mode — the syscall-EROFS enforcement tier.
 
 Two halves (read-only-carrier-mode.md):
@@ -20,7 +21,7 @@ import sys
 from pathlib import Path
 
 import pytest
-from vcs_core._errors import ReadOnlyCarrierError
+from vcs_core import ReadOnlyCarrierError
 from vcs_core._fuse_overlay import FuseOverlayBackend
 
 # --- cross-platform: the in-process write-refusal (mocked mount) -----------

@@ -1,8 +1,10 @@
+# under-test: vcs_core._transition_kernel_records
 """Unit tests for private transition-kernel canonical records."""
 
 from __future__ import annotations
 
 import pytest
+from vcs_core import canonical_digest
 from vcs_core._transition_kernel_records import (
     CandidateCommitRecord,
     CandidateOutcomeRecord,
@@ -19,7 +21,6 @@ from vcs_core._transition_kernel_records import (
     ValidatedPayloadDescriptor,
     validate_head_selection,
 )
-from vcs_core._world_types import canonical_digest
 
 
 def _sha(label: str) -> str:

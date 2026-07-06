@@ -1,11 +1,11 @@
+# under-test: vcs_core._parent_tree_manifest
 from __future__ import annotations
 
 import shutil
 from pathlib import Path
 
 import pytest
-from vcs_core import _vcscore_lifecycle
-from vcs_core._errors import MergePreconditionError, ParentWorkingTreeDivergedError
+from vcs_core import MergePreconditionError, ParentWorkingTreeDivergedError, _vcscore_lifecycle
 from vcs_core._parent_tree_manifest import capture_parent_tree_manifest
 
 from ...support.builders import make_marker_filesystem_vcscore

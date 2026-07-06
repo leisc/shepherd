@@ -1,3 +1,4 @@
+# under-test: vcs_core._managed_exec_protocol
 from __future__ import annotations
 
 import pytest

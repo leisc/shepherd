@@ -1,3 +1,4 @@
+# under-test: vcs_core._query_selectors
 from __future__ import annotations
 
 import pytest

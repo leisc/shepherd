@@ -6,6 +6,8 @@ from dataclasses import dataclass
 from pathlib import Path
 from typing import Literal
 
+from vcs_core._errors import VcsCoreError
+
 ClaimPolicy = Literal["observe", "exclusive", "authoritative_suppress_fs"]
 
 
@@ -19,7 +21,7 @@ class ResourceClaim:
     policy: ClaimPolicy
 
 
-class ClaimConflictError(ValueError):
+class ClaimConflictError(VcsCoreError, ValueError):
     """Two incompatible substrates attempted to claim the same real path."""
 
     def __init__(self, *, existing: ResourceClaim, requested: ResourceClaim) -> None:

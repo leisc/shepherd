@@ -1,15 +1,22 @@
+# under-test: vcs_core._world_substrate_adapters
 """Capability tests for provider-neutral trace substrate heads in v2 worlds."""
 
 from __future__ import annotations
 
 from pathlib import Path
 
+from vcs_core import WORLD_TRANSITION_SCHEMA, WorldSnapshot
 from vcs_core._transition_kernel_records import CandidateOutcomeRecord
-from vcs_core._world_operation_builder import CandidateSelection, OperationFinalBuilder
 from vcs_core._world_refs import world_pin_ref
-from vcs_core._world_storage_manager import DEFAULT_GROUND_REF, SubstrateStoreSpec, WorldStorageManager
 from vcs_core._world_substrate_adapters import TaskTraceSubstrateAdapter
-from vcs_core._world_types import WORLD_TRANSITION_SCHEMA, SubstrateStoreIdentity, WorldSnapshot
+from vcs_core.spi import SubstrateStoreIdentity
+from vcs_core.testing import (
+    DEFAULT_GROUND_REF,
+    CandidateSelection,
+    OperationFinalBuilder,
+    SubstrateStoreSpec,
+    WorldStorageManager,
+)
 
 
 def _trace_manager(tmp_path: Path) -> WorldStorageManager:

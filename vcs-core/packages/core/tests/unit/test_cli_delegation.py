@@ -1,3 +1,4 @@
+# under-test: vcs_core._cli_delegation
 from __future__ import annotations
 
 import pytest

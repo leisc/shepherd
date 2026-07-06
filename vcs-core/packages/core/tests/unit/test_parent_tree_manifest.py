@@ -1,3 +1,4 @@
+# under-test: vcs_core._parent_tree_manifest
 from __future__ import annotations
 
 import os

@@ -14,6 +14,7 @@ from typing import TYPE_CHECKING, BinaryIO
 from vcs_core import _cli_ipc
 from vcs_core._admission.identifiers import ParseError, parse_optional_scope_name
 from vcs_core._cli_errors import prefixed_error_message
+from vcs_core._errors import VcsCoreError
 from vcs_core._managed_exec_protocol import (
     ManagedExecExitFrame,
     ManagedExecMessageFrame,
@@ -32,7 +33,7 @@ if TYPE_CHECKING:
     from vcs_core._ipc import JsonObject, SessionInfo, SessionResponse
 
 
-class SessionCliError(RuntimeError):
+class SessionCliError(VcsCoreError, RuntimeError):
     """CLI-facing session error with an explicit process exit code."""
 
     def __init__(self, message: str, *, exit_code: int) -> None:
@@ -40,7 +41,7 @@ class SessionCliError(RuntimeError):
         self.exit_code = exit_code
 
 
-class _ManagedExecOutputClosedError(Exception):
+class _ManagedExecOutputClosedError(VcsCoreError):
     """The invoking CLI can no longer forward managed exec output."""
 
 

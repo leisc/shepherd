@@ -1,3 +1,4 @@
+# under-test: vcs_core._query_inventory
 """Part C characterization: the typed Disposition (Tier 2 of the control-plane taxonomy).
 
 Pins the behavior the taxonomy names (260622-control-plane-taxonomy.md): a fact's disposition
@@ -19,8 +20,9 @@ from vcs_core._operation_journal_inventory import (
 from vcs_core._query_inventory import InventoryIssue, InventoryItem, RecoveryKind, present_invalid
 from vcs_core._query_readiness import ReadinessRequest, _derive_blockers, _policy_for
 from vcs_core._recovery_inventory import _recovery_item
-from vcs_core._world_refs import operation_journal_ref, world_publication_lease_index_ref
+from vcs_core._world_refs import world_publication_lease_index_ref
 from vcs_core._world_storage_installation import open_or_init_default_world_storage
+from vcs_core.testing import operation_journal_ref
 from vcs_core.vcscore import VcsCore
 
 

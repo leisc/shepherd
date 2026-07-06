@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 import pytest
-from vcs_core._errors import InvalidRepositoryStateError
+from vcs_core import InvalidRepositoryStateError
 from vcs_core.vcscore import VcsCore
 
 

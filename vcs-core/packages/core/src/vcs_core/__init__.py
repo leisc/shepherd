@@ -14,6 +14,7 @@ from vcs_core._errors import (
     ActivationError,
     DirtyPushError,
     InterruptedLifecycleError,
+    InvalidIdentityError,
     InvalidRepositoryStateError,
     LifecycleRecoveryRequiredError,
     MergePreconditionError,
@@ -21,14 +22,38 @@ from vcs_core._errors import (
     OrphanedOperationsError,
     OverlayDirtyError,
     ParentWorkingTreeDivergedError,
+    ReadOnlyCarrierError,
     RefResolutionError,
+    ScopeAdmissionError,
+    SiblingGroupRecoveryRequiredError,
     StaleScopeError,
+    SubstrateCommandError,
     SubstrateNotBoundError,
+    UnknownForkHintError,
+    UnresolvedPatchPathError,
     UnscopedMutationError,
+    UnsupportedOverlayEntryError,
+    VcsCoreError,
     VerifyFailedError,
+    WorkspaceAuthorityRecoveryRequiredError,
     WorldQuiescenceError,
 )
 from vcs_core._substrate_runtime import build_builtin_substrate_context
+
+# --- World-value vocabulary (product types; promoted from private modules,
+# 260704-1410-plan.md V1.1 step 2). Re-exports: the public names are stable even
+# if the implementation home later moves (e.g. canonical_digest/canonical_bytes
+# consolidating into commons_vcs.canonical, P4 rider 2). Digest contract:
+# byte-identical output under the same content-addressing domain — moving the
+# home must not change the bytes. EvidenceRef / WORLD_TRANSITION_SCHEMA feed the
+# durable-schema design review, which inherits them as public consciously. ---
+from vcs_core._transition_kernel_records import EvidenceRef
+from vcs_core._world_types import (
+    WORLD_TRANSITION_SCHEMA,
+    WorldSnapshot,
+    canonical_bytes,
+    canonical_digest,
+)
 
 # --- Config (public in R1b) ---
 from vcs_core.authority import AuthorityAspect, SubstrateAuthority
@@ -73,6 +98,7 @@ from vcs_core.types import (
 from vcs_core.vcscore import VcsCore
 
 __all__ = [
+    "WORLD_TRANSITION_SCHEMA",
     "ActivationError",
     "AuthorityAspect",
     "BindingConfig",
@@ -82,10 +108,12 @@ __all__ = [
     "DiffSummary",
     "DirtyPushError",
     "EffectRecord",
+    "EvidenceRef",
     "FileChange",
     "FilesystemSubstrate",
     "GitSubstrate",
     "InterruptedLifecycleError",
+    "InvalidIdentityError",
     "InvalidRepositoryStateError",
     "LifecycleRecoveryRequiredError",
     "MarkerSubstrate",
@@ -98,6 +126,7 @@ __all__ = [
     "OrphanedOperationsError",
     "OverlayDirtyError",
     "ParentWorkingTreeDivergedError",
+    "ReadOnlyCarrierError",
     "RebaseResult",
     "RecordedCommandOutcome",
     "RecoverySnapshot",
@@ -109,6 +138,7 @@ __all__ = [
     "RetainedOutputSettlementResult",
     "RetainedWorkspaceHandle",
     "SQLiteSubstrate",
+    "ScopeAdmissionError",
     "ScopeInfo",
     "ScopeStack",
     "SealCandidateHandoff",
@@ -116,18 +146,28 @@ __all__ = [
     "SealedExecutionOutcome",
     "SecretRef",
     "SelectedBindingRevision",
+    "SiblingGroupRecoveryRequiredError",
     "StaleScopeError",
     "Status",
     "Store",
     "SubstrateAuthority",
+    "SubstrateCommandError",
     "SubstrateManifest",
     "SubstrateNotBoundError",
     "SubstratePlugin",
+    "UnknownForkHintError",
+    "UnresolvedPatchPathError",
     "UnscopedMutationError",
+    "UnsupportedOverlayEntryError",
     "VcsCore",
     "VcsCoreConfig",
+    "VcsCoreError",
     "VerifyFailedError",
+    "WorkspaceAuthorityRecoveryRequiredError",
     "WorkspaceChange",
     "WorldQuiescenceError",
+    "WorldSnapshot",
     "build_builtin_substrate_context",
+    "canonical_bytes",
+    "canonical_digest",
 ]

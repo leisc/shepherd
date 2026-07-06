@@ -1,3 +1,4 @@
+# under-test: vcs_core._clonefile_carrier
 """B1c — the APFS clonefile CarrierBackend (macOS member of the reversibility axis).
 
 Backend-level coverage: CoW clone of the base, clone-vs-base diff (add/modify/delete +
@@ -97,7 +98,7 @@ def test_clonefile_diff_rejects_symlinks(tmp_path) -> None:
     """Symlinks are unsupported, consistent with the overlay backends' diff_layer
     (test_diff_layer_rejects_symlink_entries): a symlink in a scope surfaces as
     UnsupportedOverlayEntryError at diff time, never silently skipped or mis-captured."""
-    from vcs_core._errors import UnsupportedOverlayEntryError
+    from vcs_core import UnsupportedOverlayEntryError
 
     backend = _make(tmp_path)
     backend.create_layer("ground", parent_scope_id=None)

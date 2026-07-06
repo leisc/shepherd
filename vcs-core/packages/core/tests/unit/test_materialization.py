@@ -1,3 +1,4 @@
+# under-test: vcs_core._vcscore_materialization
 """Tests for internal materialization planning and execution."""
 
 from __future__ import annotations
@@ -10,8 +11,8 @@ from types import SimpleNamespace
 from typing import TYPE_CHECKING
 
 import pytest
-from vcs_core._dirty_flag import read_dirty_flag, write_dirty_flag
-from vcs_core._errors import OpenScopeError, WorkspaceAuthorityRecoveryRequiredError
+from vcs_core import OpenScopeError, WorkspaceAuthorityRecoveryRequiredError
+from vcs_core._dirty_flag import read_dirty_flag
 from vcs_core._materialization_coordinator import (
     FileMaterializationState,
     MaterializationAdmission,
@@ -23,6 +24,7 @@ from vcs_core._query_inventory import InventorySnapshot
 from vcs_core._workspace_authority import WorkspaceAuthorityPending, write_pending_workspace_authority
 from vcs_core.materialization import build_materializers, plan_materialization
 from vcs_core.store import GROUND_REF
+from vcs_core.testing import write_dirty_flag
 from vcs_core.types import DiffSummary, ScopeInfo, Status
 from vcs_core.vcscore import VcsCore
 
@@ -271,7 +273,7 @@ def test_recover_dirty_push_wrapper_holds_owner_lock(tmp_path: Path) -> None:
     owner = _RecoverOwner(tmp_path, store)
     write_dirty_flag(str(tmp_path), "crashed-session")
 
-    _vcscore_materialization.recover_dirty_push(owner)  # type: ignore[arg-type]
+    _vcscore_materialization.MaterializationController(owner).recover_dirty_push()  # type: ignore[arg-type]
 
     assert owner._lock.events == ["enter", "exit"]
     assert store.advance_materialized_calls == 1
@@ -283,7 +285,7 @@ def test_plan_push_wrapper_holds_owner_lock(tmp_path: Path) -> None:
     store = _FakeMaterializationStore()
     owner = _RecoverOwner(tmp_path, store)
 
-    plan = _vcscore_materialization.plan_push(owner)  # type: ignore[arg-type]
+    plan = _vcscore_materialization.MaterializationController(owner).plan_push()  # type: ignore[arg-type]
 
     assert owner._lock.events == ["enter", "exit"]
     assert plan.total_operations == 0
@@ -297,7 +299,7 @@ def test_push_dry_run_wrapper_holds_owner_lock_without_advancing(tmp_path: Path)
     store = _FakeMaterializationStore()
     owner = _RecoverOwner(tmp_path, store)
 
-    plan = _vcscore_materialization.push(owner, dry_run=True)  # type: ignore[arg-type]
+    plan = _vcscore_materialization.MaterializationController(owner).push(dry_run=True)  # type: ignore[arg-type]
 
     assert owner._lock.events == ["enter", "exit"]
     assert plan.total_operations == 0
@@ -313,7 +315,7 @@ def test_recover_dirty_push_wrapper_is_safe_when_lock_already_held(tmp_path: Pat
     write_dirty_flag(str(tmp_path), "crashed-session")
 
     with owner._lock:
-        _vcscore_materialization.recover_dirty_push(owner)  # type: ignore[arg-type]
+        _vcscore_materialization.MaterializationController(owner).recover_dirty_push()  # type: ignore[arg-type]
 
     assert owner._lock.events == ["enter", "enter", "exit", "exit"]
     assert store.advance_materialized_calls == 1

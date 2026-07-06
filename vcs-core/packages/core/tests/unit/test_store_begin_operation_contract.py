@@ -71,10 +71,11 @@ ALLOWED_UNCHECKED_WORLD_PUBLISH_CALLS: dict[tuple[str, str, str], str] = {
         "self._world_store",
     ): "manager-mediated fork publication after new-world closure validation and receipt recording",
     (
-        "vcs_core/_world_storage_manager.py",
-        "WorldStorageManager.advance_publication",
+        # V2.2c: advance_publication moved to the publication/retention controller.
+        "vcs_core/_publication_retention_controller.py",
+        "PublicationRetentionController.advance_publication",
         "self._world_store",
-    ): "single manager-mediated publication CAS stage after new-world closure validation and receipt recording",
+    ): "single controller-mediated publication CAS stage after new-world closure validation and receipt recording",
 }
 
 TRACKED_ALLOWLISTED_OPERATION_STARTS = frozenset(

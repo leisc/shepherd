@@ -16,6 +16,7 @@ from vcs_core._command_contract import (
     compile_command_contract,
 )
 from vcs_core._command_values import cli_literal, json_schema_projection, typed_json_projection
+from vcs_core._errors import VcsCoreError
 
 if TYPE_CHECKING:
     from collections.abc import Callable, Mapping
@@ -29,7 +30,7 @@ RESERVED_CLI_CLICK_NAMES = frozenset({"scope_name", "as_json"})
 _CLI_PARAM_NAME_RE = re.compile(r"[A-Za-z0-9]+(?:[_-][A-Za-z0-9]+)*\Z")
 
 
-class CommandProjectionError(ValueError):
+class CommandProjectionError(VcsCoreError, ValueError):
     """Raised when a command cannot be lowered to a generated projection."""
 
 

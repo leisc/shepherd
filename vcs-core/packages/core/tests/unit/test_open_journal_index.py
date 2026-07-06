@@ -1,3 +1,4 @@
+# under-test: vcs_core._incremental
 """1b.2a — the open-operation-journal index (third DeltaIndex customer), standalone.
 
 Tested without the journal store/manager: a bare repo, manual open-ref sets, a fake rebuild_source.
@@ -9,11 +10,12 @@ from __future__ import annotations
 
 import pygit2
 import pytest
+from vcs_core import InvalidRepositoryStateError
 from vcs_core import _ref_txn as rt
-from vcs_core._errors import InvalidRepositoryStateError
 from vcs_core._incremental import OPEN_OPERATION_JOURNAL_INDEX_SCHEMA, OpenOperationJournalIndex
 from vcs_core._incremental import _git_record as gr
-from vcs_core._world_refs import operation_journal_ref, world_open_operation_journal_index_ref
+from vcs_core._world_refs import world_open_operation_journal_index_ref
+from vcs_core.testing import operation_journal_ref
 
 
 @pytest.fixture

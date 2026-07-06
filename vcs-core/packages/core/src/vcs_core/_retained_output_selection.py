@@ -44,7 +44,6 @@ from vcs_core._vcscore_seal import (
     _scope_selector,
     _validate_handoff_head,
     _validate_retained_workspace_handle,
-    _validated_retained_workspace,
 )
 from vcs_core._world_authority_finalizer import MAX_AUTHORITY_RETRY_ATTEMPTS, WorldAuthorityFinalizer
 from vcs_core._world_operation_builder import CandidateSelection, OperationFinalBuilder
@@ -130,7 +129,7 @@ def _select_retained_candidate_set(
 ) -> RetainedOutputSelectionResult:
     """Publish one selected retained candidate plus optional archived candidate evidence."""
     with owner._lock:
-        retained = _validated_retained_workspace(owner, _scope_selector(selected_or_handle))
+        retained = owner._seal.validated_retained_workspace(_scope_selector(selected_or_handle))
         if isinstance(selected_or_handle, RetainedWorkspaceHandle):
             _validate_retained_workspace_handle(selected_or_handle, retained)
         parent = owner._live_scope(parent)
@@ -193,7 +192,7 @@ def _select_retained_candidate_set(
                 f"{handoff.scope_name!r}: parent binding {handoff.binding!r} advanced since child fork basis"
             )
 
-        authority_context = _prepare_and_decide_retained_selection_authority(
+        selection_authority = _prepare_and_decide_retained_selection_authority(
             owner,
             manager,
             retained=retained,
@@ -210,13 +209,13 @@ def _select_retained_candidate_set(
             authority_context=authority_context,
         )
         pending_authority_settlement: PendingAuthoritySettlement | None = None
-        if authority_context is not None:
+        if selection_authority is not None:
             pending_authority_settlement = begin_pending_authority_settlement(
                 owner,
                 _retained_output_authority_pending(
                     retained=retained,
                     parent=parent,
-                    context=authority_context,
+                    context=selection_authority,
                     outcome="allowed",
                     settlement="selected",
                     commit_outcome="pending",
@@ -291,13 +290,13 @@ def _select_retained_candidate_set(
             parent_world_after=outcome.world_oid,
             settlement_ref=settlement_ref,
             archived_retained=archived_retained,
-            authority_operation_id=None if authority_context is None else authority_context.authority_operation_id,
+            authority_operation_id=None if selection_authority is None else selection_authority.authority_operation_id,
             authority_settlement_operation_id=(
-                None if authority_context is None else authority_context.settlement_operation_id
+                None if selection_authority is None else selection_authority.settlement_operation_id
             ),
-            authority_outcome=None if authority_context is None else "allowed",
+            authority_outcome=None if selection_authority is None else "allowed",
         )
-        if authority_context is not None:
+        if selection_authority is not None:
             assert pending_authority_settlement is not None
             pending_authority_settlement = update_pending_authority_settlement(
                 owner,
@@ -309,25 +308,25 @@ def _select_retained_candidate_set(
             record_retained_output_authority_final_settlement(
                 owner,
                 parent=parent,
-                settlement_operation_id=authority_context.settlement_operation_id,
-                authority_operation_id=authority_context.authority_operation_id,
-                selection_operation_id=authority_context.prepared.selection_operation_id,
-                cohort_id=authority_context.prepared.cohort_id,
-                candidate_digest=authority_context.prepared.candidate_digest,
+                settlement_operation_id=selection_authority.settlement_operation_id,
+                authority_operation_id=selection_authority.authority_operation_id,
+                selection_operation_id=selection_authority.prepared.selection_operation_id,
+                cohort_id=selection_authority.prepared.cohort_id,
+                candidate_digest=selection_authority.prepared.candidate_digest,
                 outcome="allowed",
                 settlement="selected",
                 commit_outcome="selected",
-                decision_ids=tuple(decision.decision_id for decision in authority_context.decisions),
+                decision_ids=tuple(decision.decision_id for decision in selection_authority.decisions),
                 reason_code="selected_after_allowed_decision",
-                permission_plan_digest=authority_context.permission_plan_digest,
-                permission_plan_descriptor=authority_context.permission_plan_descriptor,
-                authority_context=authority_context.authority_context,
+                permission_plan_digest=selection_authority.permission_plan_digest,
+                permission_plan_descriptor=selection_authority.permission_plan_descriptor,
+                authority_context=selection_authority.authority_context,
             )
-            clear_pending_authority_transaction(owner, authority_context.settlement_operation_id)
+            clear_pending_authority_transaction(owner, selection_authority.settlement_operation_id)
             result = replace(
                 result,
-                authority_operation_id=authority_context.authority_operation_id,
-                authority_settlement_operation_id=authority_context.settlement_operation_id,
+                authority_operation_id=selection_authority.authority_operation_id,
+                authority_settlement_operation_id=selection_authority.settlement_operation_id,
                 authority_outcome="allowed",
             )
         return result
@@ -897,7 +896,7 @@ def _validated_archived_candidates(
     seen = {_retained_candidate_identity(selected)}
     archived_retained: list[ValidatedRetainedWorkspace] = []
     for archived_item in archived:
-        retained = _validated_retained_workspace(owner, _scope_selector(archived_item))
+        retained = owner._seal.validated_retained_workspace(_scope_selector(archived_item))
         if isinstance(archived_item, RetainedWorkspaceHandle):
             _validate_retained_workspace_handle(archived_item, retained)
         handoff = retained.loaded.handoff

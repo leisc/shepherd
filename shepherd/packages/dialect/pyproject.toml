@@ -47,7 +47,9 @@ packages = ["src/shepherd_dialect"]
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]
-pythonpath = ["src"]
+# "tests" carries the shared `support` doubles (see the root pyproject note); it
+# is on pythonpath declaratively rather than via a conftest sys.path.insert.
+pythonpath = ["src", "tests"]
 addopts = ["-q", "-m", "not container"]
 markers = [
     "container: needs Linux kernel features (Landlock, fuse-overlayfs); run via `make test_container` in vcs-core/packages/core",

@@ -1,3 +1,4 @@
+# under-test: vcs_core._app_readiness_projection
 from __future__ import annotations
 
 from typing import TYPE_CHECKING
